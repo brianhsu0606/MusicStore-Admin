@@ -1,0 +1,35 @@
+[
+  {
+    "username": "brian",
+    "password": "123456",
+    "profile": {
+      "name": "Brian Hsu",
+      "gender": "male",
+      "birth": "2000 / 06 / 06",
+      "email": "test@gmail.com",
+      "avatar": "avatar2.jpeg"
+    }
+  },
+  {
+    "username": "vicky",
+    "password": "123456",
+    "profile": {
+      "name": "Vivi Huang",
+      "gender": "female",
+      "birth": "2000 / 03 / 03",
+      "email": "test@gmail.com",
+      "avatar": "avatar5.jpeg"
+    }
+  },
+  {
+    "username": "usagi",
+    "password": "123456",
+    "profile": {
+      "name": "Usagi",
+      "gender": "male",
+      "birth": "2019 / 01 / 22",
+      "email": "usagi@gmail.com",
+      "avatar": "avatar5.jpeg"
+    }
+  }
+]
