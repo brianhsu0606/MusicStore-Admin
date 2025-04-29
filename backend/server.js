@@ -122,46 +122,47 @@ app.put('/api/profile', (req, res) => {
 
 // #region home.vue
 const tableData = [
-  { name: '吊飾', todayBuy: 300, monthBuy: 600, totalBuy: 1800 },
-  { name: '吊飾娃', todayBuy: 500, monthBuy: 4000, totalBuy: 6000 },
-  { name: 'S娃', todayBuy: 600, monthBuy: 3600, totalBuy: 6000 },
-  { name: '立牌', todayBuy: 200, monthBuy: 800, totalBuy: 2000 },
-  { name: '扭蛋', todayBuy: 200, monthBuy: 800, totalBuy: 2000 },
-  { name: '拍立得', todayBuy: 200, monthBuy: 800, totalBuy: 2000 },
-  { name: '撕拉卡', todayBuy: 200, monthBuy: 800, totalBuy: 2000 },
+  { name: 'Veelah', monthlyStockIn: 20, monthlySales: 13 },
+  { name: 'Eastman', monthlyStockIn: 60, monthlySales: 11 },
+  { name: 'Maton', monthlyStockIn: 10, monthlySales: 4 },
+  { name: 'Lakewood', monthlyStockIn: 4, monthlySales: 2 },
+  { name: 'Fender', monthlyStockIn: 6, monthlySales: 3 },
+  { name: 'PRS', monthlyStockIn: 10, monthlySales: 5 },
+  { name: 'G7th 移調夾', monthlyStockIn: 30, monthlySales: 11 },
 ];
 app.get('/api/dashboard/table-data', (req, res) => {
   res.json({ code: 200, result: { tableData } });
 });
+
 const countData = [
-  { name: '電話費', value: 699, icon: 'GoodsFilled', color: '#5ab1ef' },
-  { name: '卡費', value: 2599, icon: 'GoodsFilled', color: '#5ab1ef' },
-  { name: '房租', value: 10000, icon: 'GoodsFilled', color: '#5ab1ef' },
-  { name: 'Youtube', value: 479, icon: 'SuccessFilled', color: 'rgb(239, 68, 68)' },
-  { name: 'Spotify', value: 268, icon: 'SuccessFilled', color: 'rgb(127, 225, 122)' },
-  { name: '吉伊卡哇', value: 3000, icon: 'StarFilled', color: 'rgb(254, 204, 138)' },
+  { name: '店面租金', value: 100000, icon: 'GoodsFilled', color: '#5ab1ef' },
+  { name: '人事成本', value: 120000, icon: 'GoodsFilled', color: '#5ab1ef' },
+  { name: '本月其餘成本', value: 24300, icon: 'GoodsFilled', color: '#5ab1ef' },
+  { name: '本月進貨成本', value: 425000, icon: 'GoodsFilled', color: '#5ab1ef' },
+  { name: '本月銷售總額', value: 1018850, icon: 'Money', color: 'rgb(127, 225, 122)' },
+  { name: '本月淨利潤', value: 449550, icon: 'SuccessFilled', color: 'rgb(239, 68, 68)' },
 ];
 app.get('/api/dashboard/count-data', (req, res) => {
   res.json({ code: 200, result: { countData } });
 });
+
 const chartData = {
-  stockData: {
+  salesData: {
     date: [
-      '2025-3-26', '2025-3-27', '2025-3-28', '2025-3-31',
-      '2025-4-1', '2025-4-2', '2025-4-7', '2025-4-8',
+      '2024-10', '2024-11', '2024-12', '2025-1',
+      '2025-2', '2025-3', '2025-4', '2025-5',
     ],
     data: [
-      { '台積電': 995, '聯發科': 1540, '鴻海': 167, '廣達': 252 },
-      { '台積電': 958, '聯發科': 1485, '鴻海': 160.5, '廣達': 246 },
-      { '台積電': 952, '聯發科': 1465, '鴻海': 154, '廣達': 241 },
-      { '台積電': 910, '聯發科': 1390, '鴻海': 146, '廣達': 224.5 },
-      { '台積電': 944, '聯發科': 1460, '鴻海': 152, '廣達': 234 },
-      { '台積電': 942, '聯發科': 1435, '鴻海': 153.5, '廣達': 233 },
-      { '台積電': 848, '聯發科': 1295, '鴻海': 138.5, '廣達': 210 },
-      { '台積電': 812, '聯發科': 1240, '鴻海': 125, '廣達': 190 },
+      { 'Eastman': 8, 'Veelah': 18, 'Fender': 8, 'PRS': 4 },
+      { 'Eastman': 6, 'Veelah': 15, 'Fender': 10, 'PRS': 6 },
+      { 'Eastman': 11, 'Veelah': 21, 'Fender': 12, 'PRS': 8 },
+      { 'Eastman': 15, 'Veelah': 13, 'Fender': 6, 'PRS': 12 },
+      { 'Eastman': 4, 'Veelah': 12, 'Fender': 3, 'PRS': 3 },
+      { 'Eastman': 7, 'Veelah': 16, 'Fender': 2, 'PRS': 5 },
+      { 'Eastman': 6, 'Veelah': 23, 'Fender': 5, 'PRS': 2 },
+      { 'Eastman': 12, 'Veelah': 25, 'Fender': 7, 'PRS': 7 },
     ],
   },
-  videoData: {},
 };
 app.get('/api/dashboard/chart-data', (req, res) => {
   res.json({ code: 200, result: chartData });

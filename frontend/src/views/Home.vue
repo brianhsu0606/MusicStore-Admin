@@ -7,31 +7,25 @@ import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
 const tableLabel = [
-  { prop: 'name', label: '種類' },
-  { prop: 'todayBuy', label: '當日購買' },
-  { prop: 'monthBuy', label: '當月購買' },
-  { prop: 'totalBuy', label: '總共購買' },
+  { prop: 'name', label: '品項' },
+  { prop: 'monthlyStockIn', label: '本月進貨量' },
+  { prop: 'monthlySales', label: '本月銷售量' },
 ]
 const tableData = ref([])
 const countData = ref([])
 
 // 圖表設置
 const option = reactive({
-  // 全局字體樣式
   textStyle: {
     color: '#333'
   },
-  // 圖例
   legend: {},
-  // 圖表區域邊距
   grid: {
     left: '15%'
   },
-  // 滑鼠提示
   tooltip: {
     trigger: 'axis'
   },
-  // X 軸
   xAxis: {
     type: 'category',
     data: [],
@@ -45,7 +39,6 @@ const option = reactive({
       color: "#333"
     }
   },
-  // Y 軸
   yAxis: [
     {
       type: 'value',
@@ -69,14 +62,17 @@ const initHomeData = async () => {
       api.getChartData()
     ])
     tableData.value = tableRes.tableData
-    countData.value = countRes.countData
-  
-    const { stockData } = chartRes
-    option.xAxis.data = stockData.date
-    option.series = Object.keys(stockData.data[0]).map(val => {
+    countData.value = countRes.countData.map(item => ({
+      ...item,
+      value: item.value.toLocaleString()
+    }))
+    
+    const { salesData } = chartRes
+    option.xAxis.data = salesData.date
+    option.series = Object.keys(salesData.data[0]).map(val => {
       return {
         name: val,
-        data: stockData.data.map(item => item[val]),
+        data: salesData.data.map(item => item[val]),
         type: 'line'
       }
     })
@@ -138,6 +134,9 @@ onMounted(() => {
       </div>
       <!-- 右邊中間 echarts -->
       <el-card>
+        <template #header>
+          <h3 class="echart-title">吉他銷售量折線圖</h3>
+        </template>
         <div ref="chartRef" class="chart-container"></div>
       </el-card>
     </el-col>
@@ -217,7 +216,10 @@ onMounted(() => {
     }
   }
 }
-
+.echart-title {
+    text-align: center;
+    font-size: 20px;
+}
 .chart-container {
   height: 480px;
 }
