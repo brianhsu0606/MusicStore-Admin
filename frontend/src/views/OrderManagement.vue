@@ -1,45 +1,197 @@
-// --- src/views/OrderManagement.vue ---
+<script setup>
+import { onMounted, ref, reactive } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import api from '@/api'
+
+// #region CRUD
+
+// 讀取訂單（ Read）
+const orders = ref([])
+const fetchOrders = async () => {
+  try {
+    const res = await api.getOrder()
+    orders.value = res.orderList
+  } catch (error) {
+    ElMessage.error('獲取訂單失敗')
+  }
+}
+
+onMounted(() => {
+  fetchOrders()
+})
+
+const dialog = reactive({
+  visible: false,
+  form: {
+    id: null,
+    orderNumber: null,
+    member: '',
+    items: '',
+    status: '',
+  }
+})
+
+// 新增訂單（ Create ）
+const handleAdd = () => {
+  dialog.visible = true
+  dialog.isEdit = false
+  dialog.title = '新增訂單'
+  dialog.form = {
+    id: null,
+    orderNumber: null,
+    member: '',
+    items: '',
+    status: 'processing',
+  }
+}
+
+// 編輯訂單（ Update ）
+const handleEdit = (row) => {
+  dialog.visible = true
+  dialog.isEdit = true
+  dialog.title = '編輯訂單'
+  dialog.form = { ...row }
+}
+
+// 提交 dialog
+const submit = async () => {
+  try {
+    if (dialog.isEdit) {
+      await api.updateOrder(dialog.form, dialog.form.id)
+      ElMessage.success('編輯成功')
+    } else {
+      await api.addOrder(dialog.form)
+      ElMessage.success('新增成功')
+    }
+    dialog.visible = false
+    fetchOrders()
+  } catch {
+    ElMessage.error(dialog.isEdit ? '編輯失敗' : '新增失敗')
+  }
+}
+
+// 刪除訂單（ Delete ）
+const handleDelete = async (id) => {
+  try {
+    await ElMessageBox.confirm('確定要刪除嗎？')
+    await api.deleteOrder(id)
+    fetchOrders()
+  } catch {
+    ElMessage.error('刪除訂單失敗')
+  }
+}
+
+const updateOrderStatus = async (row) => {
+  try {
+    await api.updateOrder(row, row.id)
+    ElMessage.success('更改訂單狀態成功')
+  } catch {
+    ElMessage.error('更改訂單狀態失敗')
+  }
+}
+
+const getTagType = (status) => {
+  switch (status) {
+    case 'processing': return 'primary'
+    case 'shipped': return 'warning'
+    case 'completed': return 'success'
+    default: return ''
+  }
+}
+const getStatusLabel = (status) => {
+  switch (status) {
+    case 'processing': return '處理中'
+    case 'shipped': return '已出貨'
+    case 'completed': return '已完成'
+    default: return '未知'
+  }
+}
+
+</script>
+
 <template>
+  <!-- 新增、搜尋 header -->
+  <header>
+    <el-button @click="handleAdd" type="primary">新增訂單</el-button>
+    <el-input prefix-icon="search" placeholder="請輸入訂單"></el-input>
+  </header>
+  <!-- 訂單列 table -->
   <el-card>
     <el-table :data="orders" style="width: 100%">
-      <el-table-column prop="id" label="訂單編號" />
-      <el-table-column prop="user" label="用戶名稱" />
-      <el-table-column prop="items" label="商品項目" />
-      <el-table-column prop="status" label="狀態" />
-      <el-table-column>
+      <el-table-column prop="orderNumber" label="訂單編號" />
+      <el-table-column prop="member" label="會員名稱" />
+      <el-table-column prop="items" label="商品名稱" />
+      <el-table-column label="狀態">
         <template #default="{ row }">
-          <el-select v-model="row.status" placeholder="更改狀態">
+          <el-select v-model="row.status" @change="updateOrderStatus(row)" class="status-select">
+            <template #prefix>
+              <el-tag :type="getTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+            </template>
             <el-option label="處理中" value="processing" />
+            <el-option label="已出貨" value="shipped" />
             <el-option label="已完成" value="completed" />
           </el-select>
         </template>
       </el-table-column>
+      <el-table-column label="操作">
+        <template #default="{ row }">
+          <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
+          <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
   </el-card>
+  <!-- 新增訂單 dialog -->
+  <el-dialog v-model="dialog.visible" :title="dialog.title">
+    <el-form :model="dialog.form">
+      <el-form-item label="訂單編號">
+        <el-input v-model="dialog.form.orderNumber"></el-input>
+      </el-form-item>
+      <el-form-item label="會員名稱">
+        <el-input v-model="dialog.form.member"></el-input>
+      </el-form-item>
+      <el-form-item label="商品名稱">
+        <el-input v-model="dialog.form.items"></el-input>
+      </el-form-item>
+      <el-form-item label="訂單狀態">
+        <el-select v-model="dialog.form.status">
+          <el-option label="處理中" value="processing"/>
+          <el-option label="已出貨" value="shipped" />
+          <el-option label="已完成" value="completed"/>
+        </el-select>
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <el-button @click="dialog.visible = false">取消</el-button>
+      <el-button @click="submit" type="primary">確認</el-button>
+    </template>
+  </el-dialog>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-
-const orders = ref([
-  { id: 1, user: '小明', items: '吉他, 琴弦', status: 'processing' },
-  { id: 2, user: '小美', items: '效果器', status: 'completed' },
-])
-</script>
-
-<!-- // --- src/router/guard.js ---
-import { useUserStore } from '@/stores/user'
-
-export function setupRouteGuard(router) {
-  router.beforeEach((to, from, next) => {
-    const store = useUserStore()
-    const isAdmin = store.user.role === 'admin'
-
-    if (to.meta.requiresAdmin && !isAdmin) {
-      next('/unauthorized')
-    } else {
-      next()
-    }
-  })
+<style scoped lang="less">
+header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  .el-button {
+    height: 38px;
+  }
+  .el-input {
+    width: 250px;
+    height: 38px;
+    font-size: 16px;
+  }
 }
-  --->
+
+.el-tag {
+  font-size: 14px;
+}
+
+::v-deep(.status-select .el-select__selected-item) {
+  visibility: hidden; /* 隱藏文字 */
+}
+::v-deep(.status-select .el-select__prefix) {
+  visibility: visible; /* 顯示 tag */
+}
+</style>

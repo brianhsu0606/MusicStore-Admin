@@ -70,10 +70,10 @@ const submit = async () => {
 }
 
 // 刪除商品（ Delete ）
-const handleDelete = async (product) => {
+const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
-    await api.deleteProduct(product.id)
+    await api.deleteProduct(id)
     initProductData()
   } catch (error) {
     console.error(error)
@@ -134,10 +134,11 @@ const handlePageChange = (page) => {
 </script>
 
 <template>
-  <div class="product-header">
-    <el-button type="primary" @click="handleAdd" class="add-btn">新增商品</el-button>
-    <el-input v-model="searchInput" prefix-icon="search" class="search" placeholder="請輸入商品名稱" />
-  </div>
+  <!-- 新增、搜尋 header -->
+  <header>
+    <el-button type="primary" @click="handleAdd">新增商品</el-button>
+    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" />
+  </header>
   <!-- 商品分類 tab -->
   <el-tabs v-model="activeCategory" type="border-card">
     <el-tab-pane
@@ -159,9 +160,9 @@ const handlePageChange = (page) => {
     <el-table-column prop="quantity" label="數量" />
     <el-table-column prop="category" label="分類" />
     <el-table-column label="操作">
-      <template #default="scope">
-        <el-button @click="handleEdit(scope.row)" type="primary">編輯</el-button>
-        <el-button @click="handleDelete(scope.row)" type="danger">刪除</el-button>
+      <template #default="{ row }">
+        <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
+        <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -222,14 +223,14 @@ const handlePageChange = (page) => {
 </template>
 
 <style scoped lang="less">
-.product-header {
+header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  .add-btn {
+  .el-button {
     height: 38px;
   }
-  .search {
+  .el-input {
     width: 250px;
     height: 38px;
     font-size: 16px;

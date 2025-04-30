@@ -25,7 +25,8 @@ const dialog = reactive({
 })
 
 // #region CRUD
-// 讀取 member（ Read ）
+
+// 讀取會員（ Read ）
 const memberData = ref([])
 const fetchMemberData = async () => {
   try {
@@ -37,7 +38,7 @@ const fetchMemberData = async () => {
   }  
 }
 
-// 新增 member（ Create ）
+// 新增會員（ Create ）
 const handleAdd = () => {
   dialog.visible = true
   dialog.isEdit = false
@@ -52,7 +53,7 @@ const handleAdd = () => {
   }
 }
 
-// 編輯 user（ Update ）
+// 編輯會員（ Update ）
 const handleEdit = (row) => {
   dialog.visible = true
   dialog.isEdit = true
@@ -77,11 +78,11 @@ const submit = async () => {
   }
 }
 
-// 刪除 member（ Delete ）（ await 有順序，按取消就會跳到 catch ）
-const handleDelete = async (user) => {
+// 刪除會員（ Delete ）
+const handleDelete = async (id) => {
   try {
-    await ElMessageBox.confirm('確定要刪除嗎？')   // UI 的交互等待，點取消會直接跳 catch，沒有await會直接往下刪除
-    await api.deleteMember(user.id)              // 後端請求的等待
+    await ElMessageBox.confirm('確定要刪除嗎？')
+    await api.deleteMember(id)
     ElMessage.success('刪除成功')
     fetchMemberData()
   } catch {
@@ -130,10 +131,11 @@ const handlePageChange = (page) => {
 </script>
 
 <template>
-  <div class="member-header">
-    <el-button type="primary" @click="handleAdd" class="add-btn">新增用戶</el-button>
-    <el-input v-model="searchInput" prefix-icon="search" class="search" placeholder="請輸入用戶名稱" />
-  </div>
+  <!-- 新增、搜尋 header -->
+  <header>
+    <el-button type="primary" @click="handleAdd">新增用戶</el-button>
+    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入用戶名稱" />
+  </header>
   <!-- 會員表格 table -->
   <div>
     <el-table :data="pagedData">
@@ -145,9 +147,9 @@ const handlePageChange = (page) => {
         :width="getColumnWidth()"
       />
       <el-table-column label="操作">
-        <template #default="scope">
-          <el-button type="primary" @click="handleEdit(scope.row)">編輯</el-button>
-          <el-button type="danger" @click="handleDelete(scope.row)">刪除</el-button>
+        <template #default="{ row }">
+          <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
+          <el-button type="danger" @click="handleDelete(row.id)">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -196,14 +198,14 @@ const handlePageChange = (page) => {
 </template>
 
 <style scoped lang="less">
-.member-header {
+header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
-  .add-btn {
+  .el-button {
     height: 38px;
   }
-  .search {
+  .el-input {
     width: 250px;
     height: 38px;
     font-size: 16px;

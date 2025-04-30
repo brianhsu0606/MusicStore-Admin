@@ -235,7 +235,7 @@ app.post('/api/members', (req, res) => {
 // Delete
 app.delete('/api/members/:id', (req, res) => {
   const { id } = req.params
-  memberList = memberList.filter(user => user.id != id)
+  memberList = memberList.filter(user => user.id !== Number(id))
   res.json({ code: 200, message: '刪除成功' })
 })
 
@@ -297,7 +297,6 @@ const storage = multer.diskStorage({
     cb(null, filename)
   }
 })
-
 const upload = multer({ storage })
 
 // 圖片上傳 API
@@ -310,7 +309,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
   res.json({ imageUrl })
 })
 
-
+// Create
 app.post('/api/products', (req, res) => {
   const newProduct = req.body
   newProduct.id = Date.now()
@@ -322,28 +321,105 @@ app.post('/api/products', (req, res) => {
   })
 })
 
+// Update
 app.put('/api/products/:id', (req, res) => {
   const { id } = req.params
   const updatedProduct = req.body
-  const index = productList.findIndex(product => product.id === Number(id))
+  const index = productList.findIndex(item => item.id === Number(id))
 
   if (index !== -1) {
     productList[index] = updatedProduct
     res.json({
       code: 200,
-      message: '修改成功',
+      msg: '修改成功',
     })
   } else {
     res.status(404).json({
       code: 404,
-      message: '找不到該商品',
+      msg: '找不到該商品',
     })
   }
 })
 
 app.delete('/api/products/:id', (req, res) => {
   const { id } = req.params
-  productList = productList.filter(product => product.id != id)
+  productList = productList.filter(item => item.id !== Number(id))
   res.json({ code: 200, message: '刪除成功' })
 })
 // #endregion product.vue
+
+// #region OrderManagement.vue
+let orderList = [
+  { id: 1, orderNumber: 'ORD2411135839', member: '小明', items: 'Lakewood M32', status: 'shipped' },
+  { id: 2, orderNumber: 'ORD2412254276', member: '小美', items: 'G7th Performance 3 金色', status: 'shipped' },
+  { id: 3, orderNumber: 'ORD2502072521', member: '小華', items: 'Maton EBG808TE', status: 'processing' },
+  { id: 4, orderNumber: 'ORD2503137490', member: '阿明', items: 'Eastman PCH1', status: 'completed' },
+  { id: 5, orderNumber: 'ORD2503316843', member: '大雄', items: 'G7th Performance 3 銀色', status: 'completed' },
+  { id: 6, orderNumber: 'ORD2504115877', member: '小志', items: 'Eastman PCH1', status: 'processing' },
+]
+
+// Read
+app.get('/api/orders', (req, res) => {
+  res.json({
+    code: 200,
+    msg: '訂單獲取成功',
+    result: {
+      orderList
+    }
+  })
+})
+
+// Create
+app.post('/api/orders', (req, res) => {
+  const now = new Date()
+  const datePart = String(now.getFullYear()).slice(2) + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0')
+  const random = Math.floor(1000 + Math.random() * 9000)
+  const newOrder = {
+    ...req.body,
+    id: Date.now(),
+    orderNumber: `ORD${datePart}${random}`,
+  }
+
+  orderList.push(newOrder)
+
+  res.json({
+    code: 200,
+    msg: '新增成功',
+    result: {}
+  })
+})
+
+// Update
+app.put('/api/orders/:id', (req, res) => {
+  const { id } = req.params
+  const updatedOrder = req.body
+  const index = orderList.findIndex(item => item.id === Number(id))
+
+  if (index !== -1) {
+    orderList[index] = updatedOrder
+    res.json({
+      code: 200,
+      msg: '更改成功',
+      result: {}
+    })
+  } else {
+    res.status(404).json({
+      code: 404,
+      msg: '更改失敗',
+      result: {}
+    })
+  }
+})
+
+// Delete
+app.delete('/api/orders/:id', (req, res) => {
+  const { id } = req.params
+  orderList = orderList.filter(item => item.id !== Number(id))
+
+  res.json({
+    code: 200,
+    msg: '訂單刪除成功',
+    result: {}
+  })
+})
+// #endregion OrderManagement.vue
