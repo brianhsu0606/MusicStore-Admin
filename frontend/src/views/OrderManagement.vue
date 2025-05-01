@@ -1,10 +1,9 @@
 <script setup>
-import { onMounted, ref, reactive } from 'vue'
+import { onMounted, ref, reactive, watch, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '@/api'
 
 // #region CRUD
-
 // 讀取訂單（ Read）
 const orders = ref([])
 const fetchOrders = async () => {
@@ -53,6 +52,15 @@ const handleEdit = (row) => {
   dialog.form = { ...row }
 }
 
+const updateOrderStatus = async (row) => {
+  try {
+    await api.updateOrder(row, row.id)
+    ElMessage.success('更改訂單狀態成功')
+  } catch {
+    ElMessage.error('更改訂單狀態失敗')
+  }
+}
+
 // 提交 dialog
 const submit = async () => {
   try {
@@ -75,20 +83,13 @@ const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
     await api.deleteOrder(id)
+    ElMessage.success('刪除訂單成功')
     fetchOrders()
   } catch {
     ElMessage.error('刪除訂單失敗')
   }
 }
-
-const updateOrderStatus = async (row) => {
-  try {
-    await api.updateOrder(row, row.id)
-    ElMessage.success('更改訂單狀態成功')
-  } catch {
-    ElMessage.error('更改訂單狀態失敗')
-  }
-}
+// #endregion CRUD
 
 const getTagType = (status) => {
   switch (status) {
@@ -107,17 +108,21 @@ const getStatusLabel = (status) => {
   }
 }
 
+const searchInput = ref('')
+const filteredOrder = computed(() => {
+  return orders.value.filter(item => item.orderNumber.toLowerCase().includes(searchInput.value.toLocaleLowerCase()))
+})
 </script>
 
 <template>
   <!-- 新增、搜尋 header -->
   <header>
     <el-button @click="handleAdd" type="primary">新增訂單</el-button>
-    <el-input prefix-icon="search" placeholder="請輸入訂單"></el-input>
+    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號"></el-input>
   </header>
   <!-- 訂單列 table -->
   <el-card>
-    <el-table :data="orders" style="width: 100%">
+    <el-table :data="filteredOrder" style="width: 100%">
       <el-table-column prop="orderNumber" label="訂單編號" />
       <el-table-column prop="member" label="會員名稱" />
       <el-table-column prop="items" label="商品名稱" />
