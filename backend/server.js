@@ -350,12 +350,12 @@ app.delete('/api/products/:id', (req, res) => {
 
 // #region OrderManagement.vue
 let orderList = [
-  { id: 1, orderNumber: 'ORD2411135839', member: '小明', items: 'Lakewood M32', status: 'shipped' },
-  { id: 2, orderNumber: 'ORD2412254276', member: '小美', items: 'G7th Performance 3 金色', status: 'shipped' },
-  { id: 3, orderNumber: 'ORD2502072521', member: '小華', items: 'Maton EBG808TE', status: 'processing' },
-  { id: 4, orderNumber: 'ORD2503137490', member: '阿明', items: 'Eastman PCH1', status: 'completed' },
-  { id: 5, orderNumber: 'ORD2503316843', member: '大雄', items: 'G7th Performance 3 銀色', status: 'completed' },
-  { id: 6, orderNumber: 'ORD2504115877', member: '小志', items: 'Eastman PCH1', status: 'processing' },
+  { id: 1, orderNumber: 'ORD2411135839', createdAt: '2024-11-13', member: '小明', items: 'Lakewood M32', status: 'shipped' },
+  { id: 2, orderNumber: 'ORD2412254276', createdAt: '2024-12-25', member: '小美', items: 'G7th Performance 3 金色', status: 'shipped' },
+  { id: 3, orderNumber: 'ORD2502072521', createdAt: '2025-02-07', member: '小華', items: 'Maton EBG808TE', status: 'processing' },
+  { id: 4, orderNumber: 'ORD2503137490', createdAt: '2025-03-13', member: '阿明', items: 'Eastman PCH1', status: 'completed' },
+  { id: 5, orderNumber: 'ORD2503316843', createdAt: '2025-03-31', member: '大雄', items: 'G7th Performance 3 銀色', status: 'completed' },
+  { id: 6, orderNumber: 'ORD2504115877', createdAt: '2025-04-11', member: '小志', items: 'Eastman PCH1', status: 'processing' },
 ]
 
 // Read

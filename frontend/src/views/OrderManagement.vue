@@ -24,6 +24,7 @@ const dialog = reactive({
   form: {
     id: null,
     orderNumber: null,
+    createdAt: '',
     member: '',
     items: '',
     status: '',
@@ -110,7 +111,7 @@ const getStatusLabel = (status) => {
 
 const searchInput = ref('')
 const filteredOrder = computed(() => {
-  return orders.value.filter(item => item.orderNumber.toLowerCase().includes(searchInput.value.toLocaleLowerCase()))
+  return orders.value.filter(item => item.orderNumber.toLowerCase().includes(searchInput.value.toLowerCase()))
 })
 </script>
 
@@ -120,10 +121,11 @@ const filteredOrder = computed(() => {
     <el-button @click="handleAdd" type="primary">新增訂單</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號"></el-input>
   </header>
-  <!-- 訂單列 table -->
+  <!-- 訂單列表 table -->
   <el-card>
     <el-table :data="filteredOrder" style="width: 100%">
       <el-table-column prop="orderNumber" label="訂單編號" />
+      <el-table-column prop="createdAt" label="下單日期" />
       <el-table-column prop="member" label="會員名稱" />
       <el-table-column prop="items" label="商品名稱" />
       <el-table-column label="狀態">
@@ -151,6 +153,16 @@ const filteredOrder = computed(() => {
     <el-form :model="dialog.form">
       <el-form-item label="訂單編號">
         <el-input v-model="dialog.form.orderNumber"></el-input>
+      </el-form-item>
+      <el-form-item label="下單日期">
+        <el-date-picker
+          v-model="dialog.form.createdAt"
+          type="date"
+          placeholder="選擇日期"
+          style="width: 100%"
+          format="YYYY-MM-DD"
+          value-format="YYYY-MM-DD"
+        />
       </el-form-item>
       <el-form-item label="會員名稱">
         <el-input v-model="dialog.form.member"></el-input>
