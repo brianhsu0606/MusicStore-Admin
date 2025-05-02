@@ -226,7 +226,7 @@ const handlePageChange = (page) => {
 header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   .el-button {
     height: 38px;
   }
@@ -238,7 +238,7 @@ header {
 }
 
 .el-table {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   .product-preview {
     border: 0.3px solid gray;
   }

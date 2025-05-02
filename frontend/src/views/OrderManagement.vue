@@ -1,22 +1,22 @@
 <script setup>
-import { onMounted, ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '@/api'
 
 // #region CRUD
 // 讀取訂單（ Read）
-const orders = ref([])
-const fetchOrders = async () => {
+const orderList = ref([])
+const fetchOrderList = async () => {
   try {
     const res = await api.getOrder()
-    orders.value = res.orderList
+    orderList.value = res.orderList
   } catch (error) {
     ElMessage.error('獲取訂單失敗')
   }
 }
 
 onMounted(() => {
-  fetchOrders()
+  fetchOrderList()
 })
 
 const dialog = reactive({
@@ -53,7 +53,7 @@ const handleEdit = (row) => {
   dialog.form = { ...row }
 }
 
-const updateOrderStatus = async (row) => {
+const changeStatus = async (row) => {
   try {
     await api.updateOrder(row, row.id)
     ElMessage.success('更改訂單狀態成功')
@@ -73,7 +73,7 @@ const submit = async () => {
       ElMessage.success('新增成功')
     }
     dialog.visible = false
-    fetchOrders()
+    fetchOrderList()
   } catch {
     ElMessage.error(dialog.isEdit ? '編輯失敗' : '新增失敗')
   }
@@ -85,7 +85,7 @@ const handleDelete = async (id) => {
     await ElMessageBox.confirm('確定要刪除嗎？')
     await api.deleteOrder(id)
     ElMessage.success('刪除訂單成功')
-    fetchOrders()
+    fetchOrderList()
   } catch {
     ElMessage.error('刪除訂單失敗')
   }
@@ -109,9 +109,23 @@ const getStatusLabel = (status) => {
   }
 }
 
+
+// 搜尋功能
 const searchInput = ref('')
-const filteredOrder = computed(() => {
-  return orders.value.filter(item => item.orderNumber.toLowerCase().includes(searchInput.value.toLowerCase()))
+const filteredOrderList = computed(() => {
+  return orderList.value.filter(item => item.orderNumber.toLowerCase().includes(searchInput.value.toLowerCase()))
+})
+
+// 分頁功能 Pagination
+const currentPage = ref(1)
+const pageSize = ref(8)
+const pagedOrderList = computed(() => {
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredOrderList.value.slice(start, start + pageSize.value)
+})
+
+watch(searchInput, () => {
+  currentPage.value = 1
 })
 </script>
 
@@ -123,14 +137,14 @@ const filteredOrder = computed(() => {
   </header>
   <!-- 訂單列表 table -->
   <el-card>
-    <el-table :data="filteredOrder" style="width: 100%">
+    <el-table :data="pagedOrderList" style="width: 100%">
       <el-table-column prop="orderNumber" label="訂單編號" />
-      <el-table-column prop="createdAt" label="下單日期" />
-      <el-table-column prop="member" label="會員名稱" />
-      <el-table-column prop="items" label="商品名稱" />
+      <el-table-column prop="createdAt" label="下單日期" width="150" />
+      <el-table-column prop="member" label="會員名稱" width="140" />
+      <el-table-column prop="items" label="商品名稱" width="200" />
       <el-table-column label="狀態">
         <template #default="{ row }">
-          <el-select v-model="row.status" @change="updateOrderStatus(row)" class="status-select">
+          <el-select v-model="row.status" @change="changeStatus(row)" class="status-select">
             <template #prefix>
               <el-tag :type="getTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
             </template>
@@ -148,6 +162,15 @@ const filteredOrder = computed(() => {
       </el-table-column>
     </el-table>
   </el-card>
+  <!-- 分頁功能 Pagination -->
+  <el-pagination
+    background
+    layout="prev, pager, next"
+    :current-page="currentPage"
+    :page-size="pageSize"
+    :total="filteredOrderList.length"
+    @current-change="(val) => currentPage = val"
+  />
   <!-- 新增訂單 dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
     <el-form :model="dialog.form">
@@ -167,7 +190,7 @@ const filteredOrder = computed(() => {
       <el-form-item label="會員名稱">
         <el-input v-model="dialog.form.member"></el-input>
       </el-form-item>
-      <el-form-item label="商品名稱">
+      <el-form-item label="商品名稱" width="500"> 
         <el-input v-model="dialog.form.items"></el-input>
       </el-form-item>
       <el-form-item label="訂單狀態">
@@ -190,7 +213,7 @@ const filteredOrder = computed(() => {
 header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   .el-button {
     height: 38px;
   }
@@ -201,8 +224,11 @@ header {
   }
 }
 
-.el-tag {
-  font-size: 14px;
+.el-card {
+  margin-bottom: 15px;
+  .el-tag {
+    font-size: 14px;
+  }
 }
 
 ::v-deep(.status-select .el-select__selected-item) {
