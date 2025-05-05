@@ -5,21 +5,20 @@ import CommonHeader from '@/components/CommonHeader.vue'
 
 <template>
   <el-container class="layout-container">
-    <!-- 左側 -->
-    <el-aside width="200px">
-      <CommonAside />
-    </el-aside>
-    <!-- 右側 -->
-    <el-container>
-      <!-- 標頭 header -->
-      <el-header>
+
+    <el-header>
         <CommonHeader />
-      </el-header>
-      <!-- 主內容 main -->
+    </el-header>
+    
+    <el-container>
+      <el-aside width="200px">
+        <CommonAside />
+      </el-aside>
       <el-main>
         <router-view></router-view>
       </el-main>
     </el-container>
+
   </el-container>
 </template>
 

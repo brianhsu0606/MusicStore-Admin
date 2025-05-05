@@ -19,15 +19,9 @@ const goToAccount = () => {
 </script>
 
 <template>
-  <header class="flex justify-between h-full">
-    <!-- 頂部導航欄 左側 -->
-    <div class="left-content flex items-center">
-      <el-breadcrumb separator="/" class="bread">
-        <el-breadcrumb-item :to="{ path: '/' }">首頁</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-    <!-- 頂部導航欄 右側 -->
-    <div class="right-content flex items-center">
+  <header class="flex justify-between items-center h-full">
+    <h3>後台管理系統</h3>
+    <div class="header-content flex items-center">
       <p>歡迎回來：{{ userStore.name }} !</p>
       <p @click="goToAccount" class="account">帳戶資訊</p>
       <el-dropdown>
@@ -46,18 +40,13 @@ const goToAccount = () => {
 </template>
 
 <style scoped lang="less">
-.left-content {
-  .el-button {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;   
-    .icons {
-      width: 25px;
-      height: 25px;
-    }
-  }
+h3 {
+  font-size: 20px;
+  font-weight: 500;
+  margin-left: 25px;
 }
-.right-content {
+
+.header-content {
   p {
     padding: 0 20px;
     font-size: 18px;

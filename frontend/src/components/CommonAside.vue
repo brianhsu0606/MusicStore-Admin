@@ -1,9 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useDateStore } from '@/stores/index.js'
 import { useRouter } from 'vue-router'
-
-const store = useDateStore()
 
 const list = ref([
   {
@@ -45,7 +42,6 @@ const handleMenu = (item) => {
 
 <template>
   <el-menu>
-    <h3>後台管理系統</h3>
     <el-menu-item
       v-for="item in noChildren"
       :index="item.path"
@@ -62,15 +58,8 @@ const handleMenu = (item) => {
 .el-menu {
   background-color: #E0F2F1;
   text-align: center;
-  h3 {
-    height: 60px;
-    line-height: 60px;
-    font-size: 20px;
-    font-weight: 500;
-    background-color: #10B981;
-    border-bottom: 1px solid gray;
-  }
   .el-menu-item {
+    color: #333;
     border-bottom: 1px solid gray;
     font-size: 17px;
     font-weight: 500;
