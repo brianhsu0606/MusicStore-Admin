@@ -109,7 +109,6 @@ const getStatusLabel = (status) => {
   }
 }
 
-
 // 搜尋功能
 const searchInput = ref('')
 const filteredOrderList = computed(() => {
@@ -121,22 +120,27 @@ const currentPage = ref(1)
 const pageSize = ref(8)
 const pagedOrderList = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
-  return filteredOrderList.value.slice(start, start + pageSize.value)
+  const end = start + pageSize.value
+  return filteredOrderList.value.slice(start, end)
 })
 
 watch(searchInput, () => {
   currentPage.value = 1
 })
+
+const handlePageChange = (page) => {
+  currentPage.value = page
+}
 </script>
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header>
+  <header class="flex justify-between mb-4">
     <el-button @click="handleAdd" type="primary">新增訂單</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號"></el-input>
   </header>
   <!-- 訂單列表 table -->
-  <el-card>
+  <el-card class="mb-4">
     <el-table :data="pagedOrderList" style="width: 100%">
       <el-table-column prop="orderNumber" label="訂單編號" />
       <el-table-column prop="createdAt" label="下單日期" width="150" />
@@ -169,7 +173,7 @@ watch(searchInput, () => {
     :current-page="currentPage"
     :page-size="pageSize"
     :total="filteredOrderList.length"
-    @current-change="(val) => currentPage = val"
+    @current-change="handlePageChange"
   />
   <!-- 新增訂單 dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
@@ -211,9 +215,6 @@ watch(searchInput, () => {
 
 <style scoped lang="less">
 header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
   .el-button {
     height: 38px;
   }
@@ -225,7 +226,6 @@ header {
 }
 
 .el-card {
-  margin-bottom: 15px;
   .el-tag {
     font-size: 14px;
   }

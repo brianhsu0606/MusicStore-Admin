@@ -105,6 +105,7 @@ const beforeUpload = (file) => {
   return isImage && isLt2M
 }
 
+// 搜尋功能
 const searchInput = ref('')
 const filteredProducts = computed(() => {
   let list = products.value
@@ -118,16 +119,19 @@ const filteredProducts = computed(() => {
   return list
 })
 
-// 分頁功能
+// 分頁功能 Pagination
 const currentPage = ref(1)
 const pageSize = ref(5)
 const pagedProducts = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
-  return filteredProducts.value.slice(start, start + pageSize.value)
+  const end = start + pageSize.value
+  return filteredProducts.value.slice(start, end)
 })
+
 watch([searchInput, activeCategory], () => {
   currentPage.value = 1
 })
+
 const handlePageChange = (page) => {
   currentPage.value = page
 }
@@ -135,7 +139,7 @@ const handlePageChange = (page) => {
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header>
+  <header class="flex justify-between mb-4">
     <el-button type="primary" @click="handleAdd">新增商品</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" />
   </header>
@@ -149,7 +153,7 @@ const handlePageChange = (page) => {
     />
   </el-tabs>
   <!-- 商品表格 table -->
-  <el-table :data="pagedProducts" style="width: 100%">
+  <el-table :data="pagedProducts" style="width: 100%" class="mb-4">
     <el-table-column label="圖片" width="100">
       <template #default="{ row }">
         <el-image :src="`http://localhost:3000${row.imageUrl}`" fit="cover" style="width: 60px; height: 60px;" class="product-preview"/>
@@ -224,9 +228,6 @@ const handlePageChange = (page) => {
 
 <style scoped lang="less">
 header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
   .el-button {
     height: 38px;
   }
@@ -238,7 +239,6 @@ header {
 }
 
 .el-table {
-  margin-bottom: 15px;
   .product-preview {
     border: 0.3px solid gray;
   }

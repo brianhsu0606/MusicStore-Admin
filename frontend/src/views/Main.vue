@@ -4,29 +4,34 @@ import CommonHeader from '@/components/CommonHeader.vue'
 </script>
 
 <template>
-  <div class="common-layout">
-    <el-container class="lay-container">
-      <!-- 左側 -->
+  <el-container class="layout-container">
+    <!-- 左側 -->
+    <el-aside width="200px">
       <CommonAside />
-      <!-- 右側 -->
-      <el-container>
-        <el-header>
-          <CommonHeader />
-        </el-header>
-        <el-main>
-          <router-view></router-view>
-        </el-main>
-      </el-container>
+    </el-aside>
+    <!-- 右側 -->
+    <el-container>
+      <!-- 標頭 header -->
+      <el-header>
+        <CommonHeader />
+      </el-header>
+      <!-- 主內容 main -->
+      <el-main>
+        <router-view></router-view>
+      </el-main>
     </el-container>
-  </div>
+  </el-container>
 </template>
 
 <style scoped lang="less">
-.common-layout, .lay-container {
+.layout-container {
   height: 100%;
   background-color: antiquewhite;
 }
 .el-header {
-  background-color: rgb(159.5, 206.5, 255);
+  background-color: #10B981;
+}
+.el-aside {
+  background-color: #10B981;
 }
 </style>

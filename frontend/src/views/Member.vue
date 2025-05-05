@@ -1,6 +1,6 @@
 <script setup>
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { ref, reactive, watch, computed, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import api from '@/api'
 
 const tableLabel = [
@@ -25,14 +25,12 @@ const dialog = reactive({
 })
 
 // #region CRUD
-
 // 讀取會員（ Read ）
-const memberData = ref([])
-const fetchMemberData = async () => {
+const memberList = ref([])
+const fetchMemberList = async () => {
   try {
     const res = await api.getMemberData()
-    memberData.value = res.memberList
-    handleSearch()
+    memberList.value = res.memberList
   } catch {
     ElMessage.error('無法取得會員資料')
   }  
@@ -72,7 +70,7 @@ const submit = async () => {
       ElMessage.success('新增成功')
     }
     dialog.visible = false
-    fetchMemberData()
+    fetchMemberList()
   } catch {
     ElMessage.error(dialog.isEdit ? '修改失敗' : '新增失敗')
   }
@@ -84,11 +82,14 @@ const handleDelete = async (id) => {
     await ElMessageBox.confirm('確定要刪除嗎？')
     await api.deleteMember(id)
     ElMessage.success('刪除成功')
-    fetchMemberData()
+    fetchMemberList()
   } catch {
     ElMessage.error('刪除失敗')
   }
 }
+onMounted(() => {
+  fetchMemberList()
+})
 // #endregion CRUD
 
 // 動態寬度
@@ -102,20 +103,11 @@ const getColumnWidth = () => {
   }
 }
 
-onMounted(() => {
-  fetchMemberData()
-})
-
-// 查詢 member
-const filteredData = ref([])
+// 查詢功能
 const searchInput = ref('')
-const handleSearch = () => {
-  currentPage.value = 1
-  filteredData.value = memberData.value.filter(member => {
-    return member.name.toLowerCase().includes(searchInput.value.toLowerCase()) // 忽略大小寫過濾
-  })
-}
-watch(searchInput, handleSearch)
+const filteredMember = computed(() => {
+  return memberList.value.filter(item => item.name.toLowerCase().includes(searchInput.value.toLowerCase()))
+})
 
 // 分頁功能 Pagination
 const currentPage = ref(1)
@@ -123,8 +115,13 @@ const pageSize = ref(8)
 const pagedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
-  return filteredData.value.slice(start, end)
+  return filteredMember.value.slice(start, end)
 })
+
+watch(searchInput, () => {
+  currentPage.value = 1
+})
+
 const handlePageChange = (page) => {
   currentPage.value = page
 }
@@ -132,12 +129,12 @@ const handlePageChange = (page) => {
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header>
+  <header class="flex justify-between mb-4">
     <el-button type="primary" @click="handleAdd">新增用戶</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入用戶名稱" />
   </header>
   <!-- 會員表格 table -->
-  <el-card>
+  <el-card class="mb-4">
     <el-table :data="pagedData">
       <el-table-column
         v-for="item in tableLabel"
@@ -160,7 +157,7 @@ const handlePageChange = (page) => {
     layout="prev, pager, next"
     :current-page="currentPage"
     :page-size="pageSize"
-    :total="filteredData.length"
+    :total="filteredMember.length"
     @current-change="handlePageChange"
   />
   <!-- 新增、編輯會員 Dialog -->
@@ -199,9 +196,6 @@ const handlePageChange = (page) => {
 
 <style scoped lang="less">
 header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
   .el-button {
     height: 38px;
   }
@@ -210,8 +204,5 @@ header {
     height: 38px;
     font-size: 16px;
   }
-}
-.el-card {
-  margin-bottom: 15px;
 }
 </style>
