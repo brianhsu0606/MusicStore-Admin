@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
+    role: '',
     name: '',
     gender: '',
     birth: '',
@@ -11,6 +12,7 @@ export const useUserStore = defineStore('user', {
   }),
   actions: {
     setUser(data) {
+      this.role = data.role
       this.name = data.name
       this.gender = data.gender
       this.birth = data.birth

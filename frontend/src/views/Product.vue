@@ -23,12 +23,15 @@ const dialog = reactive({
 const products = ref([])
 const initProductData = async () => {
   try {
-    const res = await api.getProduct()
-    products.value = res.productList    
+    products.value = await api.getProduct()
   } catch {
     ElMessage.error('獲取商品失敗')
   }
 }
+
+onMounted(() => {
+  initProductData()
+})
 
 // 新增商品（ Create ）
 const handleAdd =  () => {
@@ -82,9 +85,7 @@ const handleDelete = async (id) => {
 }
 // #endregion CRUD
 
-onMounted(() => {
-  initProductData()
-})
+
 
 const formatPrice = (row) => {
   return 'NT$ ' + Number(row.price).toLocaleString()

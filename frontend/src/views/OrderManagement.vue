@@ -8,9 +8,8 @@ import api from '@/api'
 const orderList = ref([])
 const fetchOrderList = async () => {
   try {
-    const res = await api.getOrder()
-    orderList.value = res.orderList
-  } catch (error) {
+    orderList.value = await api.getOrder()
+  } catch {
     ElMessage.error('獲取訂單失敗')
   }
 }

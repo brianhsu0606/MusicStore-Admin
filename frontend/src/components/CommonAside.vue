@@ -31,6 +31,13 @@ const list = ref([
     icon: 'video-play',
     url: 'Order'
   },
+  {
+    path: '/user',
+    name: 'user',
+    label: '用戶管理',
+    icon: 'user',
+    url: 'User'
+  },
 ])
 const noChildren = computed(() => list.value.filter(item => !item.children))
 
@@ -58,6 +65,7 @@ const handleMenu = (item) => {
 .el-menu {
   background-color: #E0F2F1;
   text-align: center;
+
   .el-menu-item {
     color: #333;
     border-bottom: 1px solid gray;
@@ -66,6 +74,11 @@ const handleMenu = (item) => {
     &:hover {
       background-color: #A7F3D0;
     }
+    .icons {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
   }
   .el-menu-item.is-active {
     color: #065F46;
@@ -73,9 +86,5 @@ const handleMenu = (item) => {
   }
 }
 
-.icons {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-}
+
 </style>

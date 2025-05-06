@@ -21,7 +21,7 @@ const goToAccount = () => {
 <template>
   <header class="flex justify-between items-center h-full">
     <h3>後台管理系統</h3>
-    <div class="header-content flex items-center">
+    <div class="right-content flex items-center">
       <p>歡迎回來：{{ userStore.name }} !</p>
       <p @click="goToAccount" class="account">帳戶資訊</p>
       <el-dropdown>
@@ -46,7 +46,7 @@ h3 {
   margin-left: 25px;
 }
 
-.header-content {
+.right-content {
   p {
     padding: 0 20px;
     font-size: 18px;

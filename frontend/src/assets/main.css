@@ -12,6 +12,6 @@ body,
   /* overflow: hidden; */
 }
 
-@tailwind base;
-@tailwind components;
+/* @tailwind base;
+@tailwind components; */
 @tailwind utilities;

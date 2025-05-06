@@ -4,7 +4,7 @@ import CommonHeader from '@/components/CommonHeader.vue'
 </script>
 
 <template>
-  <el-container class="layout-container">
+  <el-container class="h-full">
 
     <el-header>
         <CommonHeader />
@@ -15,7 +15,7 @@ import CommonHeader from '@/components/CommonHeader.vue'
         <CommonAside />
       </el-aside>
       <el-main>
-        <router-view></router-view>
+        <router-view />
       </el-main>
     </el-container>
 
@@ -23,14 +23,14 @@ import CommonHeader from '@/components/CommonHeader.vue'
 </template>
 
 <style scoped lang="less">
-.layout-container {
-  height: 100%;
-  background-color: antiquewhite;
-}
 .el-header {
   background-color: #10B981;
 }
 .el-aside {
   background-color: #10B981;
+}
+.el-main {
+  background-color: antiquewhite;
+  height: 100%;
 }
 </style>

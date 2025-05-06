@@ -29,8 +29,7 @@ const loadUsers = () => {
 
 // #region Login.vue
 app.post('/api/register', (req, res) => {
-  const { name, username, password } = req.body;
-
+  const { name, username, password, role } = req.body;
   const users = loadUsers();
   if (users.some(user => user.username === username)) {
     return res.status(400).json({
@@ -44,6 +43,7 @@ app.post('/api/register', (req, res) => {
     username,
     password,
     profile: {
+      role,
       name,
       gender: '',
       birth: '',
@@ -51,6 +51,7 @@ app.post('/api/register', (req, res) => {
       avatar: 'avatar1.jpeg'
     }
   });
+
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 
   return res.json({
@@ -62,7 +63,6 @@ app.post('/api/register', (req, res) => {
 
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
-
   const users = loadUsers();
   const user = users.find(u => u.username === username && u.password === password);
 
@@ -82,9 +82,9 @@ app.post('/api/login', (req, res) => {
     result: {},
   });
 });
-// #endregion Login.vue
+// #endregion
 
-// #region User.vue
+// #region Account.vue
 app.get('/api/profile', (req, res) => {
   const token = req.headers.authorization;
   const users = loadUsers();
@@ -118,7 +118,31 @@ app.put('/api/profile', (req, res) => {
 
   return res.json({ code: 200, msg: '更新成功' });
 });
-// #endregion User.vue
+// #endregion Account.vue
+
+// #region UserManagement.vue
+app.get('/api/users', (req, res) => {
+  const token = req.headers.authorization;
+  const users = loadUsers();
+
+  const currentUser = users.find(u => 'mock-token-' + u.username === token);
+  if (!currentUser || currentUser.profile.role !== 'admin') {
+    return res.status(403).json({ code: 403, msg: '無權限' });
+  }
+
+  // 回傳所有使用者（帳號 + profile）
+  const userList = users.map(u => ({
+    username: u.username,
+    ...u.profile
+  }));
+
+  return res.json({
+    code: 200,
+    msg: '獲取用戶成功',
+    result: userList
+  });
+});
+// #endregion
 
 // #region home.vue
 const tableData = [
@@ -217,10 +241,8 @@ let memberList = [
 app.get('/api/members', (req, res) => {
   res.json({
     code: 200,
-    message: '查詢成功',
-    result: {
-      memberList
-    }
+    msg: '讀取會員成功',
+    result: memberList
   })
 })
 
@@ -258,7 +280,7 @@ app.put('/api/members/:id', (req, res) => {
     })
   }
 })
-// #endregion member.vue
+// #endregion
 
 // #region product.vue
 let productList = [
@@ -278,9 +300,7 @@ app.get('/api/products', (req, res) => {
   res.json({
     code: 200,
     msg: '獲得商品成功',
-    result: {
-      productList
-    }
+    result: productList
   })
 })
 
@@ -346,7 +366,7 @@ app.delete('/api/products/:id', (req, res) => {
   productList = productList.filter(item => item.id !== Number(id))
   res.json({ code: 200, message: '刪除成功' })
 })
-// #endregion product.vue
+// #endregion
 
 // #region OrderManagement.vue
 let orderList = [
@@ -377,9 +397,7 @@ app.get('/api/orders', (req, res) => {
   res.json({
     code: 200,
     msg: '訂單獲取成功',
-    result: {
-      orderList
-    }
+    result: orderList
   })
 })
 
@@ -436,4 +454,4 @@ app.delete('/api/orders/:id', (req, res) => {
     result: {}
   })
 })
-// #endregion OrderManagement.vue
+// #endregion

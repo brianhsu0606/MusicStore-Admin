@@ -1,23 +1,13 @@
 import request from "@/utils/request";
 
 export default {
-  getProfile() {
+  getUser() {
     return request({
-      url: '/api/profile',
+      url: '/api/users',
       method: 'get',
+      // headers: {
+      //   Authorization: localStorage.getItem('token') // 一定要帶 token
+      // }
     })
-  },
-  updateProfile(data) {
-    return request({
-      url: '/api/profile',
-      method: 'put',
-      data,
-    })
-  },
-  getAvatars() {
-    return request({
-      url: '/api/profile',
-      method: 'get',
-    })
-  },
+  }
 }

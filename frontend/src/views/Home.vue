@@ -1,9 +1,9 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import * as echarts from 'echarts'
 import api from '@/api'
-import { ElMessage } from 'element-plus'
 
 const userStore = useUserStore()
 const tableLabel = [

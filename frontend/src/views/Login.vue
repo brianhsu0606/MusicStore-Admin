@@ -19,6 +19,7 @@ const registerForm = ref({
   username: '',
   password: '',
   confirmPassword: '',
+  role: '',
 })
 const registerRules = {
   name: [
@@ -45,6 +46,9 @@ const registerRules = {
       },
       trigger: 'blur'
     }
+  ],
+  role: [
+    { required: true, message: '請選擇角色', trigger: 'blur' },
   ]
 }
 
@@ -118,6 +122,12 @@ const handleLogin = async () => {
         <el-form-item prop="confirmPassword">
           <el-input v-model="registerForm.confirmPassword" prefix-icon="Lock" type="password" placeholder="確認密碼"></el-input>
         </el-form-item>
+        <el-form-item prop="role">
+          <el-select v-model="registerForm.role" placeholder="請選擇身份">
+            <el-option label="職員" value="user" />
+            <el-option label="管理員" value="admin" />
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleRegister">註冊</el-button>
         </el-form-item>
@@ -153,27 +163,26 @@ const handleLogin = async () => {
 
 <style scoped lang="less">
 .container {
-  width: 100%;
-  height: 100%;
+  height: 100vh;
 }
+
 .left-background {
   background: url('/images/生日兔.jpeg') center;
   background-size: cover;
-  background-color: antiquewhite;
 }
+
 .right-background {
-  width: 100%;
-  height: 100vh;
-  background-color: rgb(216.8, 235.6, 255);
+  background-color: #A7F3D0;
   display: flex;
   justify-content: center;
   align-items: center;
+
   .register-container {
-    width: 50%;
-    height: 380px;
+    width: 360px;
+    height: 430px;
     padding: 30px 40px;
-    background-color: rgb(235.9, 245.3, 255);
-    border: 1px solid rgb(178, 176, 176);
+    background-color: #E0F2F1;
+    border: 0.5px solid gray;
     border-radius: 30px;
     box-shadow: 3px 3px 3px gray;
     h3 {
@@ -186,4 +195,5 @@ const handleLogin = async () => {
     }
   }
 }
+
 </style>

@@ -31,5 +31,29 @@
       "email": "usagi@gmail.com",
       "avatar": "avatar5.jpeg"
     }
+  },
+  {
+    "username": "brian123",
+    "password": "123456",
+    "profile": {
+      "role": "admin",
+      "name": "Test",
+      "gender": "male",
+      "birth": "",
+      "email": "",
+      "avatar": "avatar1.jpeg"
+    }
+  },
+  {
+    "username": "usertest",
+    "password": "123456",
+    "profile": {
+      "role": "user",
+      "name": "User Test",
+      "gender": "",
+      "birth": "",
+      "email": "",
+      "avatar": "avatar1.jpeg"
+    }
   }
 ]

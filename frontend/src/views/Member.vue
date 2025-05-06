@@ -29,12 +29,15 @@ const dialog = reactive({
 const memberList = ref([])
 const fetchMemberList = async () => {
   try {
-    const res = await api.getMemberData()
-    memberList.value = res.memberList
+    memberList.value = await api.getMemberData()
   } catch {
     ElMessage.error('無法取得會員資料')
   }  
 }
+
+onMounted(() => {
+  fetchMemberList()
+})
 
 // 新增會員（ Create ）
 const handleAdd = () => {
@@ -87,10 +90,8 @@ const handleDelete = async (id) => {
     ElMessage.error('刪除失敗')
   }
 }
-onMounted(() => {
-  fetchMemberList()
-})
-// #endregion CRUD
+
+// #endregion
 
 // 動態寬度
 const getColumnWidth = () => {

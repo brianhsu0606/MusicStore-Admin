@@ -6,12 +6,17 @@ import api from '@/api'
 const userStore = useUserStore()
 
 const formData = ref({
+  role: userStore.role,
   name: userStore.name,
   gender: userStore.gender,
   birth: userStore.birth,
   email: userStore.email,
   avatar: userStore.avatar
 })
+const roleLabels = {
+  admin: '管理員',
+  user: '職員'
+}
 
 const handleUpdate = async () => {
   try {
@@ -50,7 +55,11 @@ const selectAvatar = (avatarFileName) => {
         />
       </div>
     </el-dialog>
+    <!-- 帳戶資訊 el-form -->
     <el-form label-width="80px">
+      <el-form-item label="身份">
+        <el-input v-model="roleLabels[formData.role]" disabled />
+      </el-form-item>
       <el-form-item label="姓名">
         <el-input v-model="formData.name" />
       </el-form-item>
@@ -114,6 +123,12 @@ const selectAvatar = (avatarFileName) => {
     &:hover {
       border: 1px solid ;
       box-shadow: 1px 1px 5px gray;
+    }
+  }
+  .el-form {
+    .el-input {
+      font-size: 16px;
+      height: 35px;
     }
   }
 }
