@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { ElMessage } from 'element-plus'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -42,7 +44,8 @@ const router = createRouter({
         {
           path: 'user',
           name: 'user',
-          component: () => import('@/views/UserManagement.vue')
+          component: () => import('@/views/UserManagement.vue'),
+          meta: { requiresAdmin: true },
         },
       ]
     },
@@ -51,14 +54,22 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
+  const role = useUserStore().role
 
   if (!token && to.path !== '/login') {
-    next('/login')
-  } else if (token && to.path === '/login') {
-    next('/home')
-  } else {
-    next()
+    return next('/login')
   }
+
+  if (token && to.path === '/login') {
+    return next('/home')
+  }
+
+  if (to.meta.requiresAdmin && role !== 'admin') {
+    ElMessage.warning('您沒有權限進入此頁面')
+    return next('/home')
+  }
+
+  next()
 })
 
 export default router

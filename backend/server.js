@@ -2,24 +2,19 @@ const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
-
-const app = express();
-app.use(cors());  // 啟用 CORS，允許來自前端的請求
-app.use(express.json());  // 解析 JSON 請求內容
-
-app.use('/images', express.static(path.join(__dirname, 'images')))
-
 const { v4: uuidv4 } = require('uuid');
 
-// 啟動伺服器
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use('/images', express.static(path.join(__dirname, 'images')))
+
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`伺服器運行中，請訪問 http://localhost:${PORT}`);
 });
 
-const USERS_FILE = path.join(__dirname, 'users.json'); // 儲存使用者資料的檔案
-
-// 讀取使用者資料
+const USERS_FILE = path.join(__dirname, 'users.json');
 const loadUsers = () => {
   if (fs.existsSync(USERS_FILE)) {
     return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));

@@ -10,8 +10,6 @@ const userList = ref([])
 const fetchUsers = async () => {
   try {
     userList.value = await api.getUsers()
-    console.log(userList.value);
-    
   } catch {
     ElMessage.error('獲取用戶失敗')
   }

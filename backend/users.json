@@ -6,9 +6,9 @@
     "profile": {
       "role": "admin",
       "name": "Admin Test",
-      "gender": "",
-      "birth": "",
-      "email": "",
+      "gender": "male",
+      "birth": "2000 / 06 / 05",
+      "email": "test@gmail.com",
       "avatar": "avatar1.jpeg"
     }
   },
@@ -30,12 +30,12 @@
     "username": "user2",
     "password": "123456",
     "profile": {
+      "role": "user",
       "name": "user2",
-      "gender": "",
-      "birth": "",
-      "email": "",
-      "avatar": "avatar1.jpeg",
-      "role": "user"
+      "gender": "male",
+      "birth": "2002 / 07 / 31",
+      "email": "test@gmail.com",
+      "avatar": "avatar1.jpeg"
     }
   },
   {
