@@ -6,16 +6,16 @@ import api from '@/api'
 // #region CRUD
 // 讀取訂單（ Read）
 const orderList = ref([])
-const fetchOrderList = async () => {
+const fetchOrders = async () => {
   try {
-    orderList.value = await api.getOrder()
+    orderList.value = await api.getOrders()
   } catch {
     ElMessage.error('獲取訂單失敗')
   }
 }
 
 onMounted(() => {
-  fetchOrderList()
+  fetchOrders()
 })
 
 const dialog = reactive({

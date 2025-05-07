@@ -34,7 +34,7 @@ const list = ref([
   {
     path: '/user',
     name: 'user',
-    label: '用戶管理',
+    label: '用戶權限管理',
     icon: 'user',
     url: 'User'
   },
@@ -85,6 +85,4 @@ const handleMenu = (item) => {
     background-color: #A7F3D0;
   }
 }
-
-
 </style>

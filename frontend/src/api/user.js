@@ -1,13 +1,23 @@
 import request from "@/utils/request";
 
 export default {
-  getUser() {
+  getUsers() {
     return request({
       url: '/api/users',
       method: 'get',
-      // headers: {
-      //   Authorization: localStorage.getItem('token') // 一定要帶 token
-      // }
+    })
+  },
+  deleteUser(id) {
+    return request({
+      url: `/api/users/${id}`,
+      method: 'delete'
+    })
+  },
+  updateUser(id, data) {
+    return request({
+      url: `/api/users/${id}`,
+      method: 'put',
+      data
     })
   }
 }

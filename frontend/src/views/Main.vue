@@ -11,12 +11,15 @@ import CommonHeader from '@/components/CommonHeader.vue'
     </el-header>
     
     <el-container>
+      
       <el-aside width="200px">
         <CommonAside />
       </el-aside>
+
       <el-main>
         <router-view />
       </el-main>
+
     </el-container>
 
   </el-container>

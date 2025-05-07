@@ -9,7 +9,7 @@ app.use(express.json());  // 解析 JSON 請求內容
 
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
-
+const { v4: uuidv4 } = require('uuid');
 
 // 啟動伺服器
 const PORT = 3000;
@@ -27,10 +27,11 @@ const loadUsers = () => {
   return [];
 };
 
-// #region Login.vue
+// #region auth.js
 app.post('/api/register', (req, res) => {
   const { name, username, password, role } = req.body;
   const users = loadUsers();
+
   if (users.some(user => user.username === username)) {
     return res.status(400).json({
       code: 400,
@@ -40,6 +41,7 @@ app.post('/api/register', (req, res) => {
   }
 
   users.push({
+    id: uuidv4(),
     username,
     password,
     profile: {
@@ -84,7 +86,7 @@ app.post('/api/login', (req, res) => {
 });
 // #endregion
 
-// #region Account.vue
+// #region profile.js
 app.get('/api/profile', (req, res) => {
   const token = req.headers.authorization;
   const users = loadUsers();
@@ -94,7 +96,13 @@ app.get('/api/profile', (req, res) => {
     return res.status(401).json({ code: 401, msg: '未授權' });
   }
 
-  return res.json({ code: 200, result: user.profile || {} });
+  return res.json({
+    code: 200,
+    result: {
+      id: user.id,
+      ...user.profile
+    }
+  });
 });
 
 
@@ -118,33 +126,9 @@ app.put('/api/profile', (req, res) => {
 
   return res.json({ code: 200, msg: '更新成功' });
 });
-// #endregion Account.vue
-
-// #region UserManagement.vue
-app.get('/api/users', (req, res) => {
-  const token = req.headers.authorization;
-  const users = loadUsers();
-
-  const currentUser = users.find(u => 'mock-token-' + u.username === token);
-  if (!currentUser || currentUser.profile.role !== 'admin') {
-    return res.status(403).json({ code: 403, msg: '無權限' });
-  }
-
-  // 回傳所有使用者（帳號 + profile）
-  const userList = users.map(u => ({
-    username: u.username,
-    ...u.profile
-  }));
-
-  return res.json({
-    code: 200,
-    msg: '獲取用戶成功',
-    result: userList
-  });
-});
 // #endregion
 
-// #region home.vue
+// #region home.js
 const tableData = [
   { name: 'Veelah', monthlyStockIn: 20, monthlySales: 13 },
   { name: 'Eastman', monthlyStockIn: 60, monthlySales: 11 },
@@ -193,7 +177,7 @@ app.get('/api/dashboard/chart-data', (req, res) => {
 });
 // #endregion home.vue
 
-// #region member.vue
+// #region member.js
 let memberList = [
   { id: 1, name: '小明', age: 25, gender: '男', birth: '1998-01-01', addr: '台北' },
   { id: 2, name: '小美', age: 28, gender: '女', birth: '1995-04-12', addr: '新竹' },
@@ -282,7 +266,7 @@ app.put('/api/members/:id', (req, res) => {
 })
 // #endregion
 
-// #region product.vue
+// #region product.js
 let productList = [
   { id: 1, name: 'Collings OM2H', price: 238000, quantity: 1, category: '木吉他', imageUrl: '/images/om2h.jpg' },
   { id: 2, name: 'Lakewood M32C', price: 118000, quantity: 2, category: '木吉他', imageUrl: '/images/m32c.jpg' },
@@ -368,7 +352,7 @@ app.delete('/api/products/:id', (req, res) => {
 })
 // #endregion
 
-// #region OrderManagement.vue
+// #region order.js
 let orderList = [
   { id: 1, orderNumber: 'ORD2411135839', createdAt: '2024-11-13', member: '小明', items: 'Lakewood M32', status: 'shipped' },
   { id: 2, orderNumber: 'ORD2412254276', createdAt: '2024-12-25', member: '小美', items: 'G7th Performance 3 金色', status: 'shipped' },
@@ -452,6 +436,69 @@ app.delete('/api/orders/:id', (req, res) => {
     code: 200,
     msg: '訂單刪除成功',
     result: {}
+  })
+})
+// #endregion
+
+// #region user.js
+app.get('/api/users', (req, res) => {
+  const token = req.headers.authorization;
+  const users = loadUsers();
+
+  const currentUser = users.find(u => 'mock-token-' + u.username === token);
+  if (!currentUser || currentUser.profile.role !== 'admin') {
+    return res.status(403).json({ code: 403, msg: '無權限' });
+  }
+
+  // 回傳所有使用者（帳號 + profile）
+  const userList = users.map(u => ({
+    id: u.id,
+    username: u.username,
+    ...u.profile
+  }));
+
+  return res.json({
+    code: 200,
+    msg: '獲取用戶成功',
+    result: userList
+  });
+});
+
+app.delete('/api/users/:id', (req, res) => {
+  const token = req.headers.authorization;
+  const users = loadUsers();
+
+  const currentUser = users.find(u => 'mock-token-' + u.username === token);
+  if (!currentUser || currentUser.profile.role !== 'admin') {
+    return res.status(403).json({ code: 403, msg: '無權限' });
+  }
+
+  const { id } = req.params;
+  const newUsers = users.filter(user => user.id !== id);
+
+  fs.writeFileSync(USERS_FILE, JSON.stringify(newUsers, null, 2));
+
+  res.json({
+    code: 200,
+    msg: '刪除用戶成功',
+  });
+});
+
+// update
+app.put('/api/users/:id', (req, res) => {
+  const users = loadUsers();
+  const { id } = req.params
+  const { role } = req.body
+
+  const index = users.findIndex(item => item.id === id)
+
+  users[index].profile.role = role;
+
+  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+
+  res.json({
+    code: 200,
+    msg: '更新用戶身份成功'
   })
 })
 // #endregion

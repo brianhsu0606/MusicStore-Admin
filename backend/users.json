@@ -1,55 +1,50 @@
 [
   {
-    "username": "brian",
-    "password": "123456",
-    "profile": {
-      "name": "Brian Hsu",
-      "gender": "male",
-      "birth": "2000 / 06 / 06",
-      "email": "test@gmail.com",
-      "avatar": "avatar2.jpeg"
-    }
-  },
-  {
-    "username": "vicky",
-    "password": "123456",
-    "profile": {
-      "name": "Vivi Huang",
-      "gender": "female",
-      "birth": "2000 / 03 / 03",
-      "email": "test@gmail.com",
-      "avatar": "avatar5.jpeg"
-    }
-  },
-  {
-    "username": "usagi",
-    "password": "123456",
-    "profile": {
-      "name": "Usagi",
-      "gender": "male",
-      "birth": "2019 / 01 / 22",
-      "email": "usagi@gmail.com",
-      "avatar": "avatar5.jpeg"
-    }
-  },
-  {
-    "username": "brian123",
+    "id": "eed5a3a4-f7c7-4310-8e8a-b76d36423dfb",
+    "username": "admintest",
     "password": "123456",
     "profile": {
       "role": "admin",
-      "name": "Test",
-      "gender": "male",
+      "name": "Admin Test",
+      "gender": "",
       "birth": "",
       "email": "",
       "avatar": "avatar1.jpeg"
     }
   },
   {
-    "username": "usertest",
+    "id": "57c86287-3d2a-4261-859c-da8f23d069c4",
+    "username": "brian",
+    "password": "123456",
+    "profile": {
+      "role": "admin",
+      "name": "Brian Hsu",
+      "gender": "male",
+      "birth": "2000 / 06 / 06",
+      "email": "test@gmail.com",
+      "avatar": "avatar1.jpeg"
+    }
+  },
+  {
+    "id": "a906c1e2-4bc9-4e43-93d0-d9848b4c83b3",
+    "username": "user2",
+    "password": "123456",
+    "profile": {
+      "name": "user2",
+      "gender": "",
+      "birth": "",
+      "email": "",
+      "avatar": "avatar1.jpeg",
+      "role": "user"
+    }
+  },
+  {
+    "id": "483aef91-6147-426f-96fa-5d79cf3711c3",
+    "username": "user3",
     "password": "123456",
     "profile": {
       "role": "user",
-      "name": "User Test",
+      "name": "user3",
       "gender": "",
       "birth": "",
       "email": "",

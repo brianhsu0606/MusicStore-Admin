@@ -21,16 +21,16 @@ const dialog = reactive({
 // #region CRUD
 // 載入商品（ Read ）
 const products = ref([])
-const initProductData = async () => {
+const fetchProducts = async () => {
   try {
-    products.value = await api.getProduct()
+    products.value = await api.getProducts()
   } catch {
     ElMessage.error('獲取商品失敗')
   }
 }
 
 onMounted(() => {
-  initProductData()
+  fetchProducts()
 })
 
 // 新增商品（ Create ）

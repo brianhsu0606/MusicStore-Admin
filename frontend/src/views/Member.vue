@@ -27,16 +27,16 @@ const dialog = reactive({
 // #region CRUD
 // 讀取會員（ Read ）
 const memberList = ref([])
-const fetchMemberList = async () => {
+const fetchMembers = async () => {
   try {
-    memberList.value = await api.getMemberData()
+    memberList.value = await api.getMembers()
   } catch {
     ElMessage.error('無法取得會員資料')
   }  
 }
 
 onMounted(() => {
-  fetchMemberList()
+  fetchMembers()
 })
 
 // 新增會員（ Create ）
