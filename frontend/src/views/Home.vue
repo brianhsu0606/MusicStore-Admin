@@ -61,8 +61,8 @@ const initHomeData = async () => {
       api.getCountData(),
       api.getChartData()
     ])
-    tableData.value = tableRes.tableData
-    countData.value = countRes.countData.map(item => ({
+    tableData.value = tableRes
+    countData.value = countRes.map(item => ({
       ...item,
       value: item.value.toLocaleString()
     }))

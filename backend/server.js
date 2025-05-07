@@ -1,7 +1,8 @@
-const express = require('express');
-const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+
+const express = require('express');
+const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
@@ -30,8 +31,8 @@ app.post('/api/register', (req, res) => {
   if (users.some(user => user.username === username)) {
     return res.status(400).json({
       code: 400,
-      msg: '帳號已存在',
-      result: {},
+      message: '帳號已存在',
+      result: null,
     });
   }
 
@@ -53,8 +54,8 @@ app.post('/api/register', (req, res) => {
 
   return res.json({
     code: 200,
-    msg: '註冊成功',
-    result: {},
+    message: '註冊成功',
+    result: null,
   });
 });
 
@@ -67,7 +68,7 @@ app.post('/api/login', (req, res) => {
     const token = 'mock-token-' + user.username;
     return res.json({
       code: 200,
-      msg: '登入成功',
+      message: '登入成功',
       result: {
         token,
       }
@@ -75,8 +76,8 @@ app.post('/api/login', (req, res) => {
   }
   return res.status(400).json({
     code: 400,
-    msg: '帳號或密碼錯誤',
-    result: {},
+    message: '帳號或密碼錯誤',
+    result: null,
   });
 });
 // #endregion
@@ -93,13 +94,13 @@ app.get('/api/profile', (req, res) => {
 
   return res.json({
     code: 200,
+    message: '取得用戶資訊成功',
     result: {
       id: user.id,
       ...user.profile
     }
   });
 });
-
 
 app.put('/api/profile', (req, res) => {
   const token = req.headers.authorization;
@@ -119,7 +120,11 @@ app.put('/api/profile', (req, res) => {
 
   fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
 
-  return res.json({ code: 200, msg: '更新成功' });
+  return res.json({
+    code: 200,
+    message: '更新成功',
+    result: null
+  });
 });
 // #endregion
 
@@ -134,7 +139,11 @@ const tableData = [
   { name: 'G7th 移調夾', monthlyStockIn: 30, monthlySales: 11 },
 ];
 app.get('/api/dashboard/table-data', (req, res) => {
-  res.json({ code: 200, result: { tableData } });
+  res.json({
+    code: 200,
+    message: '表格資料獲得成功',
+    result: tableData
+  });
 });
 
 const countData = [
@@ -146,7 +155,11 @@ const countData = [
   { name: '本月淨利潤', value: 449550, icon: 'SuccessFilled', color: 'rgb(239, 68, 68)' },
 ];
 app.get('/api/dashboard/count-data', (req, res) => {
-  res.json({ code: 200, result: { countData } });
+  res.json({
+    code: 200,
+    message: '算數資料獲得成功',
+    result: countData
+  });
 });
 
 const chartData = {
@@ -168,7 +181,11 @@ const chartData = {
   },
 };
 app.get('/api/dashboard/chart-data', (req, res) => {
-  res.json({ code: 200, result: chartData });
+  res.json({
+    code: 200,
+    message: '算數資料獲得成功',
+    result: chartData
+  });
 });
 // #endregion home.vue
 
@@ -220,7 +237,7 @@ let memberList = [
 app.get('/api/members', (req, res) => {
   res.json({
     code: 200,
-    msg: '讀取會員成功',
+    message: '讀取會員成功',
     result: memberList
   })
 })
@@ -230,14 +247,22 @@ app.post('/api/members', (req, res) => {
   const newMember = req.body
   newMember.id = Date.now()
   memberList.push(newMember)
-  res.json({ code: 200, message: '新增成功' })
+  res.json({
+    code: 200,
+    message: '新增會員成功',
+    result: null
+  })
 })
 
 // Delete
 app.delete('/api/members/:id', (req, res) => {
   const { id } = req.params
   memberList = memberList.filter(user => user.id !== Number(id))
-  res.json({ code: 200, message: '刪除成功' })
+  res.json({
+    code: 200,
+    message: '刪除會員成功',
+    result: null
+  })
 })
 
 // Update
@@ -251,11 +276,13 @@ app.put('/api/members/:id', (req, res) => {
     res.json({
       code: 200,
       message: '修改成功',
+      result: null
     })
   } else {
     res.status(404).json({
       code: 404,
       message: '找不到該用戶',
+      result: null
     })
   }
 })
@@ -316,7 +343,8 @@ app.post('/api/products', (req, res) => {
 
   res.json({
     code: 200,
-    msg: '新增商品成功',
+    message: '新增商品成功',
+    result: null
   })
 })
 
@@ -330,12 +358,14 @@ app.put('/api/products/:id', (req, res) => {
     productList[index] = updatedProduct
     res.json({
       code: 200,
-      msg: '修改成功',
+      message: '修改成功',
+      result: null
     })
   } else {
     res.status(404).json({
       code: 404,
-      msg: '找不到該商品',
+      message: '找不到該商品',
+      result: null
     })
   }
 })
@@ -343,7 +373,11 @@ app.put('/api/products/:id', (req, res) => {
 app.delete('/api/products/:id', (req, res) => {
   const { id } = req.params
   productList = productList.filter(item => item.id !== Number(id))
-  res.json({ code: 200, message: '刪除成功' })
+  res.json({
+    code: 200,
+    message: '刪除成功',
+    result: null
+  })
 })
 // #endregion
 
@@ -395,8 +429,8 @@ app.post('/api/orders', (req, res) => {
 
   res.json({
     code: 200,
-    msg: '新增成功',
-    result: {}
+    message: '新增成功',
+    result: null
   })
 })
 
@@ -410,14 +444,14 @@ app.put('/api/orders/:id', (req, res) => {
     orderList[index] = updatedOrder
     res.json({
       code: 200,
-      msg: '更改成功',
-      result: {}
+      message: '更改成功',
+      result: null
     })
   } else {
     res.status(404).json({
       code: 404,
-      msg: '更改失敗',
-      result: {}
+      message: '更改失敗',
+      result: null
     })
   }
 })
@@ -429,8 +463,8 @@ app.delete('/api/orders/:id', (req, res) => {
 
   res.json({
     code: 200,
-    msg: '訂單刪除成功',
-    result: {}
+    message: '訂單刪除成功',
+    result: null
   })
 })
 // #endregion
@@ -459,6 +493,7 @@ app.get('/api/users', (req, res) => {
   });
 });
 
+// delete
 app.delete('/api/users/:id', (req, res) => {
   const token = req.headers.authorization;
   const users = loadUsers();
@@ -475,7 +510,8 @@ app.delete('/api/users/:id', (req, res) => {
 
   res.json({
     code: 200,
-    msg: '刪除用戶成功',
+    message: '刪除用戶成功',
+    result: null
   });
 });
 
@@ -493,7 +529,8 @@ app.put('/api/users/:id', (req, res) => {
 
   res.json({
     code: 200,
-    msg: '更新用戶身份成功'
+    message: '更新用戶身份成功',
+    result: null
   })
 })
 // #endregion

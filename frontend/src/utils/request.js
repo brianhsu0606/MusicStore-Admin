@@ -19,13 +19,13 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (res) => {
-    const { code, msg, result } = res.data
+    const { code, message, result } = res.data
     if (code === 200) {
       return result
     }
     else {
-      ElMessage.error(msg || '網路錯誤')
-      return Promise.reject(msg || '網路錯誤')
+      ElMessage.error(message || '網路錯誤')
+      return Promise.reject(message || '網路錯誤')
     }
   }
 )
