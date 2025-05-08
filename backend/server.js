@@ -534,3 +534,84 @@ app.put('/api/users/:id', (req, res) => {
   })
 })
 // #endregion
+
+// #region admin-status
+let costList = [
+  { id: uuidv4(), name: '店面租金', price: 120000 },
+  { id: uuidv4(), name: '人事成本', price: 74000 },
+  { id: uuidv4(), name: 'Eastman進貨成本', price: 312000 },
+]
+
+app.get('/api/costs', (req, res) => {
+  res.json({
+    code: 200,
+    message: '獲取成本成功',
+    result: costList
+  })
+})
+
+app.post('/api/costs', (req, res) => {
+  const newCost = req.body
+  newCost.id = uuidv4()
+  costList.push(newCost)
+
+  res.json({
+    code: 200,
+    message: '新增成本成功',
+    result: null
+  })
+})
+
+app.delete('/api/costs/:id', (req, res) => {
+  const { id } = req.params
+
+  costList = costList.filter(item => item.id !== id)
+  res.json({
+    code: 200,
+    message: '刪除成本成功',
+    result: null
+  })
+})
+
+let revenueList = [
+  { id: uuidv4(), date: '2025-5-5', price: 76880 },
+  { id: uuidv4(), date: '2025-5-10', price: 162330 },
+  { id: uuidv4(), date: '2025-5-15', price: 82405 },
+  { id: uuidv4(), date: '2025-5-20', price: 64400 },
+  { id: uuidv4(), date: '2025-5-25', price: 132420 },
+  { id: uuidv4(), date: '2025-5-30', price: 246650 },
+]
+
+app.get('/api/revenue', (req, res) => {
+  res.json({
+    code: 200,
+    message: '獲取營業額成功',
+    result: revenueList
+  })
+})
+
+app.post('/api/revenue', (req, res) => {
+  const newRevenue = req.body
+  newRevenue.id = uuidv4()
+
+  revenueList.push(newRevenue)
+
+  res.json({
+    code: 200,
+    message: '新增營業額成功',
+    result: null
+  })
+})
+
+app.delete('/api/revenue/:id', (req, res) => {
+  const { id } = req.params
+  revenueList = revenueList.filter(item => item.id !== id)
+
+  res.json({
+    code: 200,
+    message: '刪除營業額成功',
+    result: null
+  })
+})
+
+// #endregion

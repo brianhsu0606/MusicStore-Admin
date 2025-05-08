@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import * as echarts from 'echarts'
@@ -86,6 +86,12 @@ const initHomeData = async () => {
 onMounted(() => {
   initHomeData()
 })
+
+const roleMap = {
+  admin: '管理員',
+  user: '職員'
+}
+const roleText = computed(() => roleMap[userStore.role] || '未知角色')
 </script>
 
 <template>
@@ -98,7 +104,7 @@ onMounted(() => {
           <img :src="`/images/avatars/${userStore.avatar}`">
           <div class="user-info">
             <h3>{{ userStore.name }}</h3>
-            <p>超級管理員</p>
+            <p>{{ roleText }}</p>
           </div>
         </div>
         <div class="login-info">
@@ -234,10 +240,10 @@ onMounted(() => {
       }
       .user-info {
         h3 {
-          font-size: 22px;
+          font-size: 23px;
         }
         p {
-          font-size: 18px;
+          font-size: 22px;
         }
       }
     }
@@ -284,5 +290,5 @@ onMounted(() => {
     height: 300px;
   }
 }
-// #endregion RWD
+// #endregion
 </style>

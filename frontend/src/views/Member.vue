@@ -73,7 +73,7 @@ const submit = async () => {
       ElMessage.success('新增成功')
     }
     dialog.visible = false
-    fetchMemberList()
+    await fetchMemberList()
   } catch {
     ElMessage.error(dialog.isEdit ? '修改失敗' : '新增失敗')
   }
@@ -84,8 +84,8 @@ const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
     await api.deleteMember(id)
+    await fetchMemberList()
     ElMessage.success('刪除成功')
-    fetchMemberList()
   } catch {
     ElMessage.error('刪除失敗')
   }

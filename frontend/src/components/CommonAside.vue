@@ -38,6 +38,13 @@ const list = ref([
     icon: 'user',
     url: 'User'
   },
+  {
+    path: '/admin-stats',
+    name: 'admin-stats',
+    label: '管理員介面',
+    icon: 'user',
+    url: 'Admin'
+  },
 ])
 const noChildren = computed(() => list.value.filter(item => !item.children))
 
@@ -71,18 +78,22 @@ const handleMenu = (item) => {
     border-bottom: 1px solid gray;
     font-size: 17px;
     font-weight: 500;
-    &:hover {
-      background-color: #A7F3D0;
-    }
+
     .icons {
       width: 20px;
       height: 20px;
       margin-right: 10px;
     }
-  }
-  .el-menu-item.is-active {
-    color: #065F46;
-    background-color: #A7F3D0;
+    &:nth-last-child(2), &:nth-last-child(1) {
+      background-color: #B2DFDB;
+    }
+    &:hover {
+      background-color: #A7F3D0;
+    }
+    &.is-active {
+      color: #065F46;
+      background-color: #A7F3D0;
+    }
   }
 }
 </style>
