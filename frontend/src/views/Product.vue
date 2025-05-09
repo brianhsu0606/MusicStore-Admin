@@ -65,9 +65,8 @@ const submit = async () => {
       ElMessage.success('新增成功')
     }
     dialog.visible = false
-    initProductData()
-  } catch (error) {
-    console.error(error)
+    await fetchProducts()
+  } catch {
     ElMessage.error('更新失敗')
   }
 }
@@ -77,10 +76,10 @@ const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
     await api.deleteProduct(id)
-    initProductData()
-  } catch (error) {
-    console.error(error)
-    ElMessage.error('刪除失敗')
+    await ElMessage.success('刪除商品成功')
+    await fetchProducts()
+  } catch {
+    ElMessage.error('刪除商品失敗')
   }
 }
 // #endregion CRUD

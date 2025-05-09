@@ -10,6 +10,9 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+import VueECharts from 'vue-echarts'
+import * as echarts from 'echarts'
+
 
 const app = createApp(App)
 
@@ -19,6 +22,7 @@ const pinia = createPinia()
 pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 // app.use(createPinia())
+app.component('VChart', VueECharts)
 app.mount('#app')
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

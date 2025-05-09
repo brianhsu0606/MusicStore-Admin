@@ -127,7 +127,7 @@ const roleText = computed(() => roleMap[userStore.role] || '未知角色')
     <!-- 右側 -->
     <el-col :span="16" class="right-content">
       <!-- 右側上方 el-card -->
-      <div class="card-flex">
+      <!-- <div class="card-flex">
         <el-card v-for="item in countData" :key="item.name">
           <div class="card-container">
             <component :is="item.icon" class="icons" :style="{ background: item.color }"></component>
@@ -137,7 +137,7 @@ const roleText = computed(() => roleMap[userStore.role] || '未知角色')
             </div>
           </div>
         </el-card>
-      </div>
+      </div> -->
       <!-- 右邊中間 echarts -->
       <el-card>
         <template #header>

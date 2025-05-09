@@ -191,47 +191,47 @@ app.get('/api/dashboard/chart-data', (req, res) => {
 
 // #region member.js
 let memberList = [
-  { id: 1, name: '小明', age: 25, gender: '男', birth: '1998-01-01', addr: '台北' },
-  { id: 2, name: '小美', age: 28, gender: '女', birth: '1995-04-12', addr: '新竹' },
-  { id: 3, name: '阿強', age: 32, gender: '男', birth: '1992-08-25', addr: '台中' },
-  { id: 4, name: '小花', age: 22, gender: '女', birth: '2001-07-15', addr: '高雄' },
-  { id: 5, name: '阿文', age: 30, gender: '男', birth: '1993-12-05', addr: '台南' },
-  { id: 6, name: '小志', age: 29, gender: '男', birth: '1994-03-11', addr: '新北' },
-  { id: 7, name: '美玲', age: 26, gender: '女', birth: '1997-06-20', addr: '台中' },
-  { id: 8, name: '大雄', age: 31, gender: '男', birth: '1992-09-30', addr: '桃園' },
-  { id: 9, name: '靜香', age: 27, gender: '女', birth: '1996-11-10', addr: '新竹' },
-  { id: 10, name: '小偉', age: 24, gender: '男', birth: '1999-01-18', addr: '台北' },
-  { id: 11, name: '阿珍', age: 33, gender: '女', birth: '1990-10-22', addr: '高雄' },
-  { id: 12, name: '志明', age: 35, gender: '男', birth: '1989-04-05', addr: '台南' },
-  { id: 13, name: '小拉', age: 21, gender: '女', birth: '2003-02-14', addr: '台中' },
-  { id: 14, name: '大明', age: 29, gender: '男', birth: '1994-07-07', addr: '基隆' },
-  { id: 15, name: '麗華', age: 30, gender: '女', birth: '1993-03-09', addr: '南投' },
-  { id: 16, name: '阿德', age: 34, gender: '男', birth: '1990-08-03', addr: '嘉義' },
-  { id: 17, name: '婉君', age: 23, gender: '女', birth: '2000-06-30', addr: '花蓮' },
-  { id: 18, name: '志強', age: 27, gender: '男', birth: '1996-12-12', addr: '台北' },
-  { id: 19, name: '小英', age: 26, gender: '女', birth: '1997-09-19', addr: '宜蘭' },
-  { id: 20, name: '阿凱', age: 31, gender: '男', birth: '1992-05-23', addr: '新竹' },
-  { id: 21, name: '小宏', age: 28, gender: '男', birth: '1995-02-10', addr: '台中' },
-  { id: 22, name: '小芳', age: 24, gender: '女', birth: '1999-08-08', addr: '台南' },
-  { id: 23, name: '志玲', age: 32, gender: '女', birth: '1992-01-15', addr: '台北' },
-  { id: 24, name: '阿銘', age: 30, gender: '男', birth: '1993-06-03', addr: '新北' },
-  { id: 25, name: '佳佳', age: 26, gender: '女', birth: '1997-03-28', addr: '花蓮' },
-  { id: 26, name: '文傑', age: 33, gender: '男', birth: '1990-09-17', addr: '基隆' },
-  { id: 27, name: '小翠', age: 22, gender: '女', birth: '2001-11-05', addr: '高雄' },
-  { id: 28, name: '大志', age: 35, gender: '男', birth: '1989-12-22', addr: '台中' },
-  { id: 29, name: '欣怡', age: 29, gender: '女', birth: '1994-05-10', addr: '新竹' },
-  { id: 30, name: '志豪', age: 27, gender: '男', birth: '1996-07-19', addr: '台南' },
-  { id: 31, name: '佩君', age: 25, gender: '女', birth: '1998-10-01', addr: '桃園' },
-  { id: 32, name: '阿宏', age: 34, gender: '男', birth: '1989-06-16', addr: '台東' },
-  { id: 33, name: '小倩', age: 28, gender: '女', birth: '1995-01-12', addr: '嘉義' },
-  { id: 34, name: '建志', age: 31, gender: '男', birth: '1992-03-03', addr: '台北' },
-  { id: 35, name: '美華', age: 30, gender: '女', birth: '1993-09-30', addr: '高雄' },
-  { id: 36, name: '阿仁', age: 33, gender: '男', birth: '1990-11-11', addr: '屏東' },
-  { id: 37, name: '小晴', age: 21, gender: '女', birth: '2002-04-17', addr: '新北' },
-  { id: 38, name: '信志', age: 29, gender: '男', birth: '1994-02-25', addr: '苗栗' },
-  { id: 39, name: '慧君', age: 26, gender: '女', birth: '1997-07-04', addr: '宜蘭' },
-  { id: 40, name: '阿良', age: 32, gender: '男', birth: '1991-08-28', addr: '新竹' },
-]
+  { id: uuidv4(), name: '小明', age: 25, gender: '男', birth: '1998-01-01', addr: '台北' },
+  { id: uuidv4(), name: '小美', age: 28, gender: '女', birth: '1995-04-12', addr: '新竹' },
+  { id: uuidv4(), name: '阿強', age: 32, gender: '男', birth: '1992-08-25', addr: '台中' },
+  { id: uuidv4(), name: '小花', age: 22, gender: '女', birth: '2001-07-15', addr: '高雄' },
+  { id: uuidv4(), name: '阿文', age: 30, gender: '男', birth: '1993-12-05', addr: '台南' },
+  { id: uuidv4(), name: '小志', age: 29, gender: '男', birth: '1994-03-11', addr: '新北' },
+  { id: uuidv4(), name: '美玲', age: 26, gender: '女', birth: '1997-06-20', addr: '台中' },
+  { id: uuidv4(), name: '大雄', age: 31, gender: '男', birth: '1992-09-30', addr: '桃園' },
+  { id: uuidv4(), name: '靜香', age: 27, gender: '女', birth: '1996-11-10', addr: '新竹' },
+  { id: uuidv4(), name: '小偉', age: 24, gender: '男', birth: '1999-01-18', addr: '台北' },
+  { id: uuidv4(), name: '阿珍', age: 33, gender: '女', birth: '1990-10-22', addr: '高雄' },
+  { id: uuidv4(), name: '志明', age: 35, gender: '男', birth: '1989-04-05', addr: '台南' },
+  { id: uuidv4(), name: '小拉', age: 21, gender: '女', birth: '2003-02-14', addr: '台中' },
+  { id: uuidv4(), name: '大明', age: 29, gender: '男', birth: '1994-07-07', addr: '基隆' },
+  { id: uuidv4(), name: '麗華', age: 30, gender: '女', birth: '1993-03-09', addr: '南投' },
+  { id: uuidv4(), name: '阿德', age: 34, gender: '男', birth: '1990-08-03', addr: '嘉義' },
+  { id: uuidv4(), name: '婉君', age: 23, gender: '女', birth: '2000-06-30', addr: '花蓮' },
+  { id: uuidv4(), name: '志強', age: 27, gender: '男', birth: '1996-12-12', addr: '台北' },
+  { id: uuidv4(), name: '小英', age: 26, gender: '女', birth: '1997-09-19', addr: '宜蘭' },
+  { id: uuidv4(), name: '阿凱', age: 31, gender: '男', birth: '1992-05-23', addr: '新竹' },
+  { id: uuidv4(), name: '小宏', age: 28, gender: '男', birth: '1995-02-10', addr: '台中' },
+  { id: uuidv4(), name: '小芳', age: 24, gender: '女', birth: '1999-08-08', addr: '台南' },
+  { id: uuidv4(), name: '志玲', age: 32, gender: '女', birth: '1992-01-15', addr: '台北' },
+  { id: uuidv4(), name: '阿銘', age: 30, gender: '男', birth: '1993-06-03', addr: '新北' },
+  { id: uuidv4(), name: '佳佳', age: 26, gender: '女', birth: '1997-03-28', addr: '花蓮' },
+  { id: uuidv4(), name: '文傑', age: 33, gender: '男', birth: '1990-09-17', addr: '基隆' },
+  { id: uuidv4(), name: '小翠', age: 22, gender: '女', birth: '2001-11-05', addr: '高雄' },
+  { id: uuidv4(), name: '大志', age: 35, gender: '男', birth: '1989-12-22', addr: '台中' },
+  { id: uuidv4(), name: '欣怡', age: 29, gender: '女', birth: '1994-05-10', addr: '新竹' },
+  { id: uuidv4(), name: '志豪', age: 27, gender: '男', birth: '1996-07-19', addr: '台南' },
+  { id: uuidv4(), name: '佩君', age: 25, gender: '女', birth: '1998-10-01', addr: '桃園' },
+  { id: uuidv4(), name: '阿宏', age: 34, gender: '男', birth: '1989-06-16', addr: '台東' },
+  { id: uuidv4(), name: '小倩', age: 28, gender: '女', birth: '1995-01-12', addr: '嘉義' },
+  { id: uuidv4(), name: '建志', age: 31, gender: '男', birth: '1992-03-03', addr: '台北' },
+  { id: uuidv4(), name: '美華', age: 30, gender: '女', birth: '1993-09-30', addr: '高雄' },
+  { id: uuidv4(), name: '阿仁', age: 33, gender: '男', birth: '1990-11-11', addr: '屏東' },
+  { id: uuidv4(), name: '小晴', age: 21, gender: '女', birth: '2002-04-17', addr: '新北' },
+  { id: uuidv4(), name: '信志', age: 29, gender: '男', birth: '1994-02-25', addr: '苗栗' },
+  { id: uuidv4(), name: '慧君', age: 26, gender: '女', birth: '1997-07-04', addr: '宜蘭' },
+  { id: uuidv4(), name: '阿良', age: 32, gender: '男', birth: '1991-08-28', addr: '新竹' },
+];
 
 // Read
 app.get('/api/members', (req, res) => {
@@ -245,8 +245,9 @@ app.get('/api/members', (req, res) => {
 // Create
 app.post('/api/members', (req, res) => {
   const newMember = req.body
-  newMember.id = Date.now()
+  newMember.id = uuidv4()
   memberList.push(newMember)
+
   res.json({
     code: 200,
     message: '新增會員成功',
@@ -257,7 +258,8 @@ app.post('/api/members', (req, res) => {
 // Delete
 app.delete('/api/members/:id', (req, res) => {
   const { id } = req.params
-  memberList = memberList.filter(user => user.id !== Number(id))
+  memberList = memberList.filter(user => user.id !== id)
+
   res.json({
     code: 200,
     message: '刪除會員成功',
@@ -269,7 +271,7 @@ app.delete('/api/members/:id', (req, res) => {
 app.put('/api/members/:id', (req, res) => {
   const { id } = req.params
   const updatedUser = req.body
-  const index = memberList.findIndex(user => user.id === Number(id))
+  const index = memberList.findIndex(user => user.id === id)
 
   if (index !== -1) {
     memberList[index] = updatedUser
@@ -290,16 +292,16 @@ app.put('/api/members/:id', (req, res) => {
 
 // #region product.js
 let productList = [
-  { id: 1, name: 'Collings OM2H', price: 238000, quantity: 1, category: '木吉他', imageUrl: '/images/om2h.jpg' },
-  { id: 2, name: 'Lakewood M32C', price: 118000, quantity: 2, category: '木吉他', imageUrl: '/images/m32c.jpg' },
-  { id: 3, name: 'Maton EBG808TE', price: 84800, quantity: 4, category: '木吉他', imageUrl: '/images/808te.jpg' },
-  { id: 4, name: 'AER / Alpha Plus 50瓦', price: 42000, quantity: 3, category: '音箱', imageUrl: '/images/aer.jpg' },
-  { id: 5, name: 'PRS S2 Custom 24-08 Black Amber', price: 90300, quantity: 3, category: '電吉他', imageUrl: '/images/prs.jpg' },
-  { id: 6, name: 'Lowden F32', price: 164000, quantity: 2, category: '木吉他', imageUrl: '/images/lowdenf32.jpg' },
-  { id: 7, name: 'PRS John Mayer SE Silver Sky', price: 33500, quantity: 5, category: '電吉他', imageUrl: '/images/prs2.jpg' },
-  { id: 8, name: 'G7th Performance 3 銀色', price: 1590, quantity: 10, category: '配件', imageUrl: '/images/g7p3silver.jpg' },
-  { id: 9, name: 'G7th Performance 3 金色', price: 1800, quantity: 6, category: '配件', imageUrl: '/images/g7p3golden.jpg' },
-  { id: 10, name: 'G7th Heritage 銀色', price: 5800, quantity: 3, category: '配件', imageUrl: '/images/g7heritage.jpg' },
+  { id: uuidv4(), name: 'Collings OM2H', price: 238000, quantity: 1, category: '木吉他', imageUrl: '/images/om2h.jpg' },
+  { id: uuidv4(), name: 'Lakewood M32C', price: 118000, quantity: 2, category: '木吉他', imageUrl: '/images/m32c.jpg' },
+  { id: uuidv4(), name: 'Maton EBG808TE', price: 84800, quantity: 4, category: '木吉他', imageUrl: '/images/808te.jpg' },
+  { id: uuidv4(), name: 'AER / Alpha Plus 50瓦', price: 42000, quantity: 3, category: '音箱', imageUrl: '/images/aer.jpg' },
+  { id: uuidv4(), name: 'PRS S2 Custom 24-08 Black Amber', price: 90300, quantity: 3, category: '電吉他', imageUrl: '/images/prs.jpg' },
+  { id: uuidv4(), name: 'Lowden F32', price: 164000, quantity: 2, category: '木吉他', imageUrl: '/images/lowdenf32.jpg' },
+  { id: uuidv4(), name: 'PRS John Mayer SE Silver Sky', price: 33500, quantity: 5, category: '電吉他', imageUrl: '/images/prs2.jpg' },
+  { id: uuidv4(), name: 'G7th Performance 3 銀色', price: 1590, quantity: 10, category: '配件', imageUrl: '/images/g7p3silver.jpg' },
+  { id: uuidv4(), name: 'G7th Performance 3 金色', price: 1800, quantity: 6, category: '配件', imageUrl: '/images/g7p3golden.jpg' },
+  { id: uuidv4(), name: 'G7th Heritage 銀色', price: 5800, quantity: 3, category: '配件', imageUrl: '/images/g7heritage.jpg' },
 ]
 
 app.get('/api/products', (req, res) => {
@@ -338,7 +340,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 // Create
 app.post('/api/products', (req, res) => {
   const newProduct = req.body
-  newProduct.id = Date.now()
+  newProduct.id = uuidv4()
   productList.push(newProduct)
 
   res.json({
@@ -352,7 +354,7 @@ app.post('/api/products', (req, res) => {
 app.put('/api/products/:id', (req, res) => {
   const { id } = req.params
   const updatedProduct = req.body
-  const index = productList.findIndex(item => item.id === Number(id))
+  const index = productList.findIndex(item => item.id === id)
 
   if (index !== -1) {
     productList[index] = updatedProduct
@@ -370,9 +372,10 @@ app.put('/api/products/:id', (req, res) => {
   }
 })
 
+// delete
 app.delete('/api/products/:id', (req, res) => {
   const { id } = req.params
-  productList = productList.filter(item => item.id !== Number(id))
+  productList = productList.filter(item => item.id !== id)
   res.json({
     code: 200,
     message: '刪除成功',
@@ -383,26 +386,26 @@ app.delete('/api/products/:id', (req, res) => {
 
 // #region order.js
 let orderList = [
-  { id: 1, orderNumber: 'ORD2411135839', createdAt: '2024-11-13', member: '小明', items: 'Lakewood M32', status: 'shipped' },
-  { id: 2, orderNumber: 'ORD2412254276', createdAt: '2024-12-25', member: '小美', items: 'G7th Performance 3 金色', status: 'shipped' },
-  { id: 3, orderNumber: 'ORD2502072521', createdAt: '2025-02-07', member: '小華', items: 'Maton EBG808TE', status: 'processing' },
-  { id: 4, orderNumber: 'ORD2503137490', createdAt: '2025-03-13', member: '阿明', items: 'Eastman PCH1', status: 'completed' },
-  { id: 5, orderNumber: 'ORD2503316843', createdAt: '2025-03-31', member: '大雄', items: 'G7th Performance 3 銀色', status: 'completed' },
-  { id: 6, orderNumber: 'ORD2504115877', createdAt: '2025-04-11', member: '小志', items: 'Eastman PCH1', status: 'processing' },
-  { id: 7, orderNumber: 'ORD2504151298', createdAt: '2025-04-15', member: '小美', items: 'Maton EBG808TE', status: 'processing' },
-  { id: 8, orderNumber: 'ORD2504186457', createdAt: '2025-04-18', member: '阿信', items: 'Lakewood M32', status: 'shipped' },
-  { id: 9, orderNumber: 'ORD2504198732', createdAt: '2025-04-19', member: '小明', items: 'G7th Performance 3 銀色', status: 'completed' },
-  { id: 10, orderNumber: 'ORD2504209031', createdAt: '2025-04-20', member: '阿亮', items: 'Eastman PCH1', status: 'processing' },
-  { id: 11, orderNumber: 'ORD2504214325', createdAt: '2025-04-21', member: '小志', items: 'Lakewood M32', status: 'shipped' },
-  { id: 12, orderNumber: 'ORD2504221239', createdAt: '2025-04-22', member: '小華', items: 'Maton EBG808TE', status: 'completed' },
-  { id: 13, orderNumber: 'ORD2504239652', createdAt: '2025-04-23', member: '大雄', items: 'G7th Performance 3 金色', status: 'shipped' },
-  { id: 14, orderNumber: 'ORD2504247763', createdAt: '2025-04-24', member: '阿明', items: 'Lakewood M32', status: 'processing' },
-  { id: 15, orderNumber: 'ORD2504255509', createdAt: '2025-04-25', member: '小美', items: 'Maton EBG808TE', status: 'completed' },
-  { id: 16, orderNumber: 'ORD2504266831', createdAt: '2025-04-26', member: '小志', items: 'G7th Performance 3 銀色', status: 'shipped' },
-  { id: 17, orderNumber: 'ORD2504272087', createdAt: '2025-04-27', member: '小明', items: 'Eastman PCH1', status: 'processing' },
-  { id: 18, orderNumber: 'ORD2504289312', createdAt: '2025-04-28', member: '阿信', items: 'Lakewood M32', status: 'completed' },
-  { id: 19, orderNumber: 'ORD2504293489', createdAt: '2025-04-29', member: '小華', items: 'G7th Performance 3 金色', status: 'processing' },
-  { id: 20, orderNumber: 'ORD2504307930', createdAt: '2025-04-30', member: '小美', items: 'Maton EBG808TE', status: 'shipped' },
+  { id: uuidv4(), orderNumber: 'ORD2411135839', createdAt: '2024-11-13', member: '小明', items: 'Lakewood M32', status: 'shipped' },
+  { id: uuidv4(), orderNumber: 'ORD2412254276', createdAt: '2024-12-25', member: '小美', items: 'G7th Performance 3 金色', status: 'shipped' },
+  { id: uuidv4(), orderNumber: 'ORD2502072521', createdAt: '2025-02-07', member: '小華', items: 'Maton EBG808TE', status: 'processing' },
+  { id: uuidv4(), orderNumber: 'ORD2503137490', createdAt: '2025-03-13', member: '阿明', items: 'Eastman PCH1', status: 'completed' },
+  { id: uuidv4(), orderNumber: 'ORD2503316843', createdAt: '2025-03-31', member: '大雄', items: 'G7th Performance 3 銀色', status: 'completed' },
+  { id: uuidv4(), orderNumber: 'ORD2504115877', createdAt: '2025-04-11', member: '小志', items: 'Eastman PCH1', status: 'processing' },
+  { id: uuidv4(), orderNumber: 'ORD2504151298', createdAt: '2025-04-15', member: '小美', items: 'Maton EBG808TE', status: 'processing' },
+  { id: uuidv4(), orderNumber: 'ORD2504186457', createdAt: '2025-04-18', member: '阿信', items: 'Lakewood M32', status: 'shipped' },
+  { id: uuidv4(), orderNumber: 'ORD2504198732', createdAt: '2025-04-19', member: '小明', items: 'G7th Performance 3 銀色', status: 'completed' },
+  { id: uuidv4(), orderNumber: 'ORD2504209031', createdAt: '2025-04-20', member: '阿亮', items: 'Eastman PCH1', status: 'processing' },
+  { id: uuidv4(), orderNumber: 'ORD2504214325', createdAt: '2025-04-21', member: '小志', items: 'Lakewood M32', status: 'shipped' },
+  { id: uuidv4(), orderNumber: 'ORD2504221239', createdAt: '2025-04-22', member: '小華', items: 'Maton EBG808TE', status: 'completed' },
+  { id: uuidv4(), orderNumber: 'ORD2504239652', createdAt: '2025-04-23', member: '大雄', items: 'G7th Performance 3 金色', status: 'shipped' },
+  { id: uuidv4(), orderNumber: 'ORD2504247763', createdAt: '2025-04-24', member: '阿明', items: 'Lakewood M32', status: 'processing' },
+  { id: uuidv4(), orderNumber: 'ORD2504255509', createdAt: '2025-04-25', member: '小美', items: 'Maton EBG808TE', status: 'completed' },
+  { id: uuidv4(), orderNumber: 'ORD2504266831', createdAt: '2025-04-26', member: '小志', items: 'G7th Performance 3 銀色', status: 'shipped' },
+  { id: uuidv4(), orderNumber: 'ORD2504272087', createdAt: '2025-04-27', member: '小明', items: 'Eastman PCH1', status: 'processing' },
+  { id: uuidv4(), orderNumber: 'ORD2504289312', createdAt: '2025-04-28', member: '阿信', items: 'Lakewood M32', status: 'completed' },
+  { id: uuidv4(), orderNumber: 'ORD2504293489', createdAt: '2025-04-29', member: '小華', items: 'G7th Performance 3 金色', status: 'processing' },
+  { id: uuidv4(), orderNumber: 'ORD2504307930', createdAt: '2025-04-30', member: '小美', items: 'Maton EBG808TE', status: 'shipped' },
 ]
 
 // Read
@@ -421,7 +424,7 @@ app.post('/api/orders', (req, res) => {
   const random = Math.floor(1000 + Math.random() * 9000)
   const newOrder = {
     ...req.body,
-    id: Date.now(),
+    id: uuidv4(),
     orderNumber: `ORD${datePart}${random}`,
   }
 
@@ -438,7 +441,7 @@ app.post('/api/orders', (req, res) => {
 app.put('/api/orders/:id', (req, res) => {
   const { id } = req.params
   const updatedOrder = req.body
-  const index = orderList.findIndex(item => item.id === Number(id))
+  const index = orderList.findIndex(item => item.id === id)
 
   if (index !== -1) {
     orderList[index] = updatedOrder
@@ -459,7 +462,7 @@ app.put('/api/orders/:id', (req, res) => {
 // Delete
 app.delete('/api/orders/:id', (req, res) => {
   const { id } = req.params
-  orderList = orderList.filter(item => item.id !== Number(id))
+  orderList = orderList.filter(item => item.id !== id)
 
   res.json({
     code: 200,
@@ -537,9 +540,15 @@ app.put('/api/users/:id', (req, res) => {
 
 // #region admin-status
 let costList = [
-  { id: uuidv4(), name: '店面租金', price: 120000 },
-  { id: uuidv4(), name: '人事成本', price: 74000 },
-  { id: uuidv4(), name: 'Eastman進貨成本', price: 312000 },
+  { id: uuidv4(), name: '店面租金', category: '租金/水電', price: 120000 },
+  { id: uuidv4(), name: '店面電費', category: '租金/水電', price: 3243 },
+  { id: uuidv4(), name: '店面水費', category: '租金/水電', price: 1086 },
+  { id: uuidv4(), name: '職員薪水', category: '人事成本', price: 74000 },
+  { id: uuidv4(), name: 'Taylor進貨', category: '進貨成本', price: 164320 },
+  { id: uuidv4(), name: '職員勞健保', category: '人事成本', price: 22540 },
+  { id: uuidv4(), name: 'Eastman進貨', category: '進貨成本', price: 212000 },
+  { id: uuidv4(), name: '弦進貨', category: '進貨成本', price: 27500 },
+  { id: uuidv4(), name: '維修冷氣', category: '其他成本', price: 8000 },
 ]
 
 app.get('/api/costs', (req, res) => {
@@ -593,7 +602,6 @@ app.get('/api/revenue', (req, res) => {
 app.post('/api/revenue', (req, res) => {
   const newRevenue = req.body
   newRevenue.id = uuidv4()
-
   revenueList.push(newRevenue)
 
   res.json({
@@ -613,5 +621,4 @@ app.delete('/api/revenue/:id', (req, res) => {
     result: null
   })
 })
-
 // #endregion

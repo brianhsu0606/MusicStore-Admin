@@ -13,17 +13,15 @@ const getMemberCount = async () => {
   }
 }
 
-const productCount = ref(0)
-const getProductCount = async () => {
-  try {
-    const productList = await api.getProducts()
-    productCount.value = productList.length
-  } catch {
-    ElMessage.error('獲取商品數量失敗')
-  }
-}
-
 // #region 成本 cost
+const costCategories = [
+  '租金/水電',
+  '人事成本',
+  '進貨成本',
+  '營運費用',
+  '其他成本'
+]
+
 const costList = ref([])
 const fetchCost = async () => {
   try {
@@ -37,7 +35,7 @@ const totalCost = computed(() => {
   return costList.value.reduce((sum, item) => sum + item.price, 0)
 })
 
-const newCost = ref({name: '', price: 0})
+const newCost = ref({name: '', category: '', price: 0})
 const handleAddCost = async () => {
   if (!newCost.value.name || newCost.value.price <= 0) {
     ElMessage.warning('請填寫完整的成本名稱與金額')
@@ -109,35 +107,121 @@ onMounted(() => {
   fetchCost()
   fetchRevenue()
   getMemberCount()
-  getProductCount()
 })
+
+// 成本圓餅圖資料
+// const costPieChartData = computed(() => {
+//   return costList.value.map(item => ({
+//     name: item.name,
+//     value: item.price
+//   }))
+// })
+
+const costPieChartData = computed(() => {
+  const categoryMap = {}
+  costList.value.forEach(item => {
+    const key = item.category || '未分類'
+    categoryMap[key] = (categoryMap[key] || 0) + item.price
+  })
+  return Object.entries(categoryMap).map(([name, value]) => ({ name, value }))
+})
+
+// 營業額折線圖資料
+const revenueLineChartData = computed(() => {
+  return {
+    xAxis: {
+      type: 'category',
+      data: revenueList.value.map(item => item.date)
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: revenueList.value.map(item => item.price),
+        type: 'line',
+        smooth: true
+      }
+    ]
+  }
+})
+
+const cardData = [
+  { icon: 'Money', bg: 'bg-green-400', title: '本月營業額：', value: () => 'NT ' + totalRevenue.value.toLocaleString() },
+  { icon: 'GoodsFilled', bg: 'bg-blue-400', title: '本月成本：', value: () => 'NT ' + totalCost.value.toLocaleString() },
+  { icon: 'SuccessFilled', bg: 'bg-red-500', title: '本月營淨利潤：', value: () => 'NT ' + (totalRevenue.value - totalCost.value).toLocaleString() },
+  { icon: 'User', bg: 'bg-gray-400', title: '會員人數：', value: () => memberCount.value + '人' },
+]
 </script>
 
 <template>
-  <div class="flex justify-start gap-4 mb-4">
-    <el-card>
-      <h3>本月營業額：</h3>
-      <p>金額：NT {{ totalRevenue.toLocaleString() }}</p>
-    </el-card>
-    <el-card>
-      <h3>本月成本</h3>
-      <p>金額：NT {{ totalCost.toLocaleString() }}</p>
-    </el-card>
-    <el-card>
-      <h3>本月淨利潤：</h3>
-      <p>金額：NT{{ (totalRevenue - totalCost).toLocaleString() }}</p>
+  <!-- 基本資訊 el-card -->
+  <div class="card-content flex justify-start gap-4 mb-4">
+    <el-card v-for="(item, index) in cardData" :key="index" class="w-80">
+      <div class="flex gap-4 items-center">
+        <el-icon :size="50" :class="`${item.bg} rounded-lg p-1`">
+          <component :is="item.icon" />
+        </el-icon>
+        <div>
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.value() }}</p>
+        </div>
+      </div>
     </el-card>
   </div>
 
-  <el-row class="mb-4">
+  <!-- 成本圓餅圖、營業額折線圖 -->
+  <el-row :gutter="20" class="mb-4">
+    <el-col :span="12">
+      <el-card>
+        <h3>成本占比圖</h3>
+        <v-chart
+          :option="{
+            tooltip: { trigger: 'item' },
+            legend: { top: 'bottom' },
+            series: [
+              {
+                name: '成本項目',
+                type: 'pie',
+                radius: '50%',
+                data: costPieChartData
+              }
+            ]
+          }"
+          autoresize
+          style="height: 400px"
+        />
+      </el-card>
+    </el-col>
+
+    <el-col :span="12">
+      <el-card>
+        <h3>營業額折線圖</h3>
+        <v-chart :option="revenueLineChartData" autoresize style="height: 400px" />
+      </el-card>
+    </el-col>
+  </el-row>
+
+  <!-- 新增成本、營業額 表格 -->
+  <el-row :gutter="20" class="mb-4">
     <el-col :span="12">
       <!-- 成本資料 -->
       <el-card>
-        <h3>成本資料</h3>
+        <h3 class="mb-4">成本資料</h3>
         <!-- 新增成本 form -->
         <el-form>
           <el-form-item label="成本名稱">
-            <el-input v-model="newCost.name" placeholder="請輸入成本項目" />
+            <el-input v-model="newCost.name" placeholder="請輸入成本名稱" />
+          </el-form-item>
+          <el-form-item label="成本分類">
+            <el-select v-model="newCost.category" placeholder="請選擇成本分類">
+              <el-option 
+                v-for="(item, index) in costCategories"
+                :key="index"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="金額">
             <el-input-number v-model="newCost.price" />
@@ -149,7 +233,8 @@ onMounted(() => {
         <!-- 成本表格 table -->
         <el-table :data="costList">
           <el-table-column prop="name" label="項目" />
-          <el-table-column prop="price" label="金額" :formatter="formatPrice" />
+          <el-table-column prop="category" label="分類" />
+          <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
           <el-table-column label="操作">
               <template #default="{ row }">
                 <el-button @click="handleDeleteCost(row.id)" type="danger">刪除</el-button>
@@ -161,7 +246,7 @@ onMounted(() => {
     <!-- 營業額資料 -->
     <el-col :span="12">
       <el-card>
-        <h3>營業額資料</h3>
+        <h3 class="mb-4">營業額資料</h3>
         <!-- 新增營業額 form -->
         <el-form>
           <el-form-item label="選擇日期">
@@ -177,7 +262,7 @@ onMounted(() => {
         <!-- 營業額表格 table -->
         <el-table :data="revenueList">
           <el-table-column prop="date" label="日期" />
-          <el-table-column prop="price" label="金額" :formatter="formatPrice" />
+          <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
           <el-table-column label="操作">
             <template #default="{ row }">
               <el-button @click="handleDeleteRevenue(row.id)" type="danger">刪除</el-button>
@@ -187,10 +272,17 @@ onMounted(() => {
       </el-card>  
     </el-col>
   </el-row>
-
-  <el-card>
-    <p>目前會員數量：{{ memberCount }}</p>
-    <p>目前樂器庫存：{{ productCount }}</p>
-  </el-card>
-
 </template>
+
+<style scoped lang="less">
+.card-content {
+  h3 {
+    font-size: 21px;
+  }
+  p {
+    color: gray;
+    font-size: 19px;
+    font-weight: 500;
+  }
+}
+</style>
