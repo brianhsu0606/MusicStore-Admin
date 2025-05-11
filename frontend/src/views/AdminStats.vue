@@ -18,7 +18,6 @@ const costCategories = [
   '租金/水電',
   '人事成本',
   '進貨成本',
-  '營運費用',
   '其他成本'
 ]
 
@@ -110,13 +109,6 @@ onMounted(() => {
 })
 
 // 成本圓餅圖資料
-// const costPieChartData = computed(() => {
-//   return costList.value.map(item => ({
-//     name: item.name,
-//     value: item.price
-//   }))
-// })
-
 const costPieChartData = computed(() => {
   const categoryMap = {}
   costList.value.forEach(item => {

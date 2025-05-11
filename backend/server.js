@@ -5,6 +5,12 @@ const express = require('express');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 
+const bcrypt = require('bcryptjs');
+const SALT_ROUNDS = 10;
+
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = 'mysecretkey123'; // 之後可以放在 .env 裡
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -23,8 +29,29 @@ const loadUsers = () => {
   return [];
 };
 
+
+// token
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer <token>
+
+  if (!token) {
+    return res.status(401).json({ code: 401, message: '未授權，缺少 token' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, userData) => {
+    if (err) {
+      return res.status(403).json({ code: 403, message: '無效的 token' });
+    }
+
+    req.user = userData; // 存入 req.user 以便後續使用
+    next();
+  });
+}
+
+
 // #region auth.js
-app.post('/api/register', (req, res) => {
+app.post('/api/register', async (req, res) => {
   const { name, username, password, role } = req.body;
   const users = loadUsers();
 
@@ -36,10 +63,12 @@ app.post('/api/register', (req, res) => {
     });
   }
 
+  const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
   users.push({
     id: uuidv4(),
     username,
-    password,
+    password: hashedPassword,
     profile: {
       role,
       name,
@@ -59,37 +88,91 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-app.post('/api/login', (req, res) => {
+// 登入 login
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   const users = loadUsers();
-  const user = users.find(u => u.username === username && u.password === password);
+  const user = users.find(u => u.username === username);
 
-  if (user) {
-    const token = 'mock-token-' + user.username;
-    return res.json({
-      code: 200,
-      message: '登入成功',
-      result: {
-        token,
-      }
+  if (!user) {
+    return res.status(400).json({
+      code: 400,
+      message: '帳號或密碼錯誤',
+      result: null,
     });
   }
-  return res.status(400).json({
-    code: 400,
-    message: '帳號或密碼錯誤',
-    result: null,
+
+  // 用 bcrypt 比對密碼
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    return res.status(400).json({
+      code: 400,
+      message: '帳號或密碼錯誤',
+      result: null,
+    });
+  }
+
+  // const token = 'mock-token-' + user.username;
+  // return res.json({
+  //   code: 200,
+  //   message: '登入成功',
+  //   result: {
+  //     token,
+  //   }
+  // });
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      username: user.username,
+      role: user.profile.role
+    },
+    JWT_SECRET,
+    { expiresIn: '2h' } // token 有效時間為 2 小時
+  );
+
+  return res.json({
+    code: 200,
+    message: '登入成功',
+    result: {
+      token,
+    }
   });
 });
+
+// app.post('/api/login', async (req, res) => {
+//   const { username, password } = req.body;
+//   const users = loadUsers();
+//   const user = users.find(u => u.username === username && u.password === password);
+
+//   if (user) {
+//     const token = 'mock-token-' + user.username;
+//     return res.json({
+//       code: 200,
+//       message: '登入成功',
+//       result: {
+//         token,
+//       }
+//     });
+//   }
+//   return res.status(400).json({
+//     code: 400,
+//     message: '帳號或密碼錯誤',
+//     result: null,
+//   });
+// });
 // #endregion
 
 // #region profile.js
-app.get('/api/profile', (req, res) => {
-  const token = req.headers.authorization;
+app.get('/api/profile', authenticateToken, (req, res) => {
+  // const token = req.headers.authorization;
   const users = loadUsers();
-  const user = users.find(u => 'mock-token-' + u.username === token);
+  // const user = users.find(u => 'mock-token-' + u.username === token);
+  const user = users.find(u => u.id === req.user.id); // 用 JWT 中的 id 找用戶
 
   if (!user) {
-    return res.status(401).json({ code: 401, msg: '未授權' });
+    return res.status(404).json({ code: 404, message: '用戶不存在' });
   }
 
   return res.json({
@@ -102,13 +185,16 @@ app.get('/api/profile', (req, res) => {
   });
 });
 
-app.put('/api/profile', (req, res) => {
-  const token = req.headers.authorization;
+app.put('/api/profile', authenticateToken, (req, res) => {
+  // const token = req.headers.authorization;
   const users = loadUsers();
-  const userIndex = users.findIndex(u => 'mock-token-' + u.username === token);
+  // const userIndex = users.findIndex(u => 'mock-token-' + u.username === token);
+  const userIndex = users.find(u => u.id === req.user.id); // 用 JWT 中的 id 找用戶
+
 
   if (userIndex === -1) {
-    return res.status(401).json({ code: 401, msg: '未授權' });
+    return res.status(404).json({ code: 404, message: '用戶不存在' });
+    // return res.status(401).json({ code: 401, msg: '未授權' });
   }
 
   // 更新 profile 欄位
@@ -473,15 +559,17 @@ app.delete('/api/orders/:id', (req, res) => {
 // #endregion
 
 // #region user.js
-app.get('/api/users', (req, res) => {
-  const token = req.headers.authorization;
+app.get('/api/users', authenticateToken, (req, res) => {
+  // const token = req.headers.authorization;
   const users = loadUsers();
 
-  const currentUser = users.find(u => 'mock-token-' + u.username === token);
-  if (!currentUser || currentUser.profile.role !== 'admin') {
+  // const currentUser = users.find(u => 'mock-token-' + u.username === token);
+  // if (!currentUser || currentUser.profile.role !== 'admin') {
+  //   return res.status(403).json({ code: 403, msg: '無權限' });
+  // }
+  if (req.user.role !== 'admin') {
     return res.status(403).json({ code: 403, msg: '無權限' });
   }
-
   // 回傳所有使用者（帳號 + profile）
   const userList = users.map(u => ({
     id: u.id,
@@ -519,10 +607,14 @@ app.delete('/api/users/:id', (req, res) => {
 });
 
 // update
-app.put('/api/users/:id', (req, res) => {
-  const users = loadUsers();
+app.put('/api/users/:id', authenticateToken, (req, res) => {
   const { id } = req.params
   const { role } = req.body
+  const users = loadUsers();
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ code: 403, msg: '無權限' });
+  }
 
   const index = users.findIndex(item => item.id === id)
 
@@ -538,7 +630,7 @@ app.put('/api/users/:id', (req, res) => {
 })
 // #endregion
 
-// #region admin-status
+// #region cost.js
 let costList = [
   { id: uuidv4(), name: '店面租金', category: '租金/水電', price: 120000 },
   { id: uuidv4(), name: '店面電費', category: '租金/水電', price: 3243 },
@@ -581,7 +673,9 @@ app.delete('/api/costs/:id', (req, res) => {
     result: null
   })
 })
+// #endregion
 
+// #region revenue.js
 let revenueList = [
   { id: uuidv4(), date: '2025-5-5', price: 76880 },
   { id: uuidv4(), date: '2025-5-10', price: 162330 },
@@ -591,7 +685,7 @@ let revenueList = [
   { id: uuidv4(), date: '2025-5-30', price: 246650 },
 ]
 
-app.get('/api/revenue', (req, res) => {
+app.get('/api/revenues', (req, res) => {
   res.json({
     code: 200,
     message: '獲取營業額成功',
@@ -599,7 +693,7 @@ app.get('/api/revenue', (req, res) => {
   })
 })
 
-app.post('/api/revenue', (req, res) => {
+app.post('/api/revenues', (req, res) => {
   const newRevenue = req.body
   newRevenue.id = uuidv4()
   revenueList.push(newRevenue)
@@ -611,7 +705,7 @@ app.post('/api/revenue', (req, res) => {
   })
 })
 
-app.delete('/api/revenue/:id', (req, res) => {
+app.delete('/api/revenues/:id', (req, res) => {
   const { id } = req.params
   revenueList = revenueList.filter(item => item.id !== id)
 

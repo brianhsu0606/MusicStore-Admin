@@ -1,24 +1,11 @@
 [
   {
-    "id": "eed5a3a4-f7c7-4310-8e8a-b76d36423dfb",
-    "username": "admintest",
-    "password": "123456",
+    "id": "4e6f3f2f-80b4-40b0-bdea-854c76e9fc11",
+    "username": "admin",
+    "password": "$2b$10$8cPL5yst0ThbYp4DZW6t8uQNpckUgDdadhezkPLv1MoqFkOo1gKbm",
     "profile": {
       "role": "admin",
       "name": "Admin Test",
-      "gender": "male",
-      "birth": "2000 / 06 / 05",
-      "email": "test@gmail.com",
-      "avatar": "avatar1.jpeg"
-    }
-  },
-  {
-    "id": "57c86287-3d2a-4261-859c-da8f23d069c4",
-    "username": "brian",
-    "password": "123456",
-    "profile": {
-      "role": "admin",
-      "name": "Brian Hsu",
       "gender": "male",
       "birth": "2000 / 06 / 06",
       "email": "test@gmail.com",
@@ -26,28 +13,54 @@
     }
   },
   {
-    "id": "a906c1e2-4bc9-4e43-93d0-d9848b4c83b3",
-    "username": "user2",
-    "password": "123456",
+    "id": "d3f19609-baa4-44a3-8ab0-2fed9da74509",
+    "username": "user1",
+    "password": "$2b$10$RmBPTMzj8sIv1XvT1JclTOC38mhvMDSkm5xM4SVSySnAAPYI7kASG",
     "profile": {
       "role": "user",
-      "name": "user2",
-      "gender": "male",
-      "birth": "2002 / 07 / 31",
-      "email": "test@gmail.com",
+      "name": "職員1",
+      "gender": "",
+      "birth": "",
+      "email": "",
       "avatar": "avatar1.jpeg"
     }
   },
   {
-    "id": "483aef91-6147-426f-96fa-5d79cf3711c3",
-    "username": "user3",
-    "password": "123456",
+    "id": "c7745293-76da-441d-8c69-08ae9066c903",
+    "username": "user2",
+    "password": "$2b$10$O9/gh2clCe/fB6l1/s1k7.Z5RKTcizAjuoZ0pA15mAx5C7hhx0/52",
     "profile": {
       "role": "user",
-      "name": "user3",
+      "name": "職員2",
       "gender": "",
       "birth": "",
       "email": "",
+      "avatar": "avatar1.jpeg"
+    }
+  },
+  {
+    "id": "7c518333-8c03-4b73-af9d-1157cd973bd4",
+    "username": "user3",
+    "password": "$2b$10$6RtT/G0v7ajKYufu7sSQJO0LGVNq3yR7gQB9ZVPE7qoPmVzjChXaS",
+    "profile": {
+      "role": "user",
+      "name": "職員3",
+      "gender": "",
+      "birth": "",
+      "email": "",
+      "avatar": "avatar1.jpeg"
+    }
+  },
+  {
+    "id": "852a48e0-2445-430b-9f8c-fed91e08e8fc",
+    "username": "brian",
+    "password": "$2b$10$/QO4TkesxxBmRhEw5wGirOXCVk3P2cSPrz5E6hHwkd8sXw.s8LjwG",
+    "profile": {
+      "role": "admin",
+      "name": "Brian Hsu",
+      "gender": "male",
+      "birth": "2000 / 06 / 06",
+      "email": "test@gmail.com",
       "avatar": "avatar1.jpeg"
     }
   }
