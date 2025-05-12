@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
+const toJSON = require('../utils/toJSON')
 
 const memberSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -7,6 +8,6 @@ const memberSchema = new mongoose.Schema({
   birth: { type: String, required: true },
   addr: { type: String, required: true },
 });
-const Member = mongoose.model('Member', memberSchema);
+toJSON(memberSchema)
 
-module.exports = Member;
+module.exports = mongoose.model('Member', memberSchema)

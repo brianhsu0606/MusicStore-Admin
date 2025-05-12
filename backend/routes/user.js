@@ -1,81 +1,65 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const { authenticateToken } = require('../middleware/auth');
+const User = require('../models/userModel');
 
-const fs = require('fs')
-const path = require('path')
+// 載入用戶 Read（僅限 admin）
+router.get('/api/users', authenticateToken, async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.user.id)
+    if (!currentUser || currentUser.profile.role !== 'admin') {
+      return res.status(403).json({ code: 403, msg: '無權限' });
+    }
 
-const { authenticateToken } = require('../middleware/auth')
+    const users = await User.find().select('-password')
+    const userList = users.map(user => ({
+      id: user.id,
+      username: user.username,
+      ...user.profile
+    }));
 
-const USERS_FILE = path.join(__dirname, '../data/users.json');
-const loadUsers = () => {
-  if (fs.existsSync(USERS_FILE)) {
-    return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
+    return res.json({
+      code: 200,
+      msg: '獲取用戶成功',
+      result: userList
+    });
+  } catch (error) {
+    res.status(500).json({ code: 500, msg: '伺服器錯誤' });
   }
-  return [];
-};
-
-
-// #region user.js
-router.get('/api/users', authenticateToken, (req, res) => {
-  const users = loadUsers();
-
-
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ code: 403, msg: '無權限' });
-  }
-  // 回傳所有使用者（帳號 + profile）
-  const userList = users.map(u => ({
-    id: u.id,
-    username: u.username,
-    ...u.profile
-  }));
-
-  return res.json({
-    code: 200,
-    msg: '獲取用戶成功',
-    result: userList
-  });
-});
-
-// delete
-router.delete('/api/users/:id', authenticateToken, (req, res) => {
-  // const token = req.headers.authorization;
-  const users = loadUsers();
-
-  // const currentUser = users.find(u => 'mock-token-' + u.username === token);
-  // if (!currentUser || currentUser.profile.role !== 'admin') {
-  //   return res.status(403).json({ code: 403, msg: '無權限' });
-  // }
-
-  const { id } = req.params;
-  const newUsers = users.filter(user => user.id !== id);
-
-  fs.writeFileSync(USERS_FILE, JSON.stringify(newUsers, null, 2));
-
-  res.json({
-    code: 200,
-    message: '刪除用戶成功',
-    result: null
-  });
-});
-
-// update
-router.put('/api/users/:id', authenticateToken, (req, res) => {
-  const users = loadUsers();
-  const { id } = req.params
-  const { role } = req.body
-
-  const index = users.findIndex(item => item.id === id)
-
-  users[index].profile.role = role;
-
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-
-  res.json({
-    code: 200,
-    message: '更新用戶身份成功',
-    result: null
-  })
 })
-// #endregion
+
+// 更新用戶角色 Update
+router.put('/api/users/:id', authenticateToken, async (req, res) => {
+  try {
+    const { role } = req.body;
+
+    await User.findByIdAndUpdate(req.params.id, {
+      'profile.role': role
+    });
+
+    res.json({
+      code: 200,
+      message: '更新用戶身份成功',
+      result: null
+    });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: '更新失敗' });
+  }
+})
+
+// 刪除用戶 Delete
+router.delete('/api/users/:id', authenticateToken, async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+
+    res.json({
+      code: 200,
+      message: '刪除用戶成功',
+      result: null
+    });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: '刪除失敗' });
+  }
+})
+
 module.exports = router;

@@ -31,7 +31,7 @@ router.post('/api/products', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       msg: '新增商品成功',
-      result: newProduct
+      result: null
     })
   } catch (error) {
     res.status(500).json({
@@ -43,29 +43,18 @@ router.post('/api/products', authenticateToken, async (req, res) => {
 })
 
 // 更新商品 Update
-router.put('/api/products/:_id', authenticateToken, async (req, res) => {
-  const { _id } = req.params
-  const updatedData = req.body
-
+router.put('/api/products/:id', authenticateToken, async (req, res) => {
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      _id,
-      updatedData,
+    await Product.findByIdAndUpdate(
+      req.params.id,
+      req.body,
       { new: true }
     )
-    if (updatedProduct) {
-      res.json({
-        code: 200,
-        message: '更新商品成功',
-        result: updatedProduct
-      });
-    } else {
-      res.status(404).json({
-        code: 404,
-        message: '找不到該商品',
-        result: null
-      });
-    }
+    res.json({
+      code: 200,
+      message: '商品更新成功',
+      result: null
+    })
   } catch (error) {
     res.status(500).json({
       code: 500,
@@ -76,25 +65,15 @@ router.put('/api/products/:_id', authenticateToken, async (req, res) => {
 })
 
 // 刪除商品 Delete
-router.delete('/api/products/:_id', authenticateToken, async (req, res) => {
-  const { _id } = req.params
-
+router.delete('/api/products/:id', authenticateToken, async (req, res) => {
   try {
-    const deletedProduct = await Product.findByIdAndDelete(_id)
+    await Product.findByIdAndDelete(req.params.id)
 
-    if (deletedProduct) {
-      res.json({
-        code: 200,
-        message: '刪除商品成功',
-        result: deletedProduct
-      });
-    } else {
-      res.status(404).json({
-        code: 404,
-        message: '找不到該商品',
-        result: null
-      });
-    }
+    res.json({
+      code: 200,
+      message: '刪除商品成功',
+      result: null
+    })
   } catch (error) {
     res.status(500).json({
       code: 500,

@@ -26,13 +26,17 @@ const dialog = reactive({
 
 // #region CRUD
 // 讀取會員（ Read ）
+const loading = ref(true)
 const memberList = ref([])
 const fetchMembers = async () => {
+  loading.value = true
   try {
     memberList.value = await api.getMembers()
   } catch {
     ElMessage.error('無法取得會員資料')
-  }  
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
@@ -66,7 +70,7 @@ const handleEdit = (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateMember(dialog.form._id, dialog.form)
+      await api.updateMember(dialog.form.id, dialog.form)
       ElMessage.success('修改成功')
     } else {
       await api.addMember(dialog.form)
@@ -90,7 +94,6 @@ const handleDelete = async (id) => {
     ElMessage.error('刪除失敗')
   }
 }
-
 // #endregion
 
 // 動態寬度
@@ -135,7 +138,7 @@ const handlePageChange = (page) => {
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入用戶名稱" />
   </header>
   <!-- 會員表格 table -->
-  <el-card class="mb-4">
+  <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedData">
       <el-table-column
         v-for="item in tableLabel"
@@ -147,7 +150,7 @@ const handlePageChange = (page) => {
       <el-table-column label="操作">
         <template #default="{ row }">
           <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
-          <el-button type="danger" @click="handleDelete(row._id)">刪除</el-button>
+          <el-button type="danger" @click="handleDelete(row.id)">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>

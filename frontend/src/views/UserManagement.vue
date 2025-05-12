@@ -6,12 +6,16 @@ import api from '@/api';
 
 const userId = useUserStore().id
 
+const loading = ref(true)
 const userList = ref([])
 const fetchUsers = async () => {
+  loading.value = true
   try {
     userList.value = await api.getUsers()
   } catch {
     ElMessage.error('獲取用戶失敗')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -23,7 +27,8 @@ const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除用戶嗎？')
     await api.deleteUser(id)
-    fetchUsers()
+    await fetchUsers()
+    ElMessage.success('刪除用戶成功')
   } catch {
     ElMessage.error('刪除用戶失敗')
   }
@@ -39,7 +44,7 @@ const changeRole = async (id, role) => {
 </script>
 
 <template>
-  <el-card>
+  <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="userList">
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性別">

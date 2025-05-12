@@ -21,12 +21,16 @@ const costCategories = [
   '其他成本'
 ]
 
+const loadingCost = ref(true)
 const costList = ref([])
 const fetchCost = async () => {
+  loadingCost.value = true
   try {
     costList.value = await api.getCost()
   } catch {
     ElMessage.error('獲取成本失敗')
+  } finally {
+    loadingCost.value = false
   }
 }
 
@@ -63,12 +67,16 @@ const handleDeleteCost = async (id) => {
 // #endregion
 
 // #region 營業額 Revenue
+const loadingRevenue = ref(true)
 const revenueList = ref([])
 const fetchRevenue = async () => {
+  loadingRevenue.value = true
   try {
     revenueList.value = await api.getRevenue()
   } catch {
     ElMessage.error('獲取營業額失敗')
+  } finally {
+    loadingRevenue.value = false
   }
 }
 
@@ -92,6 +100,7 @@ const handleDeleteRevenue = async (id) => {
     await ElMessageBox.confirm('確定要刪除嗎？')
     await api.deleteRevenue(id)
     await fetchRevenue()
+    ElMessage.success('刪除成功')
   } catch {
     ElMessage.error('刪除營業額失敗')
   }
@@ -162,10 +171,11 @@ const cardData = [
     </el-card>
   </div>
 
-  <!-- 成本圓餅圖、營業額折線圖 -->
-  <el-row :gutter="20" class="mb-4">
-    <el-col :span="12">
-      <el-card>
+  <el-row :gutter="20">
+    <!-- 左側 成本圓餅圖 + 成本表格 -->
+    <el-col :span="12" v-loading="loadingCost" element-loading-text="載入中，請稍候...">
+      <!-- 成本圓餅圖 -->
+      <el-card class="mb-4">
         <h3>成本占比圖</h3>
         <v-chart
           :option="{
@@ -184,20 +194,6 @@ const cardData = [
           style="height: 400px"
         />
       </el-card>
-    </el-col>
-
-    <el-col :span="12">
-      <el-card>
-        <h3>營業額折線圖</h3>
-        <v-chart :option="revenueLineChartData" autoresize style="height: 400px" />
-      </el-card>
-    </el-col>
-  </el-row>
-
-  <!-- 新增成本、營業額 表格 -->
-  <el-row :gutter="20" class="mb-4">
-    <el-col :span="12">
-      <!-- 成本資料 -->
       <el-card>
         <h3 class="mb-4">成本資料</h3>
         <!-- 新增成本 form -->
@@ -229,14 +225,19 @@ const cardData = [
           <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
           <el-table-column label="操作">
               <template #default="{ row }">
-                <el-button @click="handleDeleteCost(row.id)" type="danger">刪除</el-button>
+                <el-button @click="handleDeleteCost(row._id)" type="danger">刪除</el-button>
               </template>
           </el-table-column>
         </el-table>
       </el-card>
     </el-col>
-    <!-- 營業額資料 -->
-    <el-col :span="12">
+
+    <!-- 右側 營業額折線圖 + 營業額表格-->
+    <el-col :span="12" v-loading="loadingRevenue" element-loading-text="載入中，請稍候...">
+      <el-card class="mb-4">
+        <h3>營業額折線圖</h3>
+        <v-chart :option="revenueLineChartData" autoresize style="height: 400px" />
+      </el-card>
       <el-card>
         <h3 class="mb-4">營業額資料</h3>
         <!-- 新增營業額 form -->

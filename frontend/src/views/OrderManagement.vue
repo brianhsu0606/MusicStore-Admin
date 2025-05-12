@@ -5,12 +5,16 @@ import api from '@/api'
 
 // #region CRUD
 // 讀取訂單（ Read）
+const loading = ref(true)
 const orderList = ref([])
 const fetchOrders = async () => {
+  loading.value = true
   try {
     orderList.value = await api.getOrders()
   } catch {
     ElMessage.error('獲取訂單失敗')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -65,7 +69,7 @@ const changeStatus = async (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateOrder(dialog.form, dialog.form._id)
+      await api.updateOrder(dialog.form, dialog.form.id)
       ElMessage.success('編輯成功')
     } else {
       await api.addOrder(dialog.form)
@@ -139,7 +143,7 @@ const handlePageChange = (page) => {
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號"></el-input>
   </header>
   <!-- 訂單列表 table -->
-  <el-card class="mb-4">
+  <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedOrderList" style="width: 100%">
       <el-table-column prop="orderNumber" label="訂單編號" />
       <el-table-column prop="createdAt" label="下單日期" width="150" />
@@ -160,7 +164,7 @@ const handlePageChange = (page) => {
       <el-table-column label="操作">
         <template #default="{ row }">
           <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
-          <el-button @click="handleDelete(row._id)" type="danger">刪除</el-button>
+          <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>

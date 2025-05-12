@@ -1,13 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/images', express.static(path.join(__dirname, 'images')))
 
 const PORT = 3000;
 app.listen(PORT, () => {
@@ -17,11 +13,15 @@ app.listen(PORT, () => {
 const mongoose = require('mongoose');
 
 const Member = require('./models/memberModel');
-const defaultMembers = require('./data/defaultMembers');
-const Order = require('./models/orderModel');
-const defaultOrders = require('./data/defaultOrders');
 const Product = require('./models/productModel');
+const Order = require('./models/orderModel');
+const Cost = require('./models/costModel');
+const Revenue = require('./models/revenueModel');
+const defaultMembers = require('./data/defaultMembers');
 const defaultProducts = require('./data/defaultProducts');
+const defaultOrders = require('./data/defaultOrders');
+const defaultCost = require('./data/defaultCost');
+const defaultRevenue = require('./data/defaultRevenue');
 
 
 mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mongodb.net/myproject?retryWrites=true&w=majority&appName=Cluster0', {})
@@ -31,13 +31,17 @@ mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mong
     try {
       // 測試用，重啟伺服器時清空資料
       await Member.deleteMany({});
-      await Order.deleteMany({});
       await Product.deleteMany({});
+      await Order.deleteMany({});
+      await Cost.deleteMany({});
+      await Revenue.deleteMany({});
       console.log('舊有資料已清除');
 
       await Member.insertMany(defaultMembers);
-      await Order.insertMany(defaultOrders);
       await Product.insertMany(defaultProducts);
+      await Order.insertMany(defaultOrders);
+      await Cost.insertMany(defaultCost);
+      await Revenue.insertMany(defaultRevenue);
       console.log('預設資料已成功插入');
 
     } catch (err) {

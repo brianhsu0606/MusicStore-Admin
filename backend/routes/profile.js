@@ -1,66 +1,55 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const { authenticateToken } = require('../middleware/auth');
+const User = require('../models/userModel');
 
-const fs = require('fs')
-const path = require('path')
+router.get('/api/profile', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
 
-const { authenticateToken } = require('../middleware/auth')
-
-const USERS_FILE = path.join(__dirname, '../data/users.json');
-const loadUsers = () => {
-  if (fs.existsSync(USERS_FILE)) {
-    return JSON.parse(fs.readFileSync(USERS_FILE, 'utf8'));
-  }
-  return [];
-};
-
-// #region profile.js
-router.get('/api/profile', authenticateToken, (req, res) => {
-
-  const users = loadUsers();
-
-  const user = users.find(u => u.id === req.user.id); // 用 JWT 中的 id 找用戶
-
-  if (!user) {
-    return res.status(404).json({ code: 404, message: '用戶不存在' });
-  }
-
-  return res.json({
-    code: 200,
-    message: '取得用戶資訊成功',
-    result: {
-      id: user.id,
-      ...user.profile
+    if (!user) {
+      return res.status(404).json({ code: 404, message: '用戶不存在' });
     }
-  });
-});
 
-router.put('/api/profile', authenticateToken, (req, res) => {
-
-  const users = loadUsers();
-
-  const userIndex = users.findIndex(u => u.id === req.user.id); // 用 JWT 中的 id 找用戶
-
-
-  if (userIndex === -1) {
-    return res.status(404).json({ code: 404, message: '用戶不存在' });
-
+    res.json({
+      code: 200,
+      message: '取得用戶資訊成功',
+      result: {
+        id: user.id,
+        ...user.profile
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: '伺服器錯誤' });
   }
-
-  // 更新 profile 欄位
-  const updatedProfile = req.body;
-  users[userIndex].profile = {
-    ...users[userIndex].profile,
-    ...updatedProfile
-  };
-
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
-
-  return res.json({
-    code: 200,
-    message: '更新成功',
-    result: null
-  });
 });
-// #endregion
+
+// 更新個人資料
+router.put('/api/profile', authenticateToken, async (req, res) => {
+  try {
+    const updatedProfile = req.body;
+
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ code: 404, message: '用戶不存在' });
+    }
+
+    // 合併更新資料
+    user.profile = {
+      ...user.profile,
+      ...updatedProfile
+    };
+
+    await user.save();
+
+    res.json({
+      code: 200,
+      message: '更新成功',
+      result: null
+    });
+  } catch (error) {
+    res.status(500).json({ code: 500, message: '伺服器錯誤' });
+  }
+});
+
 module.exports = router;

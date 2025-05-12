@@ -1,50 +1,62 @@
 const express = require('express')
 const router = express.Router();
-const { v4: uuidv4 } = require('uuid')
 const { authenticateToken } = require('../middleware/auth')
+const Cost = require('../models/costModel')
 
-// #region cost.js
-let costList = [
-  { id: uuidv4(), name: '店面租金', category: '租金/水電', price: 120000 },
-  { id: uuidv4(), name: '店面電費', category: '租金/水電', price: 3243 },
-  { id: uuidv4(), name: '店面水費', category: '租金/水電', price: 1086 },
-  { id: uuidv4(), name: '職員薪水', category: '人事成本', price: 74000 },
-  { id: uuidv4(), name: 'Taylor進貨', category: '進貨成本', price: 164320 },
-  { id: uuidv4(), name: '職員勞健保', category: '人事成本', price: 22540 },
-  { id: uuidv4(), name: 'Eastman進貨', category: '進貨成本', price: 212000 },
-  { id: uuidv4(), name: '弦進貨', category: '進貨成本', price: 27500 },
-  { id: uuidv4(), name: '維修冷氣', category: '其他成本', price: 8000 },
-]
-
-router.get('/api/costs', authenticateToken, (req, res) => {
-  res.json({
-    code: 200,
-    message: '獲取成本成功',
-    result: costList
-  })
+// 讀取成本 Read
+router.get('/api/costs', authenticateToken, async (req, res) => {
+  try {
+    const costList = await Cost.find()
+    res.json({
+      code: 200,
+      message: '獲取成本成功',
+      result: costList
+    })
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: '伺服器錯誤',
+      result: null
+    })
+  }
 })
 
-router.post('/api/costs', authenticateToken, (req, res) => {
-  const newCost = req.body
-  newCost.id = uuidv4()
-  costList.push(newCost)
-
-  res.json({
-    code: 200,
-    message: '新增成本成功',
-    result: null
-  })
+// 新增成本 Create
+router.post('/api/costs', authenticateToken, async (req, res) => {
+  try {
+    const newCost = new Cost(req.body)
+    await newCost.save()
+    res.json({
+      code: 200,
+      message: '新增成本成功',
+      result: null
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: '伺服器錯誤',
+      result: null
+    })
+  }
 })
 
-router.delete('/api/costs/:id', authenticateToken, (req, res) => {
-  const { id } = req.params
+// 刪除成本 Delete
+router.delete('/api/costs/:id', authenticateToken, async (req, res) => {
+  try {
+    await Cost.findByIdAndDelete(req.params.id)
 
-  costList = costList.filter(item => item.id !== id)
-  res.json({
-    code: 200,
-    message: '刪除成本成功',
-    result: null
-  })
+    res.json({
+      code: 200,
+      message: '刪除成本成功',
+      result: deletedCost
+    });
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: '伺服器錯誤',
+      result: null
+    });
+  }
 })
-// #endregion
+
 module.exports = router;

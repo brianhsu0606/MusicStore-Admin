@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const toJSON = require('../utils/toJSON')
 
 const orderSchema = new mongoose.Schema({
   orderNumber: { type: String, required: true },
@@ -7,6 +8,6 @@ const orderSchema = new mongoose.Schema({
   items: { type: String, required: true },
   status: { type: String, required: true },
 });
-const Order = mongoose.model('Order', orderSchema);
+toJSON(orderSchema)
 
-module.exports = Order;
+module.exports = mongoose.model('Order', orderSchema)
