@@ -75,6 +75,8 @@ const handleRegister = async () => {
     ElMessage.success('註冊成功')
     isRegister.value = false
   } catch (error) {
+    console.error('註冊失敗:', error.response?.data || error);
+
     ElMessage.error('註冊失敗')
   }
 }
@@ -92,6 +94,8 @@ const handleLogin = async () => {
     ElMessage.success('登入成功')
     router.push('/home')
   } catch (error) {
+    console.log(error);
+    console.error('登入失敗:', error.response?.data || error);
     ElMessage.error('登入失敗')
   }
 }

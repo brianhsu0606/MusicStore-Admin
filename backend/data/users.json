@@ -1,0 +1,41 @@
+[
+  {
+    "id": "fe927b74-62af-47cd-a0a3-3d55ad680d12",
+    "username": "test2",
+    "password": "$2b$10$TULkrrTYPH9t89MaNMuOduHpqYEoKZ49ExqDfCqEuUby1j9H4qnrS",
+    "profile": {
+      "role": "admin",
+      "name": "test2",
+      "gender": "",
+      "birth": "",
+      "email": "",
+      "avatar": "avatar1.jpeg"
+    }
+  },
+  {
+    "id": "2bc6d493-5982-4846-95de-f39089dde09b",
+    "username": "test3",
+    "password": "$2b$10$2g64jWqnkdsmrtB1zu/pbugsddYA/.aZCMY/W.FFRqzG1BXj18wE6",
+    "profile": {
+      "role": "admin",
+      "name": "test3",
+      "gender": "",
+      "birth": "",
+      "email": "",
+      "avatar": "avatar1.jpeg"
+    }
+  },
+  {
+    "id": "c290efad-5d62-4eb5-a33e-b2999e276875",
+    "username": "admin",
+    "password": "$2b$10$5NHZ/bsN32TjBL4Vee2wxefuWQT4nr.brfk2JR96t18CNxuEXldge",
+    "profile": {
+      "role": "admin",
+      "name": "Admin Test",
+      "gender": "male",
+      "birth": "2000 / 06 / 06",
+      "email": "test@gmail.com",
+      "avatar": "avatar1.jpeg"
+    }
+  }
+]
