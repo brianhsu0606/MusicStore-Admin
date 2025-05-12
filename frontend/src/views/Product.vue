@@ -58,7 +58,7 @@ const handleEdit = (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateProduct(dialog.form, dialog.form.id)
+      await api.updateProduct(dialog.form, dialog.form._id)
       ElMessage.success('修改成功')
     } else {
       await api.addProduct(dialog.form)
@@ -84,25 +84,8 @@ const handleDelete = async (id) => {
 }
 // #endregion CRUD
 
-
-
 const formatPrice = (row) => {
   return 'NT$ ' + Number(row.price).toLocaleString()
-}
-
-const handleUploadSuccess = (res) => {
-  dialog.form.imageUrl = res.imageUrl
-  ElMessage.success('圖片上傳成功')
-}
-
-const beforeUpload = (file) => {
-  const isImage = file.type.startsWith('image/')
-  const isLt2M = file.size / 1024 / 1024 < 2
-
-  if (!isImage) ElMessage.error('請上傳圖片檔')
-  if (!isLt2M) ElMessage.error('圖片大小不能超過 2MB')
-
-  return isImage && isLt2M
 }
 
 // 搜尋功能
@@ -121,7 +104,7 @@ const filteredProducts = computed(() => {
 
 // 分頁功能 Pagination
 const currentPage = ref(1)
-const pageSize = ref(5)
+const pageSize = ref(8)
 const pagedProducts = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
@@ -154,19 +137,14 @@ const handlePageChange = (page) => {
   </el-tabs>
   <!-- 商品表格 table -->
   <el-table :data="pagedProducts" style="width: 100%" class="mb-4">
-    <el-table-column label="圖片" width="100">
-      <template #default="{ row }">
-        <el-image :src="`http://localhost:3000${row.imageUrl}`" fit="cover" style="width: 60px; height: 60px;" class="product-preview"/>
-      </template>
-    </el-table-column>
     <el-table-column prop="name" label="商品名稱" width="300"/>
+    <el-table-column prop="category" label="分類" />
     <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
     <el-table-column prop="quantity" label="數量" />
-    <el-table-column prop="category" label="分類" />
     <el-table-column label="操作">
       <template #default="{ row }">
         <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
-        <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
+        <el-button @click="handleDelete(row._id)" type="danger">刪除</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -182,29 +160,13 @@ const handlePageChange = (page) => {
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
     <el-form :model="dialog.form">
-      <el-form-item label="商品圖片">
-        <div class="flex-img">          
-          <div v-if="dialog.form.imageUrl" style="margin-top: 10px;">
-            <el-image
-              :src="`http://localhost:3000${dialog.form.imageUrl}`"
-              style="width: 100px; height: 100px;"
-              fit="cover"
-              class="dialog-img"
-            />
-          </div>
-          <el-upload
-            class="upload-demo"
-            action="http://localhost:3000/upload" 
-            :show-file-list="false"
-            :on-success="handleUploadSuccess"
-            :before-upload="beforeUpload"
-          >
-            <el-button type="primary">選擇圖片</el-button>
-          </el-upload>
-        </div>
-      </el-form-item>
       <el-form-item label="商品名稱">
         <el-input v-model="dialog.form.name" />
+      </el-form-item>
+      <el-form-item label="分類">
+        <el-select v-model="dialog.form.category" placeholder="請選擇分類">
+          <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
+        </el-select>
       </el-form-item>
       <el-form-item label="價格">
         <el-input v-model.number="dialog.form.price" type="number" />
@@ -212,11 +174,7 @@ const handlePageChange = (page) => {
       <el-form-item label="數量">
         <el-input v-model.number="dialog.form.quantity" type="number" />
       </el-form-item>
-      <el-form-item label="分類">
-        <el-select v-model="dialog.form.category" placeholder="請選擇分類">
-          <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
-        </el-select>
-      </el-form-item>
+      
     </el-form>
 
     <template #footer>

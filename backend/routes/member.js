@@ -25,8 +25,8 @@ router.get('/api/members', authenticateToken, async (req, res) => {
 // 新增會員 Create
 router.post('/api/members', authenticateToken, async (req, res) => {
   try {
-    const newMember = new Member(req.body);
-    await newMember.save();
+    const newMember = new Member(req.body)
+    await newMember.save()
 
     res.json({
       code: 200,
@@ -56,7 +56,7 @@ router.put('/api/members/:_id', authenticateToken, async (req, res) => {
     if (updatedMember) {
       res.json({
         code: 200,
-        message: '修改成功',
+        message: '更新會員成功',
         result: updatedMember
       });
     } else {
