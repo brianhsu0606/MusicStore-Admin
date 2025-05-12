@@ -89,7 +89,7 @@ router.post('/api/login', async (req, res) => {
       role: user.profile.role
     },
     JWT_SECRET,
-    { expiresIn: '2h' } // token 有效時間為 2 小時
+    { expiresIn: '30d' }
   );
 
   return res.json({

@@ -15,7 +15,7 @@ const dialog = reactive({
   isEdit: false,
   title: '新增用戶',
   form: {
-    id: null,
+    _id: null,
     name: '',
     age: '',
     gender: '',
@@ -45,7 +45,7 @@ const handleAdd = () => {
   dialog.isEdit = false
   dialog.title = '新增用戶'
   dialog.form = {
-    id: null,
+    _id: null,
     name: '',
     age: '',
     gender: '',
@@ -66,15 +66,15 @@ const handleEdit = (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateMember(dialog.form.id, dialog.form)
+      await api.updateMember(dialog.form._id, dialog.form)
       ElMessage.success('修改成功')
     } else {
       await api.addMember(dialog.form)
       ElMessage.success('新增成功')
     }
     dialog.visible = false
-    await fetchMemberList()
-  } catch {
+    await fetchMembers()
+  } catch(error) {
     ElMessage.error(dialog.isEdit ? '修改失敗' : '新增失敗')
   }
 }
@@ -84,7 +84,7 @@ const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
     await api.deleteMember(id)
-    await fetchMemberList()
+    await fetchMembers()
     ElMessage.success('刪除成功')
   } catch {
     ElMessage.error('刪除失敗')
@@ -147,7 +147,7 @@ const handlePageChange = (page) => {
       <el-table-column label="操作">
         <template #default="{ row }">
           <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
-          <el-button type="danger" @click="handleDelete(row.id)">刪除</el-button>
+          <el-button type="danger" @click="handleDelete(row._id)">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>

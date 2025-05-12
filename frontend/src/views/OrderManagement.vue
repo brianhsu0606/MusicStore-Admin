@@ -65,7 +65,7 @@ const changeStatus = async (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateOrder(dialog.form, dialog.form.id)
+      await api.updateOrder(dialog.form, dialog.form._id)
       ElMessage.success('編輯成功')
     } else {
       await api.addOrder(dialog.form)
@@ -160,7 +160,7 @@ const handlePageChange = (page) => {
       <el-table-column label="操作">
         <template #default="{ row }">
           <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
-          <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
+          <el-button @click="handleDelete(row._id)" type="danger">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>
