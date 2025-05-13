@@ -3,16 +3,6 @@ import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '@/api'
 
-const memberCount = ref(0)
-const getMemberCount = async () => {
-  try {
-    const memberList = await api.getMembers()
-    memberCount.value = memberList.length
-  } catch {
-    ElMessage.error('獲取會員數量失敗')
-  }
-}
-
 // #region 成本 cost
 const costCategories = [
   '租金/水電',
@@ -121,7 +111,6 @@ const formatPrice = (row) => {
 onMounted(() => {
   fetchCost()
   fetchRevenue()
-  getMemberCount()
 })
 
 // 成本圓餅圖資料
@@ -158,7 +147,6 @@ const cardData = [
   { icon: 'Money', bg: 'bg-green-400', title: '本月營業額：', value: () => 'NT ' + totalRevenue.value.toLocaleString() },
   { icon: 'GoodsFilled', bg: 'bg-blue-400', title: '本月成本：', value: () => 'NT ' + totalCost.value.toLocaleString() },
   { icon: 'SuccessFilled', bg: 'bg-red-500', title: '本月營淨利潤：', value: () => 'NT ' + (totalRevenue.value - totalCost.value).toLocaleString() },
-  { icon: 'User', bg: 'bg-gray-400', title: '會員人數：', value: () => memberCount.value + '人' },
 ]
 </script>
 
@@ -227,7 +215,7 @@ const cardData = [
           </el-form-item>
         </el-form>
         <!-- 成本表格 table -->
-        <el-table :data="costList">
+        <el-table :data="costList" stripe>
           <el-table-column prop="name" label="項目" />
           <el-table-column prop="category" label="分類" />
           <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
@@ -261,7 +249,7 @@ const cardData = [
           </el-form-item>
         </el-form>
         <!-- 營業額表格 table -->
-        <el-table :data="revenueList">
+        <el-table :data="revenueList" stripe>
           <el-table-column prop="date" label="日期" />
           <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
           <el-table-column label="操作">

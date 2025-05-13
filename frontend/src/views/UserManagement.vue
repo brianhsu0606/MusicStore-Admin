@@ -50,7 +50,7 @@ const changeRole = async (id, role) => {
 
 <template>
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="userList">
+    <el-table :data="userList" stripe>
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性別">
         <template #default="{ row }">

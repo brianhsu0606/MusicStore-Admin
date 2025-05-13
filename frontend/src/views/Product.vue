@@ -3,7 +3,7 @@ import { ref, computed, onMounted, reactive, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '@/api'
 
-const categories = ['全部商品', '木吉他', '電吉他', '音箱', '配件']
+const categories = ['全部商品', '木吉他', '電吉他', '音箱', '配件', '吉他弦']
 const activeCategory = ref('全部商品')
 const dialog = reactive({
   isEdit: false,
@@ -142,7 +142,7 @@ const handlePageChange = (page) => {
       :name="item"
     />
     <!-- 商品表格 table -->    
-    <el-table :data="pagedProducts" style="width: 100%">
+    <el-table :data="pagedProducts" style="width: 100%" stripe>
       <el-table-column prop="name" label="商品名稱" width="300"/>
       <el-table-column prop="category" label="分類" />
       <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>

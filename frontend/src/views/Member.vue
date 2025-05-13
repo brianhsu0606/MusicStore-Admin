@@ -146,7 +146,7 @@ const handlePageChange = (page) => {
   </header>
   <!-- 會員表格 table -->
   <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedData">
+    <el-table :data="pagedData" stripe>
       <el-table-column prop="name" label="姓名" />
       <el-table-column label="年齡">
         <template #default="{ row }">{{ calcAge(row.birth) }}</template>

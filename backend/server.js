@@ -65,39 +65,6 @@ app.use(require('./routes/user'));
 app.use(require('./routes/revenue'));
 
 // #region home.js
-const tableData = [
-  { name: 'Veelah', monthlyStockIn: 20, monthlySales: 13 },
-  { name: 'Eastman', monthlyStockIn: 60, monthlySales: 11 },
-  { name: 'Maton', monthlyStockIn: 10, monthlySales: 4 },
-  { name: 'Lakewood', monthlyStockIn: 4, monthlySales: 2 },
-  { name: 'Fender', monthlyStockIn: 6, monthlySales: 3 },
-  { name: 'PRS', monthlyStockIn: 10, monthlySales: 5 },
-  { name: 'G7th 移調夾', monthlyStockIn: 30, monthlySales: 11 },
-];
-app.get('/api/dashboard/table-data', (req, res) => {
-  res.json({
-    code: 200,
-    message: '表格資料獲得成功',
-    result: tableData
-  });
-});
-
-const countData = [
-  { name: '店面租金', value: 100000, icon: 'GoodsFilled', color: '#5ab1ef' },
-  { name: '人事成本', value: 120000, icon: 'GoodsFilled', color: '#5ab1ef' },
-  { name: '本月其餘成本', value: 24300, icon: 'GoodsFilled', color: '#5ab1ef' },
-  { name: '本月進貨成本', value: 425000, icon: 'GoodsFilled', color: '#5ab1ef' },
-  { name: '本月銷售總額', value: 1018850, icon: 'Money', color: 'rgb(127, 225, 122)' },
-  { name: '本月淨利潤', value: 449550, icon: 'SuccessFilled', color: 'rgb(239, 68, 68)' },
-];
-app.get('/api/dashboard/count-data', (req, res) => {
-  res.json({
-    code: 200,
-    message: '算數資料獲得成功',
-    result: countData
-  });
-});
-
 const chartData = {
   salesData: {
     date: [

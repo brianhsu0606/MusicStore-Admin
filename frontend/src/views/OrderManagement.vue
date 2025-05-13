@@ -148,7 +148,7 @@ const handlePageChange = (page) => {
   </header>
   <!-- 訂單列表 table -->
   <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedOrderList" style="width: 100%">
+    <el-table :data="pagedOrderList" style="width: 100%" stripe>
       <el-table-column prop="orderNumber" label="訂單編號" />
       <el-table-column prop="createdAt" label="下單日期" width="150" />
       <el-table-column prop="member" label="會員名稱" width="140" />
