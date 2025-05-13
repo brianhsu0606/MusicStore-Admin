@@ -63,15 +63,14 @@ const submit = async () => {
   try {
     if (dialog.isEdit) {
       await api.updateProduct(dialog.form, dialog.form.id)
-      ElMessage.success('修改成功')
     } else {
       await api.addProduct(dialog.form)
-      ElMessage.success('新增成功')
     }
     dialog.visible = false
     await fetchProducts()
+    ElMessage.success(dialog.isEdit ? '編輯商品成功' : '新增商品成功')
   } catch {
-    ElMessage.error('更新失敗')
+    ElMessage.error(dialog.isEdit ? '編輯商品失敗' : '新增商品失敗')
   }
 }
 
@@ -79,9 +78,13 @@ const submit = async () => {
 const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
+  } catch (error) { 
+    return
+  }
+  try {
     await api.deleteProduct(id)
-    await ElMessage.success('刪除商品成功')
     await fetchProducts()
+    ElMessage.success('刪除商品成功')
   } catch {
     ElMessage.error('刪除商品失敗')
   }
@@ -173,10 +176,10 @@ const handlePageChange = (page) => {
         </el-select>
       </el-form-item>
       <el-form-item label="價格">
-        <el-input v-model.number="dialog.form.price" type="number" />
+        <el-input-number v-model.number="dialog.form.price" />
       </el-form-item>
       <el-form-item label="數量">
-        <el-input v-model.number="dialog.form.quantity" type="number" />
+        <el-input-number v-model.number="dialog.form.quantity" />
       </el-form-item>
     </el-form>
     <template #footer>

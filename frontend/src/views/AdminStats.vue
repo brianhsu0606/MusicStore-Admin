@@ -57,6 +57,10 @@ const handleAddCost = async () => {
 const handleDeleteCost = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
+  } catch (error) {
+    return
+  } 
+  try {
     await api.deleteCost(id)
     await fetchCost()
     ElMessage.success('刪除成本成功')
@@ -90,7 +94,6 @@ const handleAddRevenue = async () => {
   }
 }
 
-
 const totalRevenue = computed(() => {
   return revenueList.value.reduce((sum, item) => sum + item.price, 0)
 })
@@ -98,6 +101,10 @@ const totalRevenue = computed(() => {
 const handleDeleteRevenue = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
+  } catch (error) {
+    return
+  }
+  try {
     await api.deleteRevenue(id)
     await fetchRevenue()
     ElMessage.success('刪除成功')
@@ -194,6 +201,7 @@ const cardData = [
           style="height: 400px"
         />
       </el-card>
+      <!-- 成本 form + table-->
       <el-card>
         <h3 class="mb-4">成本資料</h3>
         <!-- 新增成本 form -->

@@ -3,21 +3,13 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import api from '@/api'
 
-const tableLabel = [
-  { prop: 'name', label: '姓名' },
-  { prop: 'age', label: '年齡' },
-  { prop: 'gender', label: '性別' },
-  { prop: 'birth', label: '出生日期' },
-  { prop: 'addr', label: '地址' },
-]
 const dialog = reactive({
   visible: false,
   isEdit: false,
   title: '新增用戶',
   form: {
-    _id: null,
+    id: null,
     name: '',
-    age: '',
     gender: '',
     birth: '',
     addr: '',
@@ -51,7 +43,6 @@ const handleAdd = () => {
   dialog.form = {
     _id: null,
     name: '',
-    age: '',
     gender: '',
     birth: '',
     addr: ''
@@ -63,7 +54,7 @@ const handleEdit = (row) => {
   dialog.visible = true
   dialog.isEdit = true
   dialog.title = '編輯用戶'
-  dialog.form = { ...row } // 深拷貝避免直接改資料
+  dialog.form = { ...row }
 }
 
 // 送出資料（ Create, Update ）
@@ -71,15 +62,14 @@ const submit = async () => {
   try {
     if (dialog.isEdit) {
       await api.updateMember(dialog.form.id, dialog.form)
-      ElMessage.success('修改成功')
     } else {
       await api.addMember(dialog.form)
-      ElMessage.success('新增成功')
     }
     dialog.visible = false
     await fetchMembers()
+    ElMessage.success(dialog.isEdit ? '編輯會員成功': '新增會員成功')
   } catch(error) {
-    ElMessage.error(dialog.isEdit ? '修改失敗' : '新增失敗')
+    ElMessage.error(dialog.isEdit ? '編輯會員失敗' : '新增會員失敗')
   }
 }
 
@@ -87,11 +77,15 @@ const submit = async () => {
 const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
+  } catch (error) {
+    return
+  }
+  try {
     await api.deleteMember(id)
     await fetchMembers()
-    ElMessage.success('刪除成功')
+    ElMessage.success('刪除會員成功')
   } catch {
-    ElMessage.error('刪除失敗')
+    ElMessage.error('刪除會員失敗')
   }
 }
 // #endregion
@@ -105,6 +99,19 @@ const getColumnWidth = () => {
   } else {
     return 220
   }
+}
+
+const calcAge = (birth) => {
+  const today = new Date()
+  const birthDate = new Date(birth)
+
+  let age = today.getFullYear() - birthDate.getFullYear()
+  const month = today.getMonth() - birthDate.getMonth()
+  
+  if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
+    age--
+  }
+  return age
 }
 
 // 查詢功能
@@ -140,13 +147,13 @@ const handlePageChange = (page) => {
   <!-- 會員表格 table -->
   <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedData">
-      <el-table-column
-        v-for="item in tableLabel"
-        :key="item.prop"
-        :prop="item.prop"
-        :label="item.label"
-        :width="getColumnWidth()"
-      />
+      <el-table-column prop="name" label="姓名" />
+      <el-table-column label="年齡">
+        <template #default="{ row }">{{ calcAge(row.birth) }}</template>
+      </el-table-column>
+      <el-table-column prop="gender" label="性別" />
+      <el-table-column prop="birth" label="生日" />
+      <el-table-column prop="addr" label="地址" />
       <el-table-column label="操作">
         <template #default="{ row }">
           <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
@@ -169,9 +176,6 @@ const handlePageChange = (page) => {
     <el-form :model="dialog.form" label-width="80px">
       <el-form-item label="姓名">
         <el-input v-model="dialog.form.name" />
-      </el-form-item>
-      <el-form-item label="年齡">
-        <el-input v-model="dialog.form.age" />
       </el-form-item>
       <el-form-item label="性別">
         <el-select v-model="dialog.form.gender" placeholder="請選擇">

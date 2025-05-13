@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus';
 import { useUserStore } from '@/stores/user';
 import api from '@/api';
 
-const userId = useUserStore().id
+const userStore = useUserStore()
 
 const loading = ref(true)
 const userList = ref([])
@@ -26,6 +26,10 @@ onMounted(() => {
 const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除用戶嗎？')
+  } catch (error) {
+    return
+  }
+  try {
     await api.deleteUser(id)
     await fetchUsers()
     ElMessage.success('刪除用戶成功')
@@ -37,6 +41,7 @@ const handleDelete = async (id) => {
 const changeRole = async (id, role) => {
   try {
     await api.updateUser(id, { role })
+    ElMessage.success('更新用戶身份成功')
   } catch {
     ElMessage.error('更新用戶身份失敗')
   }
@@ -56,7 +61,7 @@ const changeRole = async (id, role) => {
       <el-table-column prop="birth" label="生日" />
       <el-table-column label="身份">
         <template #default="{ row }">
-          <el-select v-model="row.role" @change="changeRole(row.id, row.role)" :disabled="row.id === userId">
+          <el-select v-model="row.role" @change="changeRole(row.id, row.role)" :disabled="row.id === userStore.id">
             <el-option label="職員" value="user"/>
             <el-option label="管理員" value="admin"/>
           </el-select>
@@ -64,7 +69,7 @@ const changeRole = async (id, role) => {
       </el-table-column>
       <el-table-column label="操作">
         <template #default="{ row }">
-          <el-button @click="handleDelete(row.id)" type="danger" :disabled="row.id === userId">刪除</el-button>
+          <el-button @click="handleDelete(row.id)" type="danger" :disabled="row.id === userStore.id">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>

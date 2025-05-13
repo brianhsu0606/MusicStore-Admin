@@ -86,10 +86,14 @@ const submit = async () => {
 const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
+  } catch (error) {
+    return
+  }
+  try {
     await api.deleteOrder(id)
     await fetchOrders()
     ElMessage.success('刪除訂單成功')
-  } catch {
+  } catch (error) {
     ElMessage.error('刪除訂單失敗')
   }
 }
