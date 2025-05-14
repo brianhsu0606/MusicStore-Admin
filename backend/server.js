@@ -63,31 +63,3 @@ app.use(require('./routes/order'));
 app.use(require('./routes/cost'));
 app.use(require('./routes/user'));
 app.use(require('./routes/revenue'));
-
-// #region home.js
-const chartData = {
-  salesData: {
-    date: [
-      '2024-10', '2024-11', '2024-12', '2025-1',
-      '2025-2', '2025-3', '2025-4', '2025-5',
-    ],
-    data: [
-      { 'Eastman': 8, 'Veelah': 18, 'Fender': 8, 'PRS': 4 },
-      { 'Eastman': 6, 'Veelah': 15, 'Fender': 10, 'PRS': 6 },
-      { 'Eastman': 11, 'Veelah': 21, 'Fender': 12, 'PRS': 8 },
-      { 'Eastman': 15, 'Veelah': 13, 'Fender': 6, 'PRS': 12 },
-      { 'Eastman': 4, 'Veelah': 12, 'Fender': 3, 'PRS': 3 },
-      { 'Eastman': 7, 'Veelah': 16, 'Fender': 2, 'PRS': 5 },
-      { 'Eastman': 6, 'Veelah': 23, 'Fender': 5, 'PRS': 2 },
-      { 'Eastman': 12, 'Veelah': 25, 'Fender': 7, 'PRS': 7 },
-    ],
-  },
-};
-app.get('/api/dashboard/chart-data', (req, res) => {
-  res.json({
-    code: 200,
-    message: '算數資料獲得成功',
-    result: chartData
-  });
-});
-// #endregion home.vue

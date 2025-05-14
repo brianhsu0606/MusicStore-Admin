@@ -123,25 +123,34 @@ const costPieChartData = computed(() => {
   return Object.entries(categoryMap).map(([name, value]) => ({ name, value }))
 })
 
+const costPieChartOption = computed(() => ({
+  title: { text: '成本佔比圖' },
+  tooltip: {},
+  legend: { top: 'bottom' },
+  series: [{
+    name: '成本項目',
+    type: 'pie',
+    radius: '50%',
+    data: costPieChartData.value
+  }]
+}))
+
 // 營業額折線圖資料
-const revenueLineChartData = computed(() => {
-  return {
-    xAxis: {
-      type: 'category',
-      data: revenueList.value.map(item => item.date)
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: revenueList.value.map(item => item.price),
-        type: 'line',
-        smooth: true
-      }
-    ]
-  }
-})
+const revenueLineChartData = computed(() => ({
+  title: { text: '營業額趨勢圖' },
+  tooltip: {},
+  xAxis: {
+    type: 'category',
+    data: revenueList.value.map(item => item.date),
+    axisLabel: { rotate: 45 }
+  },
+  yAxis: { type: 'value' },
+  series: [{    
+    name: '營業額',
+    type: 'line',
+    data: revenueList.value.map(item => item.price),
+  }]
+}))
 
 const cardData = [
   { icon: 'Money', bg: 'bg-green-400', title: '本月營業額：', value: () => 'NT ' + totalRevenue.value.toLocaleString() },
@@ -171,23 +180,7 @@ const cardData = [
     <el-col :span="12" v-loading="loadingCost" element-loading-text="載入中，請稍候...">
       <!-- 成本圓餅圖 -->
       <el-card class="mb-4">
-        <h3>成本占比圖</h3>
-        <v-chart
-          :option="{
-            tooltip: { trigger: 'item' },
-            legend: { top: 'bottom' },
-            series: [
-              {
-                name: '成本項目',
-                type: 'pie',
-                radius: '50%',
-                data: costPieChartData
-              }
-            ]
-          }"
-          autoresize
-          style="height: 400px"
-        />
+        <v-chart :option="costPieChartOption" autoresize style="height: 400px" />
       </el-card>
       <!-- 成本 form + table-->
       <el-card>
@@ -231,7 +224,6 @@ const cardData = [
     <!-- 右側 營業額折線圖 + 營業額表格-->
     <el-col :span="12" v-loading="loadingRevenue" element-loading-text="載入中，請稍候...">
       <el-card class="mb-4">
-        <h3>營業額折線圖</h3>
         <v-chart :option="revenueLineChartData" autoresize style="height: 400px" />
       </el-card>
       <el-card>

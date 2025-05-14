@@ -1,4 +1,3 @@
-import home from './home'
 import member from './member'
 import auth from './auth'
 import profile from './profile'
@@ -9,7 +8,6 @@ import cost from './cost'
 import revenue from './revenue'
 
 export default {
-  ...home,
   ...member,
   ...auth,
   ...profile,

@@ -142,7 +142,7 @@ const handlePageChange = (page) => {
   <!-- 新增、搜尋 header -->
   <header class="flex justify-between mb-4">
     <el-button type="primary" @click="handleAdd">新增用戶</el-button>
-    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入用戶名稱" />
+    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入會員名稱" />
   </header>
   <!-- 會員表格 table -->
   <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
