@@ -130,7 +130,6 @@ const cardData = [
             <p>{{ roleText }}</p>
           </div>
         </div>
-        <p class="mt-4 font-medium text-lg text-gray-500">上次登入時間：{{ userStore.loginTime }}</p>
       </el-card>
       <!-- 左側下方 表格資料 el-table -->
       <el-card v-loading="productLoading" element-loading-text="載入中，請稍候...">
@@ -174,8 +173,6 @@ const cardData = [
 // 左側
 .left-content {
   .user-content {
-    padding-bottom: 20px;
-    border-bottom: 1px solid gray;
     img {
       width: 180px;
       height: 180px;

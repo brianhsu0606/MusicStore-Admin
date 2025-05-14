@@ -9,7 +9,6 @@ export const useUserStore = defineStore('user', {
     birth: '',
     email: '',
     avatar: '',
-    loginTime: '',
   }),
   actions: {
     setUser(data) {

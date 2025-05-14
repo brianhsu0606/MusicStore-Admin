@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema({
     birth: { type: String, default: '' },
     email: { type: String, default: '' },
     avatar: { type: String, default: 'avatar1.jpeg' },
-    role: { type: String, required: true }
+    role: { type: String, required: true },
+    lastLogin: { type: String, default: '' },
   }
 });
 toJSON(userSchema)

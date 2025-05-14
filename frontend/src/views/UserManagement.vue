@@ -54,11 +54,16 @@ const changeRole = async (id, role) => {
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性別">
         <template #default="{ row }">
-          {{ row.gender === 'male' ? '男': row.gender === 'female' ? '女' : '尚未填寫' }}
+          {{ row.gender === 'male' ? '男性': '女性' }}
         </template>
       </el-table-column>
       <el-table-column prop="email" label="信箱" />
       <el-table-column prop="birth" label="生日" />
+      <el-table-column label="最後登入日期">
+        <template #default="{ row }">
+          {{ new Date(row.lastLogin).toLocaleDateString() }}
+        </template>
+      </el-table-column>
       <el-table-column label="身份">
         <template #default="{ row }">
           <el-select v-model="row.role" @change="changeRole(row.id, row.role)" :disabled="row.id === userStore.id">

@@ -77,6 +77,9 @@ router.post('/api/login', async (req, res) => {
       })
     }
 
+    user.profile.lastLogin = new Date().toISOString()
+    await user.save()
+
     const token = jwt.sign(
       {
         id: user.id,

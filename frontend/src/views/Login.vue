@@ -88,9 +88,7 @@ const handleLogin = async () => {
     localStorage.setItem('token', res.token)
 
     const profile = await api.getProfile()
-
     userStore.setUser(profile)
-    userStore.loginTime = new Date().toLocaleString()
 
     ElMessage.success('登入成功')
     router.push('/home')
