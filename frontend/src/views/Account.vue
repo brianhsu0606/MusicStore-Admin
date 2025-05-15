@@ -5,23 +5,29 @@ import { useUserStore } from '@/stores/user'
 import api from '@/api'
 const userStore = useUserStore()
 
+const formatValue = (val) => val === '-' ? '' : val
 const formData = ref({
   role: userStore.role,
-  name: userStore.name,
-  gender: userStore.gender,
-  birth: userStore.birth,
-  email: userStore.email,
+  name: formatValue(userStore.name),
+  gender: formatValue(userStore.gender),
+  birth: formatValue(userStore.birth),
+  email: formatValue(userStore.email),
   avatar: userStore.avatar
 })
-const roleLabels = {
-  admin: '管理員',
-  user: '職員'
-}
 
+const formatEmpty = (val) => val === '' ? '-' : val
 const handleUpdate = async () => {
+  const payload = {
+    ...formData.value,
+    name: formatEmpty(formData.value.name),
+    gender: formatEmpty(formData.value.gender),
+    birth: formatEmpty(formData.value.birth),
+    email: formatEmpty(formData.value.email),
+  }
+
   try {
-    await api.updateProfile(formData.value)
-    userStore.setUser(formData.value)
+    await api.updateProfile(payload)
+    userStore.setUser(payload)
     ElMessage.success('更新成功')
   } catch (err) {
     ElMessage.error('更新失敗')

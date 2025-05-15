@@ -3,16 +3,18 @@ const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const User = require('../models/userModel');
 
-// 載入用戶 Read（僅限 admin）
+// 載入用戶 Read（僅限 superAdmin、admin）
 router.get('/api/users', authenticateToken, async (req, res) => {
   try {
+    const allowedRoles = ['superadmin', 'admin']
     const currentUser = await User.findById(req.user.id)
-    if (!currentUser || currentUser.profile.role !== 'admin') {
+    if (!currentUser || !allowedRoles.includes(currentUser.profile.role)) {
       return res.status(403).json({ code: 403, msg: '無權限' });
     }
 
     const users = await User.find().select('-password')
     const userList = users.map(user => ({
+      employeeId: user.employeeId,
       id: user.id,
       username: user.username,
       ...user.profile

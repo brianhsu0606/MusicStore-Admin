@@ -19,12 +19,11 @@ const registerForm = ref({
   username: '',
   password: '',
   confirmPassword: '',
-  role: '',
 })
 const registerRules = {
   name: [
     { required: true, message: '請輸入用戶名稱', trigger: 'blur' },
-    { min: 2, max: 10, message: '用戶名稱必須為 2 - 10 個字', trigger: 'blur' },
+    { min: 3, max: 10, message: '用戶名稱必須為 3 - 10 個字', trigger: 'blur' },
   ],
   username: [
     { required: true, message: '請輸入帳號', trigger: 'blur' },
@@ -47,9 +46,6 @@ const registerRules = {
       trigger: 'blur'
     }
   ],
-  role: [
-    { required: true, message: '請選擇角色', trigger: 'blur' },
-  ]
 }
 
 const loginFormRef = ref(null)
@@ -76,7 +72,6 @@ const handleRegister = async () => {
     isRegister.value = false
   } catch (error) {
     console.error('註冊失敗:', error.response?.data || error);
-
     ElMessage.error('註冊失敗')
   }
 }
@@ -93,7 +88,6 @@ const handleLogin = async () => {
     ElMessage.success('登入成功')
     router.push('/home')
   } catch (error) {
-    console.log(error);
     console.error('登入失敗:', error.response?.data || error);
     ElMessage.error('登入失敗')
   }
@@ -101,102 +95,103 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <el-row class="container">
-    <el-col :span="12" class="left-background"></el-col>
-    <el-col :span="12" class="right-background">
-      <!-- 註冊頁面 -->
-      <el-form
-        ref="registerFormRef"
-        :model="registerForm"
-        :rules="registerRules"
-        class="register-container"
-        v-if="isRegister"
-      >
-        <h3>註冊</h3>
-        <el-form-item prop="name">
-          <el-input v-model="registerForm.name" prefix-icon="View" placeholder="請輸入用戶名稱"></el-input>
-        </el-form-item>
-        <el-form-item prop="username">
-          <el-input v-model="registerForm.username" prefix-icon="User" placeholder="請輸入帳號"></el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-            <el-input v-model="registerForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼"></el-input>
-        </el-form-item>
-        <el-form-item prop="confirmPassword">
-          <el-input v-model="registerForm.confirmPassword" prefix-icon="Lock" type="password" placeholder="確認密碼"></el-input>
-        </el-form-item>
-        <el-form-item prop="role">
-          <el-select v-model="registerForm.role" placeholder="請選擇身份">
-            <el-option label="職員" value="user" />
-            <el-option label="管理員" value="admin" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleRegister">註冊</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-link @click="handleChange">返回登入</el-link>
-        </el-form-item>
-      </el-form>
-      <!-- 登入頁面 -->
-      <el-form
-        ref="loginFormRef"
-        :model="loginForm"
-        :rules="loginRules"
-        class="register-container"
-        v-else
-      >
-        <h3>登入</h3>
-        <el-form-item prop="username">
-          <el-input v-model="loginForm.username" prefix-icon="User" placeholder="請輸入帳號"></el-input>
-        </el-form-item>
-        <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleLogin">登入</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-link @click="handleChange">返回註冊</el-link>
-        </el-form-item>
-      </el-form>
-    </el-col>
-  </el-row>
+  <div class="background flex justify-center items-center">
+
+    <div class="auth-wrapper">
+
+      <div class="flex gap-4 justify-center mb-4">
+        <el-icon size="30"><Headset /></el-icon>
+        <h2>樂器行後台系統</h2>
+      </div>
+
+      <div>
+        <!-- 註冊表單 -->
+        <el-form
+          ref="registerFormRef"
+          :model="registerForm"
+          :rules="registerRules"
+          v-if="isRegister"
+        >
+          <h3 class="title">註冊</h3>
+          <el-form-item prop="name">
+            <el-input v-model="registerForm.name" prefix-icon="User" placeholder="請輸入用戶名稱" />
+          </el-form-item>
+          <el-form-item prop="username">
+            <el-input v-model="registerForm.username" prefix-icon="User" placeholder="請輸入帳號" />
+          </el-form-item>
+          <el-form-item prop="password">
+              <el-input v-model="registerForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼" />
+          </el-form-item>
+          <el-form-item prop="confirmPassword">
+            <el-input v-model="registerForm.confirmPassword" prefix-icon="Lock" type="password" placeholder="確認密碼" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="handleRegister">註冊</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-link @click="handleChange">返回登入</el-link>
+          </el-form-item>
+        </el-form>
+        
+        <!-- 登入表單 -->
+        <el-form
+          ref="loginFormRef"
+          :model="loginForm"
+          :rules="loginRules"
+          v-else
+        >
+          <h3 class="title">登入</h3>
+          <el-form-item prop="username">
+            <el-input v-model="loginForm.username" prefix-icon="User" placeholder="請輸入帳號" />
+          </el-form-item>
+          <el-form-item prop="password">
+            <el-input v-model="loginForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼" />
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="handleLogin">登入</el-button>
+          </el-form-item>
+          <el-form-item>
+            <el-link @click="handleChange">返回註冊</el-link>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped lang="less">
-.container {
+.background {
   height: 100vh;
+  background: linear-gradient(to right, #B2DFDB, #A7F3D0);
 }
 
-.left-background {
-  background: url('/images/生日兔.jpeg') center;
-  background-size: cover;
-}
+.auth-wrapper {
+  padding: 40px 30px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 0.5px solid black;
+  box-shadow: 0 0 30px black;
+  width: 100%;
+  max-width: 400px;
 
-.right-background {
-  background-color: #A7F3D0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  .title {
+    display: inline-block;
+    background-color: #A7F3D0;
+    border: 1px solid black;
+    border-radius: 15px;
+    box-shadow: 1px 1px 5px gray;
+    padding: 6px 10px;
+    margin-bottom: 16px;
+  }
+  
+  .el-input {
+    height: 36px;
+    font-size: 16px;
+  }
 
-  .register-container {
-    width: 360px;
-    height: 430px;
-    padding: 30px 40px;
-    background-color: #E0F2F1;
-    border: 0.5px solid gray;
-    border-radius: 30px;
-    box-shadow: 3px 3px 3px gray;
-    h3 {
-      text-align: center;
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-    .el-button {
-      width: 100%;
-    }
+  .el-button {
+    width: 100%;
   }
 }
-
 </style>

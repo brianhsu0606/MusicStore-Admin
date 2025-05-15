@@ -70,7 +70,8 @@ router.beforeEach((to, from, next) => {
     return next('/home')
   }
 
-  if (to.meta.requiresAdmin && role !== 'admin') {
+  const allowedRoles = ['admin', 'superadmin']
+  if (to.meta.requiresAdmin && !allowedRoles.includes(role)) {
     ElMessage.warning('您沒有權限進入此頁面')
     return next('/home')
   }

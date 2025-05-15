@@ -1,10 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
 import api from '@/api'
-const userStore = useUserStore()
 
 const orderLoading = ref(true)
 const orderList = ref([])
@@ -22,20 +20,22 @@ const fetchOrderCount = async () => {
 }
 
 // 計算近30天的訂單數量
-const last30Orders = computed(() => {
+const selectedDays = ref(30)
+const filteredOrders = computed(() => {
   const today = dayjs()
-  return orderList.value.filter(order => {
-    return dayjs(order.createdAt).isAfter(today.subtract(30, 'day'))
-  })
+  return orderList.value.filter(order =>
+    dayjs(order.createdAt).isAfter(today.subtract(selectedDays.value, 'day'))
+  )
 })
+
 const ordersPerDay = computed(() => {
   const result = {}
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < selectedDays.value; i++) {
     const date = dayjs().subtract(i, 'day').format('YYYY-MM-DD')
     result[date] = 0
   }
 
-  last30Orders.value.forEach(order => {
+  filteredOrders.value.forEach(order => {
     const date = dayjs(order.createdAt).format('YYYY-MM-DD')
     if (result[date] !== undefined) result[date]++
   })
@@ -46,9 +46,9 @@ const ordersPerDay = computed(() => {
   }
 })
 
+
 // 長條圖 echart
 const chartOption = computed(() => ({
-  title: { text: '近 30 天訂單數量' },
   tooltip: {},
   xAxis: {
     type: 'category',
@@ -105,12 +105,6 @@ onMounted(() => {
   fetchProductStock()
 })
 
-const roleMap = {
-  admin: '管理員',
-  user: '職員'
-}
-const roleText = computed(() => roleMap[userStore.role] || '未知角色')
-
 const cardData = [
   { icon: 'User', bg: 'bg-green-400', title: '會員人數：', value: () => memberCount.value + ' 人' },
   { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', value: () => orderCount.value },
@@ -119,19 +113,23 @@ const cardData = [
 
 <template>
   <el-row :gutter="20">
-    <!-- 左側 -->
+    <!-- 左邊 -->
     <el-col :span="10" class="left-content">
-      <!-- 左側上方 登入資訊 el-card -->
-      <el-card class="mb-4">
-        <div class="user-content flex items-center">
-          <img :src="`/images/avatars/${userStore.avatar}`">
-          <div class="user-info">
-            <h3>{{ userStore.name }}</h3>
-            <p>{{ roleText }}</p>
+      <!-- 左邊上方 基本資料卡 el-card -->
+      <div class="flex gap-4 mb-4">
+        <el-card v-for="(item, index) in cardData" :key="index" class="flex-1">
+          <div class="flex items-center gap-4">
+            <el-icon :size="50" :class="`${item.bg} rounded-lg p-1`">
+              <component :is="item.icon" />
+            </el-icon>
+            <div class="card-info">
+              <h3>{{ item.title }}</h3>
+              <p class="text-xl text-gray-500 font-medium">{{ item.value() }}</p>
+            </div>
           </div>
-        </div>
-      </el-card>
-      <!-- 左側下方 表格資料 el-table -->
+        </el-card>
+      </div>
+      <!-- 左邊下方 庫存表格 el-table -->
       <el-card v-loading="productLoading" element-loading-text="載入中，請稍候...">
         <el-table :data="productStock" stripe>
           <el-table-column prop="category" label="分類" />
@@ -145,24 +143,18 @@ const cardData = [
         </el-table>
       </el-card>
     </el-col>
-    <!-- 右側 -->
+    <!-- 右邊 -->
     <el-col :span="14" class="right-content">
-      <!-- 右邊上方 基本資料區 el-card -->
-      <div class="flex gap-4 mb-4">
-        <el-card v-for="(item, index) in cardData" :key="index">
-          <div class="flex items-center gap-4">
-            <el-icon :size="50" :class="`${item.bg} rounded-lg p-1`">
-              <component :is="item.icon" />
-            </el-icon>
-            <div class="card-info">
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.value() }}</p>
-            </div>
-          </div>
-        </el-card>
-      </div>
-      <!-- 右側中間 訂單分析長條圖 v-chart -->
+      <!-- 右邊 訂單分析長條圖 v-chart -->
       <el-card v-loading="orderLoading" element-loading-text="載入中，請稍候...">
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-medium">最近 {{ selectedDays }} 天的訂單數量</h3>
+          <el-select v-model="selectedDays" size="large" style="width: 150px">
+            <el-option :label="'最近 7 天'" :value="7" />
+            <el-option :label="'最近 14 天'" :value="14" />
+            <el-option :label="'最近 30 天'" :value="30" />
+          </el-select>
+        </div>
         <v-chart :option="chartOption" autoresize style="height: 400px" />
       </el-card>
     </el-col>
@@ -170,48 +162,6 @@ const cardData = [
 </template>
 
 <style scoped lang="less">
-// 左側
-.left-content {
-  .user-content {
-    img {
-      width: 180px;
-      height: 180px;
-      border-radius: 30px;
-      margin-right: 30px;
-      border: 1px solid gray;
-      box-shadow: 1px 1px 3px gray;
-    }
-    .user-info {
-      h3 {
-        font-size: 30px;
-        font-weight: 500;
-      }
-      p {
-        font-size: 24px;
-        color: gray;
-      }
-    }
-  }
-}
-
-.el-card {
-  transition: all 0.2s ease;
-  &:hover {
-    box-shadow: 3px 3px 5px gray;
-    transform: scale(1.01);
-  }
-}
-
-.card-info {
-  h3 {
-    font-size: 20px;
-  }
-  p {
-    font-size: 20px;
-    font-weight: 500;
-    color: gray;
-  }
-}
 // // #region RWD
 // @media (max-width: 1500px) {
 //   .left-content {

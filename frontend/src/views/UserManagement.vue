@@ -12,6 +12,8 @@ const fetchUsers = async () => {
   loading.value = true
   try {
     userList.value = await api.getUsers()
+console.log(userList.value);
+
   } catch {
     ElMessage.error('獲取用戶失敗')
   } finally {
@@ -51,30 +53,38 @@ const changeRole = async (id, role) => {
 <template>
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="userList" stripe>
+      <el-table-column prop="employeeId" label="員工編號" width="120" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性別">
         <template #default="{ row }">
-          {{ row.gender === 'male' ? '男性': '女性' }}
+          {{ row.gender === 'male' ? '男性' : (row.gender === 'female' ? '女性' : '-') }}
         </template>
       </el-table-column>
       <el-table-column prop="email" label="信箱" />
       <el-table-column prop="birth" label="生日" />
       <el-table-column label="最後登入日期">
         <template #default="{ row }">
-          {{ new Date(row.lastLogin).toLocaleDateString() }}
+          {{ row.lastLogin ? new Date(row.lastLogin).toLocaleDateString() : '-' }}
         </template>
       </el-table-column>
-      <el-table-column label="身份">
+      <el-table-column label="身份" width="150">
         <template #default="{ row }">
-          <el-select v-model="row.role" @change="changeRole(row.id, row.role)" :disabled="row.id === userStore.id">
-            <el-option label="職員" value="user"/>
-            <el-option label="管理員" value="admin"/>
-          </el-select>
+          <template v-if="row.role === 'superadmin'">
+            <el-select v-model="row.role" disabled>
+              <el-option label="超級管理員" value="superadmin"/>
+            </el-select>
+          </template>
+          <template v-else>
+            <el-select v-model="row.role" @change="changeRole(row.id, row.role)" :disabled="row.id === userStore.id">
+              <el-option label="職員" value="user"/>
+              <el-option label="管理員" value="admin"/>
+            </el-select>
+          </template>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template #default="{ row }">
-          <el-button @click="handleDelete(row.id)" type="danger" :disabled="row.id === userStore.id">刪除</el-button>
+          <el-button @click="handleDelete(row.id)" type="danger" :disabled="row.id === userStore.id || row.role === 'superadmin' ">刪除</el-button>
         </template>
       </el-table-column>
     </el-table>

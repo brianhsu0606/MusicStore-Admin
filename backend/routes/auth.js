@@ -11,7 +11,7 @@ const User = require('../models/userModel')
 
 // 註冊 register
 router.post('/api/register', async (req, res) => {
-  const { name, username, password, role } = req.body
+  const { name, username, password } = req.body
 
   try {
     const existingUser = await User.findOne({ username })
@@ -23,17 +23,21 @@ router.post('/api/register', async (req, res) => {
       })
     }
 
+    const lastUser = await User.findOne().sort({ employeeId: -1 }).exec();
+    const nextEmployeeId = lastUser ? lastUser.employeeId + 1 : 1;
+
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
 
     const newUser = new User({
       username,
       password: hashedPassword,
+      employeeId: nextEmployeeId,
       profile: {
         name,
-        role,
-        gender: '',
-        birth: '',
-        email: '',
+        role: 'user',
+        gender: '-',
+        birth: '-',
+        email: '-',
         avatar: 'avatar1.jpeg'
       }
     })
@@ -68,6 +72,7 @@ router.post('/api/login', async (req, res) => {
       })
     }
 
+    // bcrypt 密碼加密 
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
       return res.status(400).json({
@@ -77,9 +82,11 @@ router.post('/api/login', async (req, res) => {
       })
     }
 
+    // 登入時間
     user.profile.lastLogin = new Date().toISOString()
     await user.save()
 
+    // jwt token設定
     const token = jwt.sign(
       {
         id: user.id,

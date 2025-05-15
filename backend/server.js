@@ -12,18 +12,21 @@ app.listen(PORT, () => {
 
 const mongoose = require('mongoose');
 
+const User = require('./models/userModel');
 const Member = require('./models/memberModel');
 const Product = require('./models/productModel');
 const Order = require('./models/orderModel');
 const Cost = require('./models/costModel');
 const Revenue = require('./models/revenueModel');
 
+const defaultUser = require('./data/defaultUser');
+
+const initUser = require('./utils/initUser');
 const defaultMembers = require('./data/defaultMembers');
 const defaultProducts = require('./data/defaultProducts');
 const defaultOrders = require('./data/defaultOrders');
 const defaultCost = require('./data/defaultCost');
 const defaultRevenue = require('./data/defaultRevenue');
-
 
 mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mongodb.net/myproject?retryWrites=true&w=majority&appName=Cluster0', {})
   .then(async () => {
@@ -31,6 +34,7 @@ mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mong
 
     try {
       // 測試用，重啟伺服器時清空資料
+      // await User.deleteMany({});
       await Member.deleteMany({});
       await Product.deleteMany({});
       await Order.deleteMany({});
@@ -38,6 +42,8 @@ mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mong
       await Revenue.deleteMany({});
       console.log('舊有資料已清除');
 
+      // await User.insertMany(defaultUser);
+      await initUser();
       await Member.insertMany(defaultMembers);
       await Product.insertMany(defaultProducts);
       await Order.insertMany(defaultOrders);
