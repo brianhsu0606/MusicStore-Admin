@@ -8,7 +8,6 @@ const dialog = reactive({
   isEdit: false,
   title: '新增用戶',
   form: {
-    id: null,
     name: '',
     gender: '',
     birth: '',
@@ -41,7 +40,6 @@ const handleAdd = () => {
   dialog.isEdit = false
   dialog.title = '新增用戶'
   dialog.form = {
-    _id: null,
     name: '',
     gender: '',
     birth: '',
@@ -66,8 +64,8 @@ const submit = async () => {
       await api.addMember(dialog.form)
     }
     dialog.visible = false
-    await fetchMembers()
     ElMessage.success(dialog.isEdit ? '編輯會員成功': '新增會員成功')
+    await fetchMembers()
   } catch(error) {
     ElMessage.error(dialog.isEdit ? '編輯會員失敗' : '新增會員失敗')
   }
@@ -121,8 +119,8 @@ const filteredMember = computed(() => {
 })
 
 // 分頁功能 Pagination
-const currentPage = ref(1)
 const pageSize = ref(8)
+const currentPage = ref(1)
 const pagedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
@@ -144,6 +142,7 @@ const handlePageChange = (page) => {
     <el-button type="primary" @click="handleAdd">新增用戶</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入會員名稱" />
   </header>
+
   <!-- 會員表格 table -->
   <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedData" stripe>
@@ -162,15 +161,17 @@ const handlePageChange = (page) => {
       </el-table-column>
     </el-table>
   </el-card>
+
   <!-- 分頁功能 Pagination -->
   <el-pagination
     background
     layout="prev, pager, next"
-    :current-page="currentPage"
     :page-size="pageSize"
+    :current-page="currentPage"
     :total="filteredMember.length"
     @current-change="handlePageChange"
   />
+
   <!-- 新增、編輯會員 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px">
     <el-form :model="dialog.form" label-width="80px">

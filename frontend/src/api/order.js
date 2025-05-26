@@ -14,7 +14,7 @@ export default {
       data,
     })
   },
-  updateOrder(data, id) {
+  updateOrder(id, data) {
     return request({
       url: `/api/orders/${id}`,
       method: 'put',

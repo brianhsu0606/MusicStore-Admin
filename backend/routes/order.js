@@ -6,11 +6,11 @@ const Order = require('../models/orderModel')
 // 讀取訂單 Read
 router.get('/api/orders', authenticateToken, async (req, res) => {
   try {
-    const orderList = await Order.find()
+    const orderList = await Order.find().sort({ createdAt: -1 });
 
     res.json({
       code: 200,
-      msg: '訂單獲取成功',
+      message: '獲取訂單成功',
       result: orderList
     })
   } catch (error) {

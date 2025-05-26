@@ -1,3 +1,4 @@
+import report from './report'
 import member from './member'
 import auth from './auth'
 import profile from './profile'
@@ -8,6 +9,7 @@ import cost from './cost'
 import revenue from './revenue'
 
 export default {
+  ...report,
   ...member,
   ...auth,
   ...profile,

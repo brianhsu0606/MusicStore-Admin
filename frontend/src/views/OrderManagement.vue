@@ -24,9 +24,9 @@ onMounted(() => {
 
 const dialog = reactive({
   visible: false,
+  isEdit: false,
+  title: '新增訂單',
   form: {
-    id: null,
-    orderNumber: null,
     createdAt: '',
     member: '',
     items: '',
@@ -40,8 +40,6 @@ const handleAdd = () => {
   dialog.isEdit = false
   dialog.title = '新增訂單'
   dialog.form = {
-    id: null,
-    orderNumber: null,
     member: '',
     items: '',
     status: 'processing',
@@ -69,16 +67,15 @@ const changeStatus = async (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateOrder(dialog.form, dialog.form.id)
-      ElMessage.success('編輯成功')
+      await api.updateOrder(dialog.form.id, dialog.form)
     } else {
       await api.addOrder(dialog.form)
-      ElMessage.success('新增成功')
     }
     dialog.visible = false
+    ElMessage.success(dialog.isEdit ? '編輯訂單成功' : '新增訂單成功')
     await fetchOrders()
   } catch {
-    ElMessage.error(dialog.isEdit ? '編輯失敗' : '新增失敗')
+    ElMessage.error(dialog.isEdit ? '編輯訂單失敗' : '新增訂單失敗')
   }
 }
 
@@ -146,6 +143,7 @@ const handlePageChange = (page) => {
     <el-button @click="handleAdd" type="primary">新增訂單</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號"></el-input>
   </header>
+
   <!-- 訂單列表 table -->
   <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedOrderList" style="width: 100%" stripe>
@@ -173,21 +171,20 @@ const handlePageChange = (page) => {
       </el-table-column>
     </el-table>
   </el-card>
+
   <!-- 分頁功能 Pagination -->
   <el-pagination
     background
     layout="prev, pager, next"
-    :current-page="currentPage"
     :page-size="pageSize"
+    :current-page="currentPage"
     :total="filteredOrderList.length"
     @current-change="handlePageChange"
   />
+
   <!-- 新增訂單 dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
     <el-form :model="dialog.form">
-      <el-form-item label="訂單編號">
-        <el-input v-model="dialog.form.orderNumber"></el-input>
-      </el-form-item>
       <el-form-item label="下單日期">
         <el-date-picker
           v-model="dialog.form.createdAt"

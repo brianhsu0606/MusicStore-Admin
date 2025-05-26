@@ -1,18 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
-const Member = require('../models/memberModel');
+const Report = require('../models/reportModel');
 
-// 讀取會員 Read
-router.get('/api/members', authenticateToken, async (req, res) => {
+// 讀取營業額 Read
+router.get('/api/reports', authenticateToken, async (req, res) => {
   try {
-    const memberList = await Member.find();
+    const reportList = await Report.find().sort({ date: -1 });
 
     res.json({
       code: 200,
-      message: '讀取會員成功',
-      result: memberList
-    });
+      message: '獲取營收成功',
+      result: reportList
+    })
   } catch (error) {
     res.status(500).json({
       code: 500,
@@ -20,17 +20,17 @@ router.get('/api/members', authenticateToken, async (req, res) => {
       result: null
     });
   }
-});
+})
 
-// 新增會員 Create
-router.post('/api/members', authenticateToken, async (req, res) => {
+// 新增營業額 Create
+router.post('/api/reports', authenticateToken, async (req, res) => {
   try {
-    const newMember = new Member(req.body)
-    await newMember.save()
+    const newReport = new Report(req.body)
+    await newReport.save()
 
     res.json({
       code: 200,
-      message: '新增會員成功',
+      message: '新增營業額成功',
       result: null
     })
   } catch (error) {
@@ -42,17 +42,17 @@ router.post('/api/members', authenticateToken, async (req, res) => {
   }
 })
 
-// 更新會員 Update
-router.put('/api/members/:id', authenticateToken, async (req, res) => {
+// 更新營業額 update
+router.put('/api/reports/:id', authenticateToken, async (req, res) => {
   try {
-    await Member.findByIdAndUpdate(
+    await Report.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     )
     res.json({
       code: 200,
-      message: '更新會員成功',
+      message: '更新營業額成功',
       result: null
     })
   } catch (error) {
@@ -64,16 +64,16 @@ router.put('/api/members/:id', authenticateToken, async (req, res) => {
   }
 })
 
-// 刪除會員 Delete
-router.delete('/api/members/:id', authenticateToken, async (req, res) => {
+// 刪除營業額 delete
+router.delete('/api/reports/:id', authenticateToken, async (req, res) => {
   try {
-    await Member.findByIdAndDelete(req.params.id);
+    await Report.findByIdAndDelete(req.params.id)
 
     res.json({
       code: 200,
-      message: '刪除會員成功',
+      message: '刪除當日營業額成功',
       result: null
-    });
+    })
   } catch (error) {
     res.status(500).json({
       code: 500,
@@ -81,6 +81,6 @@ router.delete('/api/members/:id', authenticateToken, async (req, res) => {
       result: null
     });
   }
-});
+})
 
 module.exports = router;

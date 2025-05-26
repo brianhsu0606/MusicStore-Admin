@@ -12,8 +12,6 @@ const fetchUsers = async () => {
   loading.value = true
   try {
     userList.value = await api.getUsers()
-console.log(userList.value);
-
   } catch {
     ElMessage.error('獲取用戶失敗')
   } finally {
@@ -84,7 +82,14 @@ const changeRole = async (id, role) => {
       </el-table-column>
       <el-table-column label="操作">
         <template #default="{ row }">
-          <el-button @click="handleDelete(row.id)" type="danger" :disabled="row.id === userStore.id || row.role === 'superadmin' ">刪除</el-button>
+          <el-button
+            @click="handleDelete(row.id)"
+            v-if="row.role !== 'superadmin'"
+            :disabled="row.id === userStore.id"
+            type="danger" 
+          >
+            刪除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

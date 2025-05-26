@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
 
 const app = express();
 app.use(cors());
@@ -10,18 +11,25 @@ app.listen(PORT, () => {
   console.log(`伺服器運行中，請訪問 http://localhost:${PORT}`);
 });
 
-const mongoose = require('mongoose');
+app.use(require('./routes/auth'));
+app.use(require('./routes/profile'));
+app.use(require('./routes/report'));
+app.use(require('./routes/member'));
+app.use(require('./routes/product'));
+app.use(require('./routes/order'));
+app.use(require('./routes/cost'));
+app.use(require('./routes/revenue'));
+app.use(require('./routes/user'));
 
-const User = require('./models/userModel');
+const Report = require('./models/reportModel');
 const Member = require('./models/memberModel');
 const Product = require('./models/productModel');
 const Order = require('./models/orderModel');
 const Cost = require('./models/costModel');
 const Revenue = require('./models/revenueModel');
 
-const defaultUser = require('./data/defaultUser');
-
 const initUser = require('./utils/initUser');
+const defaultReport = require('./data/defaultReport');
 const defaultMembers = require('./data/defaultMembers');
 const defaultProducts = require('./data/defaultProducts');
 const defaultOrders = require('./data/defaultOrders');
@@ -35,6 +43,7 @@ mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mong
     try {
       // 測試用，重啟伺服器時清空資料
       // await User.deleteMany({});
+      await Report.deleteMany({});
       await Member.deleteMany({});
       await Product.deleteMany({});
       await Order.deleteMany({});
@@ -44,6 +53,7 @@ mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mong
 
       // await User.insertMany(defaultUser);
       await initUser();
+      await Report.insertMany(defaultReport);
       await Member.insertMany(defaultMembers);
       await Product.insertMany(defaultProducts);
       await Order.insertMany(defaultOrders);
@@ -56,16 +66,3 @@ mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mong
     }
   })
   .catch((err) => console.error('MongoDB 連線失敗', err));
-
-
-
-app.use(require('./routes/auth'));
-app.use(require('./routes/profile'));
-
-app.use(require('./routes/member'));
-app.use(require('./routes/product'));
-app.use(require('./routes/order'));
-
-app.use(require('./routes/cost'));
-app.use(require('./routes/user'));
-app.use(require('./routes/revenue'));

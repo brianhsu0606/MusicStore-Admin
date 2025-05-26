@@ -34,6 +34,12 @@ const handleUpdate = async () => {
   }
 }
 
+const roleLabels = {
+  superadmin: '超級管理員',
+  admin: '管理員',
+  user: '職員'
+}
+
 const dialogVisible = ref(false)
 const selectAvatar = (avatarFileName) => {
   formData.value.avatar = avatarFileName

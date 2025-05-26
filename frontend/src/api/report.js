@@ -1,30 +1,30 @@
 import request from "@/utils/request";
 
 export default {
-  getProducts() {
+  getReports() {
     return request({
-      url: '/api/products',
-      method: 'get'
+      url: '/api/reports',
+      method: 'get',
     })
   },
-  addProduct(data) {
+  addReport(data) {
     return request({
-      url: '/api/products',
+      url: '/api/reports',
       method: 'post',
       data
     })
   },
-  updateProduct(id, data) {
+  updateReport(id, data) {
     return request({
-      url: `/api/products/${id}`,
+      url: `/api/reports/${id}`,
       method: 'put',
       data
     })
   },
-  deleteProduct(id) {
+  deleteReport(id) {
     return request({
-      url: `/api/products/${id}`,
+      url: `/api/reports/${id}`,
       method: 'delete',
     })
-  },
+  }
 }

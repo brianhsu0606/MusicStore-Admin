@@ -10,7 +10,6 @@ const dialog = reactive({
   visible: false,
   title: '',
   form: {
-    id: null,
     name: '',
     price: 0,
     quantity: 0,
@@ -43,7 +42,6 @@ const handleAdd =  () => {
   dialog.isEdit = false
   dialog.title = '新增商品'
   dialog.form = {
-    id: null,
     name: '',
     price: 0,
     quantity: 0,
@@ -62,13 +60,13 @@ const handleEdit = (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateProduct(dialog.form, dialog.form.id)
+      await api.updateProduct( dialog.form.id, dialog.form)
     } else {
       await api.addProduct(dialog.form)
     }
     dialog.visible = false
-    await fetchProducts()
     ElMessage.success(dialog.isEdit ? '編輯商品成功' : '新增商品成功')
+    await fetchProducts()
   } catch {
     ElMessage.error(dialog.isEdit ? '編輯商品失敗' : '新增商品失敗')
   }
@@ -133,6 +131,7 @@ const handlePageChange = (page) => {
     <el-button type="primary" @click="handleAdd">新增商品</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" />
   </header>
+
   <!-- 商品分類 tab -->
   <el-tabs v-model="activeCategory" class="mb-4" type="border-card" v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-tab-pane
@@ -141,6 +140,7 @@ const handlePageChange = (page) => {
       :label="item"
       :name="item"
     />
+
     <!-- 商品表格 table -->    
     <el-table :data="pagedProducts" style="width: 100%" stripe>
       <el-table-column prop="name" label="商品名稱" width="300"/>
@@ -155,15 +155,17 @@ const handlePageChange = (page) => {
       </el-table-column>
     </el-table>
   </el-tabs>
+
   <!-- 分頁功能 Pagination -->
   <el-pagination
     background
     layout="prev, pager, next"
-    :current-page="currentPage"
     :page-size="pageSize"
+    :current-page="currentPage"
     :total="filteredProducts.length"
     @current-change="handlePageChange"
   />
+
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
     <el-form :model="dialog.form">
@@ -200,7 +202,6 @@ header {
     font-size: 16px;
   }
 }
-
 .el-tabs__nav-wrap {
   flex-grow: 1;
 }

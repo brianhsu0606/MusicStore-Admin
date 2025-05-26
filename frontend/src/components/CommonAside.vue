@@ -11,6 +11,13 @@ const list = ref([
     url: 'Home'
   },
   {
+    path: '/report',
+    name: 'report',
+    label: '每日營收',
+    icon: 'Money',
+    url: 'Report'
+  },
+  {
     path: '/member',
     name: 'member',
     label: '會員管理',
@@ -20,15 +27,15 @@ const list = ref([
   {
     path: '/product',
     name: 'product',
-    label: '商品管理',
+    label: '商品庫存',
     icon: 'goods',
     url: 'Product'
   },
   {
     path: '/order',
     name: 'order',
-    label: '訂單管理',
-    icon: 'video-play',
+    label: '網路訂單',
+    icon: 'Document',
     url: 'Order'
   },
   {
