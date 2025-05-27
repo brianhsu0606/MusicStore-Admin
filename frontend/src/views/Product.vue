@@ -142,7 +142,7 @@ const handlePageChange = (page) => {
     />
 
     <!-- 商品表格 table -->    
-    <el-table :data="pagedProducts" style="width: 100%" stripe>
+    <el-table :data="pagedProducts" class="mb-4" stripe>
       <el-table-column prop="name" label="商品名稱" width="300"/>
       <el-table-column prop="category" label="分類" />
       <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
@@ -154,17 +154,18 @@ const handlePageChange = (page) => {
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分頁功能 Pagination -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :page-size="pageSize"
+      :current-page="currentPage"
+      :total="filteredProducts.length"
+      @current-change="handlePageChange"
+    />
   </el-tabs>
 
-  <!-- 分頁功能 Pagination -->
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :page-size="pageSize"
-    :current-page="currentPage"
-    :total="filteredProducts.length"
-    @current-change="handlePageChange"
-  />
 
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">

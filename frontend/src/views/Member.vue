@@ -144,8 +144,8 @@ const handlePageChange = (page) => {
   </header>
 
   <!-- 會員表格 table -->
-  <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedData" stripe>
+  <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
+    <el-table :data="pagedData" class="mb-4" stripe>
       <el-table-column prop="name" label="姓名" />
       <el-table-column label="年齡">
         <template #default="{ row }">{{ calcAge(row.birth) }}</template>
@@ -160,17 +160,17 @@ const handlePageChange = (page) => {
         </template>
       </el-table-column>
     </el-table>
-  </el-card>
 
-  <!-- 分頁功能 Pagination -->
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :page-size="pageSize"
-    :current-page="currentPage"
-    :total="filteredMember.length"
-    @current-change="handlePageChange"
-  />
+    <!-- 分頁功能 Pagination -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :page-size="pageSize"
+      :current-page="currentPage"
+      :total="filteredMember.length"
+      @current-change="handlePageChange"
+    />
+  </el-card>
 
   <!-- 新增、編輯會員 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px">

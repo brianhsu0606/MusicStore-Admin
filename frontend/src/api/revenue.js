@@ -4,7 +4,7 @@ export default {
   getRevenue() {
     return request({
       url: '/api/revenues',
-      method: 'get'
+      method: 'get',
     })
   },
   addRevenue(data) {
@@ -14,10 +14,17 @@ export default {
       data
     })
   },
+  updateRevenue(id, data) {
+    return request({
+      url: `/api/revenues/${id}`,
+      method: 'put',
+      data
+    })
+  },
   deleteRevenue(id) {
     return request({
       url: `/api/revenues/${id}`,
-      method: 'delete'
+      method: 'delete',
     })
   }
 }

@@ -20,11 +20,11 @@ const dialog = reactive({
 
 // #region CRUD
 const loading = ref(true)
-const reportList = ref([])
-const fetchReports = async () => {
+const revenueList = ref([])
+const fetchRevenue = async () => {
   loading.value = true
   try {
-    reportList.value = await api.getReports()
+    revenueList.value = await api.getRevenue()
   } catch (error) {
     ElMessage.error('獲取營業額失敗')
   } finally {
@@ -37,8 +37,8 @@ const handleAdd = () => {
   dialog.isEdit = false
   dialog.title = '新增營業額'
   dialog.form = {
-    date: '',
-    revenue: 0,
+    date: dayjs().format('YYYY-MM-DD'),
+    price: 0,
     note: '',
     createdBy: userStore.name
   }
@@ -54,13 +54,13 @@ const handleEdit = (row) => {
 const submit = async () => {
   try {
     if (dialog.isEdit) {
-      await api.updateReport(dialog.form.id, dialog.form)
+      await api.updateRevenue(dialog.form.id, dialog.form)
     } else {
-      await api.addReport(dialog.form)
+      await api.addRevenue(dialog.form)
     }
     dialog.visible = false
     ElMessage.success(dialog.isEdit ? '編輯營業額成功' : '新增營業額成功')
-    await fetchReports()
+    await fetchRevenue()
   } catch (error) {
     ElMessage.error(dialog.isEdit ? '編輯營業額失敗' : '新增營業額失敗')
   }
@@ -74,8 +74,8 @@ const handleDelete = async (id) => {
     return
   }
   try {
-    await api.deleteReport(id)
-    await fetchReports()
+    await api.deleteRevenue(id)
+    await fetchRevenue()
     ElMessage.success('刪除營業額成功')
   } catch (error) {
     ElMessage.error('刪除營業額失敗')
@@ -88,16 +88,16 @@ const pageSize = ref(8)
 const currentPage = ref(1)
 const selectedMonth = ref('')
 
-const filteredReports = computed(() => {
+const filteredRevenue = computed(() => {
   if (!selectedMonth.value) {
-    return reportList.value
+    return revenueList.value
   }
-  return reportList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
+  return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
 })
-const paginatedReports = computed(() => {
+const paginatedRevenue = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
-  return filteredReports.value.slice(start, end)
+  return filteredRevenue.value.slice(start, end)
 })
 const handlePageChange = (page) => {
   currentPage.value = page
@@ -105,11 +105,11 @@ const handlePageChange = (page) => {
 
 // 價格標準化
 const formatePrice = (row) => {
-  return 'NT ' + row.revenue.toLocaleString()
+  return 'NT ' + row.price.toLocaleString()
 }
 
 onMounted(() => {
-  fetchReports()
+  fetchRevenue()
 })
 </script>
 
@@ -127,10 +127,10 @@ onMounted(() => {
   </header>
 
   <!-- 營業額表格 table -->
-  <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="paginatedReports">
+  <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
+    <el-table :data="paginatedRevenue" class="mb-4" stripe>
       <el-table-column prop="date" label="日期" />
-      <el-table-column prop="revenue" label="營業額" :formatter="formatePrice"/>
+      <el-table-column prop="price" label="營業額" :formatter="formatePrice"/>
       <el-table-column prop="note" label="備註" />
       <el-table-column prop="createdBy" label="登錄者" />
       <el-table-column label="操作">
@@ -140,17 +140,17 @@ onMounted(() => {
         </template>
       </el-table-column>
     </el-table>
-  </el-card>
 
-  <!-- 分頁功能 pagination -->
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :page-size="pageSize"
-    :current-page="currentPage"
-    :total="filteredReports.length"
-    @current-change="handlePageChange"
-  />
+    <!-- 分頁功能 pagination -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :page-size="pageSize"
+      :current-page="currentPage"
+      :total="filteredRevenue.length"
+      @current-change="handlePageChange"
+    />
+  </el-card>
   
   <!-- 新增營業額 dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
@@ -166,7 +166,7 @@ onMounted(() => {
         />
       </el-form-item>
       <el-form-item label="輸入當日營業額">
-        <el-input-number v-model="dialog.form.revenue"/>
+        <el-input-number v-model="dialog.form.price"/>
       </el-form-item>
       <el-form-item label="備註">
         <el-input v-model="dialog.form.note" type="textarea"></el-input>

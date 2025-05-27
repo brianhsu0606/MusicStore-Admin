@@ -40,6 +40,27 @@ router.post('/api/costs', authenticateToken, async (req, res) => {
   }
 })
 
+router.put('/api/costs/:id', authenticateToken, async (req, res) => {
+  try {
+    await Cost.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    )
+    res.json({
+      code: 200,
+      message: '編輯成本成功',
+      result: null
+    })
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: '伺服器錯誤',
+      result: null
+    })
+  }
+})
+
 // 刪除成本 Delete
 router.delete('/api/costs/:id', authenticateToken, async (req, res) => {
   try {
@@ -48,14 +69,14 @@ router.delete('/api/costs/:id', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '刪除成本成功',
-      result: deletedCost
-    });
+      result: null
+    })
   } catch (error) {
     res.status(500).json({
       code: 500,
       message: '伺服器錯誤',
       result: null
-    });
+    })
   }
 })
 

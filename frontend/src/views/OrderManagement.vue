@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import dayjs from 'dayjs'
 import api from '@/api'
 
 // #region CRUD
@@ -40,6 +41,7 @@ const handleAdd = () => {
   dialog.isEdit = false
   dialog.title = '新增訂單'
   dialog.form = {
+    createdAt: dayjs().format('YYYY-MM-DD'),
     member: '',
     items: '',
     status: 'processing',
@@ -145,8 +147,8 @@ const handlePageChange = (page) => {
   </header>
 
   <!-- 訂單列表 table -->
-  <el-card class="mb-4" v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedOrderList" style="width: 100%" stripe>
+  <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
+    <el-table :data="pagedOrderList" class="mb-4" stripe>
       <el-table-column prop="orderNumber" label="訂單編號" />
       <el-table-column prop="createdAt" label="下單日期" width="150" />
       <el-table-column prop="member" label="會員名稱" width="140" />
@@ -170,17 +172,18 @@ const handlePageChange = (page) => {
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 分頁功能 Pagination -->
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :page-size="pageSize"
+      :current-page="currentPage"
+      :total="filteredOrderList.length"
+      @current-change="handlePageChange"
+    />
   </el-card>
 
-  <!-- 分頁功能 Pagination -->
-  <el-pagination
-    background
-    layout="prev, pager, next"
-    :page-size="pageSize"
-    :current-page="currentPage"
-    :total="filteredOrderList.length"
-    @current-change="handlePageChange"
-  />
 
   <!-- 新增訂單 dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">

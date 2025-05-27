@@ -1,15 +1,16 @@
-const express = require('express')
+const express = require('express');
 const router = express.Router();
-const { authenticateToken } = require('../middleware/auth')
-const Revenue = require('../models/revenueModel')
+const { authenticateToken } = require('../middleware/auth');
+const Revenue = require('../models/revenueModel');
 
-// 載入營業額 Read
+// 讀取營業額 Read
 router.get('/api/revenues', authenticateToken, async (req, res) => {
   try {
-    const revenueList = await Revenue.find()
+    const revenueList = await Revenue.find().sort({ date: -1 });
+
     res.json({
       code: 200,
-      message: '獲取營業額成功',
+      message: '獲取營收成功',
       result: revenueList
     })
   } catch (error) {
@@ -17,7 +18,7 @@ router.get('/api/revenues', authenticateToken, async (req, res) => {
       code: 500,
       message: '伺服器錯誤',
       result: null
-    })
+    });
   }
 })
 
@@ -26,6 +27,7 @@ router.post('/api/revenues', authenticateToken, async (req, res) => {
   try {
     const newRevenue = new Revenue(req.body)
     await newRevenue.save()
+
     res.json({
       code: 200,
       message: '新增營業額成功',
@@ -40,13 +42,17 @@ router.post('/api/revenues', authenticateToken, async (req, res) => {
   }
 })
 
-// 刪除營業額 Delete
-router.delete('/api/revenues/:id', authenticateToken, async (req, res) => {
+// 更新營業額 update
+router.put('/api/revenues/:id', authenticateToken, async (req, res) => {
   try {
-    await Revenue.findByIdAndDelete(req.params.id)
+    await Revenue.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    )
     res.json({
       code: 200,
-      message: '刪除營業額成功',
+      message: '更新營業額成功',
       result: null
     })
   } catch (error) {
@@ -55,6 +61,25 @@ router.delete('/api/revenues/:id', authenticateToken, async (req, res) => {
       message: '伺服器錯誤',
       result: null
     })
+  }
+})
+
+// 刪除營業額 delete
+router.delete('/api/revenues/:id', authenticateToken, async (req, res) => {
+  try {
+    await Revenue.findByIdAndDelete(req.params.id)
+
+    res.json({
+      code: 200,
+      message: '刪除當日營業額成功',
+      result: null
+    })
+  } catch (error) {
+    res.status(500).json({
+      code: 500,
+      message: '伺服器錯誤',
+      result: null
+    });
   }
 })
 
