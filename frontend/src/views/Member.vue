@@ -1,22 +1,30 @@
 <script setup>
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import dayjs from 'dayjs'
 import api from '@/api'
 
+const formRef = ref()
 const dialog = reactive({
   visible: false,
   isEdit: false,
-  title: '新增用戶',
+  title: '',
   form: {
+    createdAt: '',
     name: '',
     gender: '',
     birth: '',
     addr: '',
   }
 })
+const rules = {
+  createdAt: [{ required: true, message: '請選擇註冊日期', trigger: 'blur' }],
+  name: [{ required: true, message: '請輸入姓名', trigger: 'blur' }],
+  gender: [{ required: true, message: '請選擇性別', trigger: 'blur' }],
+  birth: [{ required: true, message: '請選擇生日', trigger: 'blur' }],
+}
 
 // #region CRUD
-// 讀取會員（ Read ）
 const loading = ref(true)
 const memberList = ref([])
 const fetchMembers = async () => {
@@ -30,34 +38,31 @@ const fetchMembers = async () => {
   }
 }
 
-onMounted(() => {
-  fetchMembers()
-})
-
-// 新增會員（ Create ）
 const handleAdd = () => {
   dialog.visible = true
   dialog.isEdit = false
-  dialog.title = '新增用戶'
-  dialog.form = {
+  dialog.title = '新增會員'
+  Object.assign(dialog.form, {
+    createdAt: dayjs().format('YYYY-MM-DD'),
     name: '',
     gender: '',
     birth: '',
     addr: ''
-  }
+  })
+  formRef.value?.clearValidate()
 }
 
-// 編輯會員（ Update ）
 const handleEdit = (row) => {
   dialog.visible = true
   dialog.isEdit = true
-  dialog.title = '編輯用戶'
-  dialog.form = { ...row }
+  dialog.title = '編輯會員'
+  Object.assign(dialog.form, row)
+  formRef.value?.clearValidate()
 }
 
-// 送出資料（ Create, Update ）
 const submit = async () => {
   try {
+    await formRef.value.validate()
     if (dialog.isEdit) {
       await api.updateMember(dialog.form.id, dialog.form)
     } else {
@@ -71,7 +76,6 @@ const submit = async () => {
   }
 }
 
-// 刪除會員（ Delete ）
 const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
@@ -87,17 +91,6 @@ const handleDelete = async (id) => {
   }
 }
 // #endregion
-
-// 動態寬度
-const getColumnWidth = () => {
-  const width = window.innerWidth
-  
-  if (width < 1440) {
-    return 150
-  } else {
-    return 220
-  }
-}
 
 const calcAge = (birth) => {
   const today = new Date()
@@ -118,9 +111,11 @@ const filteredMember = computed(() => {
   return memberList.value.filter(item => item.name.toLowerCase().includes(searchInput.value.toLowerCase()))
 })
 
-// 分頁功能 Pagination
+// 分頁功能
 const pageSize = ref(8)
 const currentPage = ref(1)
+const handlePageChange = (page) => { currentPage.value = page }
+
 const pagedData = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
@@ -131,26 +126,27 @@ watch(searchInput, () => {
   currentPage.value = 1
 })
 
-const handlePageChange = (page) => {
-  currentPage.value = page
-}
+onMounted(() => {
+  fetchMembers()
+})
 </script>
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header class="flex justify-between mb-4">
-    <el-button type="primary" @click="handleAdd">新增用戶</el-button>
+  <header class="mb-4 flex justify-between items-center">
+    <el-button type="primary" @click="handleAdd">新增會員</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入會員名稱" />
   </header>
 
   <!-- 會員表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedData" class="mb-4" stripe>
+      <el-table-column prop="createdAt" label="註冊日期" />
       <el-table-column prop="name" label="姓名" />
-      <el-table-column label="年齡">
+      <el-table-column label="年齡" width="130px">
         <template #default="{ row }">{{ calcAge(row.birth) }}</template>
       </el-table-column>
-      <el-table-column prop="gender" label="性別" />
+      <el-table-column prop="gender" label="性別" width="130px" />
       <el-table-column prop="birth" label="生日" />
       <el-table-column prop="addr" label="地址" />
       <el-table-column label="操作">
@@ -174,22 +170,28 @@ const handlePageChange = (page) => {
 
   <!-- 新增、編輯會員 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px">
-    <el-form :model="dialog.form" label-width="80px">
-      <el-form-item label="姓名">
+    <el-form :model="dialog.form" :rules="rules" ref="formRef">
+      <el-form-item prop="createdAt" label="註冊日期">
+        <el-date-picker 
+          v-model="dialog.form.createdAt"
+          value-format="YYYY-MM-DD"
+          placeholder="選擇日期"
+        />
+      </el-form-item>
+      <el-form-item prop="name" label="姓名">
         <el-input v-model="dialog.form.name" />
       </el-form-item>
-      <el-form-item label="性別">
+      <el-form-item prop="gender" label="性別">
         <el-select v-model="dialog.form.gender" placeholder="請選擇">
           <el-option label="男" value="男" />
           <el-option label="女" value="女" />
         </el-select>
       </el-form-item>
-      <el-form-item label="生日">
+      <el-form-item prop="birth" label="生日">
         <el-date-picker
           v-model="dialog.form.birth"
-          type="date"
+          value-format="YYYY-MM-DD"
           placeholder="選擇日期"
-          style="width: 100%"
         />
       </el-form-item>
       <el-form-item label="地址">
@@ -197,8 +199,8 @@ const handlePageChange = (page) => {
       </el-form-item>
     </el-form>
     <template #footer>
+      <el-button @click="submit" type="primary">確認</el-button>
       <el-button @click="dialog.visible = false">取消</el-button>
-      <el-button type="primary" @click="submit">確認</el-button>
     </template>
   </el-dialog>
 </template>

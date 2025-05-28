@@ -6,7 +6,7 @@ const Revenue = require('../models/revenueModel');
 // 讀取營業額 Read
 router.get('/api/revenues', authenticateToken, async (req, res) => {
   try {
-    const revenueList = await Revenue.find().sort({ date: -1 });
+    const revenueList = await Revenue.find().sort({ date: -1 })
 
     res.json({
       code: 200,
@@ -18,7 +18,7 @@ router.get('/api/revenues', authenticateToken, async (req, res) => {
       code: 500,
       message: '伺服器錯誤',
       result: null
-    });
+    })
   }
 })
 
@@ -79,7 +79,7 @@ router.delete('/api/revenues/:id', authenticateToken, async (req, res) => {
       code: 500,
       message: '伺服器錯誤',
       result: null
-    });
+    })
   }
 })
 

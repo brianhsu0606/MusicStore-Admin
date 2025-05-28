@@ -5,20 +5,27 @@ import api from '@/api'
 
 const categories = ['全部商品', '木吉他', '電吉他', '音箱', '配件', '吉他弦']
 const activeCategory = ref('全部商品')
+
+const formRef = ref()
 const dialog = reactive({
-  isEdit: false,
   visible: false,
+  isEdit: false,
   title: '',
   form: {
     name: '',
+    category: '',
     price: 0,
     quantity: 0,
-    category: '木吉他'
   }
 })
+const rules = {
+  name : [{ required: true, message: '請輸入商品名稱', trigger: 'blur' }],
+  category : [{ required: true, message: '請選擇商品分類', trigger: 'blur' }],
+  price : [{ required: true, message: '請輸入商品價格', trigger: 'blur' }],
+  quantity : [{ required: true, message: '請輸入商品數量', trigger: 'blur' }],
+}
 
 // #region CRUD
-// 載入商品（ Read ）
 const loading = ref(true)
 const products = ref([])
 const fetchProducts = async () => {
@@ -32,33 +39,30 @@ const fetchProducts = async () => {
   }
 }
 
-onMounted(() => {
-  fetchProducts()
-})
-
-// 新增商品（ Create ）
 const handleAdd =  () => {
   dialog.visible = true
   dialog.isEdit = false
   dialog.title = '新增商品'
-  dialog.form = {
+  Object.assign(dialog.form, {
     name: '',
+    category: '',
     price: 0,
     quantity: 0,
-    category: '木吉他'
-  }
+  })
+  formRef.value?.clearValidate()
 }
 
-// 編輯商品（ Update ）
 const handleEdit = (row) => {
   dialog.visible = true
   dialog.isEdit = true
   dialog.title = '編輯商品'
-  dialog.form = { ...row }
+  Object.assign(dialog.form, row)
+  formRef.value?.clearValidate()
 }
 
 const submit = async () => {
   try {
+    await formRef.value.validate()
     if (dialog.isEdit) {
       await api.updateProduct( dialog.form.id, dialog.form)
     } else {
@@ -72,7 +76,6 @@ const submit = async () => {
   }
 }
 
-// 刪除商品（ Delete ）
 const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
@@ -87,10 +90,10 @@ const handleDelete = async (id) => {
     ElMessage.error('刪除商品失敗')
   }
 }
-// #endregion CRUD
+// #endregion
 
 const formatPrice = (row) => {
-  return 'NT$ ' + Number(row.price).toLocaleString()
+  return 'NT$ ' + row.price.toLocaleString()
 }
 
 // 搜尋功能
@@ -107,9 +110,11 @@ const filteredProducts = computed(() => {
   return list
 })
 
-// 分頁功能 Pagination
+// 分頁功能
 const currentPage = ref(1)
 const pageSize = ref(8)
+const handlePageChange = (page) => { currentPage.value = page }
+
 const pagedProducts = computed(() => {
   const start = (currentPage.value - 1) * pageSize.value
   const end = start + pageSize.value
@@ -120,20 +125,20 @@ watch([searchInput, activeCategory], () => {
   currentPage.value = 1
 })
 
-const handlePageChange = (page) => {
-  currentPage.value = page
-}
+onMounted(() => {
+  fetchProducts()
+})
 </script>
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header class="flex justify-between mb-4">
-    <el-button type="primary" @click="handleAdd">新增商品</el-button>
+  <header class="mb-4 flex justify-between items-center">
+    <el-button @click="handleAdd" type="primary">新增商品</el-button>
     <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" />
   </header>
 
   <!-- 商品分類 tab -->
-  <el-tabs v-model="activeCategory" class="mb-4" type="border-card" v-loading="loading" element-loading-text="載入中，請稍候...">
+  <el-tabs v-model="activeCategory" type="border-card" v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-tab-pane
       v-for="item in categories"
       :key="item"
@@ -169,25 +174,25 @@ const handlePageChange = (page) => {
 
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
-    <el-form :model="dialog.form">
-      <el-form-item label="商品名稱">
+    <el-form :model="dialog.form" :rules="rules" ref="formRef">
+      <el-form-item prop="name" label="商品名稱">
         <el-input v-model="dialog.form.name" />
       </el-form-item>
-      <el-form-item label="分類">
+      <el-form-item prop="category" label="分類">
         <el-select v-model="dialog.form.category" placeholder="請選擇分類">
           <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
         </el-select>
       </el-form-item>
-      <el-form-item label="價格">
+      <el-form-item prop="price" label="價格">
         <el-input-number v-model.number="dialog.form.price" />
       </el-form-item>
-      <el-form-item label="數量">
+      <el-form-item prop="quantity" label="數量">
         <el-input-number v-model.number="dialog.form.quantity" />
       </el-form-item>
     </el-form>
     <template #footer>
+      <el-button @click="submit" type="primary">確認</el-button>
       <el-button @click="dialog.visible = false">取消</el-button>
-      <el-button type="primary" @click="submit">確認</el-button>
     </template>
   </el-dialog>
 </template>
@@ -202,9 +207,6 @@ header {
     height: 38px;
     font-size: 16px;
   }
-}
-.el-tabs__nav-wrap {
-  flex-grow: 1;
 }
 </style>
 

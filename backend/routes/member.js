@@ -6,21 +6,21 @@ const Member = require('../models/memberModel');
 // 讀取會員 Read
 router.get('/api/members', authenticateToken, async (req, res) => {
   try {
-    const memberList = await Member.find();
+    const memberList = await Member.find().sort({ createdAt: -1 })
 
     res.json({
       code: 200,
       message: '讀取會員成功',
       result: memberList
-    });
+    })
   } catch (error) {
     res.status(500).json({
       code: 500,
       message: '伺服器錯誤',
       result: null
-    });
+    })
   }
-});
+})
 
 // 新增會員 Create
 router.post('/api/members', authenticateToken, async (req, res) => {
@@ -73,14 +73,14 @@ router.delete('/api/members/:id', authenticateToken, async (req, res) => {
       code: 200,
       message: '刪除會員成功',
       result: null
-    });
+    })
   } catch (error) {
     res.status(500).json({
       code: 500,
       message: '伺服器錯誤',
       result: null
-    });
+    })
   }
-});
+})
 
 module.exports = router;

@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema({
   createdAt: { type: String, required: true },
   member: { type: String, required: true },
   items: { type: String, required: true },
+  price: { type: Number, required: true },
   status: { type: String, required: true },
 }, { timestamps: true });
 toJSON(orderSchema)

@@ -6,17 +6,26 @@ import dayjs from 'dayjs'
 import api from '@/api'
 
 const userStore = useUserStore()
+const currentMonth = ref(dayjs().format('YYYY-MM'))
+const selectedMonth = ref(currentMonth.value)
+
+const formRef = ref()
 const dialog = reactive({
   visible: false,
-  title: '新增營業額',
-  isEdit: true,
+  isEdit: false,
+  title: '',
   form: {
     date: '',
-    revenue: 0,
+    price: 0,
     note: '',
     createdBy: ''
   }
 })
+const rules = {
+  date: [{ required: true, message: '請選擇日期', trigger: 'blur' },],
+  price: [{ required: true, message: '請輸入營業額', trigger: 'blur' },],
+  createdBy: [{ required: true, message: '請輸入登錄者', trigger: 'blur' }],
+}
 
 // #region CRUD
 const loading = ref(true)
@@ -26,7 +35,7 @@ const fetchRevenue = async () => {
   try {
     revenueList.value = await api.getRevenue()
   } catch (error) {
-    ElMessage.error('獲取營業額失敗')
+    ElMessage.error('無法取得營業額資料')
   } finally {
     loading.value = false
   }
@@ -36,23 +45,26 @@ const handleAdd = () => {
   dialog.visible = true
   dialog.isEdit = false
   dialog.title = '新增營業額'
-  dialog.form = {
+  Object.assign(dialog.form, {
     date: dayjs().format('YYYY-MM-DD'),
     price: 0,
     note: '',
     createdBy: userStore.name
-  }
+  })
+  formRef.value?.clearValidate()
 }
 
 const handleEdit = (row) => {
   dialog.visible = true
   dialog.isEdit = true
   dialog.title = '編輯營業額'
-  dialog.form = { ...row }
+  Object.assign(dialog.form, row)
+  formRef.value?.clearValidate()
 }
 
 const submit = async () => {
   try {
+    await formRef.value.validate()
     if (dialog.isEdit) {
       await api.updateRevenue(dialog.form.id, dialog.form)
     } else {
@@ -66,7 +78,6 @@ const submit = async () => {
   }
 }
 
-// 刪除營業額 delete
 const handleDelete = async (id) => {
   try {
     await ElMessageBox.confirm('確定要刪除嗎？')
@@ -86,12 +97,9 @@ const handleDelete = async (id) => {
 // 分頁功能
 const pageSize = ref(8)
 const currentPage = ref(1)
-const selectedMonth = ref('')
+const handlePageChange = () => { currentPage.value = page }
 
 const filteredRevenue = computed(() => {
-  if (!selectedMonth.value) {
-    return revenueList.value
-  }
   return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
 })
 const paginatedRevenue = computed(() => {
@@ -99,13 +107,10 @@ const paginatedRevenue = computed(() => {
   const end = start + pageSize.value
   return filteredRevenue.value.slice(start, end)
 })
-const handlePageChange = (page) => {
-  currentPage.value = page
-}
 
 // 價格標準化
 const formatePrice = (row) => {
-  return 'NT ' + row.price.toLocaleString()
+  return 'NT$ ' + row.price.toLocaleString()
 }
 
 onMounted(() => {
@@ -114,15 +119,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <header class="mb-4 flex items-center justify-between">
+  <!-- header 新增按鈕、選擇月份 -->
+  <header class="mb-4 flex justify-between items-center">
     <el-button @click="handleAdd" type="primary">新增營業額</el-button>
     <el-date-picker
       v-model="selectedMonth"
       type="month"
-      placeholder="選擇月份"
+      size="large"
       format="YYYY-MM"
       value-format="YYYY-MM"
-      clearable
+      placeholder="選擇月份"
+      :clearable="false"
     />
   </header>
 
@@ -153,30 +160,29 @@ onMounted(() => {
   </el-card>
   
   <!-- 新增營業額 dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title">
-    <el-form :model="dialog.form">
-      <el-form-item label="選擇日期">
+  <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px">
+    <el-form :model="dialog.form" :rules="rules" ref="formRef">
+      <el-form-item prop="date" label="選擇日期">
         <el-date-picker
           v-model="dialog.form.date"
-          type="date"
-          placeholder="選擇日期"
-          style="width: 100%"
-          format="YYYY-MM-DD"
           value-format="YYYY-MM-DD"
+          placeholder="選擇日期"
         />
       </el-form-item>
-      <el-form-item label="輸入當日營業額">
-        <el-input-number v-model="dialog.form.price"/>
+      <el-form-item prop="price" label="營業額">
+        <el-input-number v-model="dialog.form.price" />
       </el-form-item>
       <el-form-item label="備註">
-        <el-input v-model="dialog.form.note" type="textarea"></el-input>
+        <el-input v-model="dialog.form.note" type="textarea" />
       </el-form-item>
-      <el-form-item label="登錄者">
-        <el-input v-model="dialog.form.createdBy"/>
+      <el-form-item prop="createdBy" label="登錄者">
+        <el-input v-model="dialog.form.createdBy" />
       </el-form-item>       
     </el-form>
-    <el-button @click="dialog.visible = false">取消</el-button>
-    <el-button @click="submit" type="primary">確認</el-button>
+    <template #footer>
+      <el-button @click="submit" type="primary">確認</el-button>
+      <el-button @click="dialog.visible = false">取消</el-button>
+    </template>
   </el-dialog>
 </template>
 
@@ -184,11 +190,6 @@ onMounted(() => {
 header {
   .el-button {
     height: 38px;
-  }
-  .el-input {
-    width: 250px;
-    height: 38px;
-    font-size: 16px;
   }
 }
 </style>

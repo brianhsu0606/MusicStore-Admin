@@ -46,7 +46,6 @@ const ordersPerDay = computed(() => {
   }
 })
 
-
 // 長條圖 echart
 const chartOption = computed(() => ({
   tooltip: {},
@@ -63,7 +62,6 @@ const chartOption = computed(() => ({
     itemStyle: { color: '#10B981' }
   }]
 }))
-
 
 const memberCount = ref(0)
 const fetchMemberCount = async () => {
@@ -107,14 +105,14 @@ onMounted(() => {
 
 const cardData = [
   { icon: 'User', bg: 'bg-green-400', title: '會員人數：', value: () => memberCount.value + ' 人' },
-  { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', value: () => orderCount.value },
+  { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', value: () => orderCount.value},
 ]
 </script>
 
 <template>
   <el-row :gutter="20">
     <!-- 左邊 -->
-    <el-col :span="10" class="left-content">
+    <el-col :span="10">
       <!-- 左邊上方 基本資料卡 el-card -->
       <div class="flex gap-4 mb-4">
         <el-card v-for="(item, index) in cardData" :key="index" class="flex-1">
@@ -135,93 +133,27 @@ const cardData = [
           <el-table-column prop="category" label="分類" />
           <el-table-column prop="quantity" label="庫存量">
             <template #default="{ row }">
-              <span :class="{ 'text-red-500 font-semibold': row.quantity < 20 }">
-                {{ row.quantity }}
-              </span>
+              <span :class="{ 'text-red-500 font-semibold': row.quantity < 20 }">{{ row.quantity }}</span>
             </template>
           </el-table-column>
         </el-table>
       </el-card>
     </el-col>
+
     <!-- 右邊 -->
-    <el-col :span="14" class="right-content">
+    <el-col :span="14">
       <!-- 右邊 訂單分析長條圖 v-chart -->
       <el-card v-loading="orderLoading" element-loading-text="載入中，請稍候...">
-        <div class="flex justify-between items-center">
+        <header class="flex justify-between items-center">
           <h3 class="text-xl font-medium">最近 {{ selectedDays }} 天的訂單數量</h3>
           <el-select v-model="selectedDays" size="large" style="width: 150px">
             <el-option :label="'最近 7 天'" :value="7" />
             <el-option :label="'最近 14 天'" :value="14" />
             <el-option :label="'最近 30 天'" :value="30" />
           </el-select>
-        </div>
+        </header>
         <v-chart :option="chartOption" autoresize style="height: 400px" />
       </el-card>
     </el-col>
   </el-row>
 </template>
-
-<style scoped lang="less">
-// // #region RWD
-// @media (max-width: 1500px) {
-//   .left-content {
-//     .user-content {
-//       img {
-//         width: 160px;
-//         height: 160px;
-//       }
-//       .user-info {
-//         h3 {
-//           font-size: 23px;
-//         }
-//         p {
-//           font-size: 22px;
-//         }
-//       }
-//     }
-//     .login-info {
-//       font-size: 17px;
-//     }
-//   }
-  
-//   .card-flex .el-card {
-//     width: 49%;
-//   }
-
-//   .chart-container {
-//     height: 400px;
-//   }
-// }
-
-// @media (max-width: 800px) {
-//   .left-content {
-//     .user-content {
-//       flex-direction: column;
-//       align-items: flex-start;
-//       img {
-//         width: 150px;
-//         height: 150px;
-//         margin: 0 auto;
-//         margin-bottom: 10px;
-//       }
-//       .login-info {
-//         font-size: 10px;
-//       }
-//     }
-//   }
- 
-//   .card-flex {
-//     flex-direction: column;
-
-//     .el-card {
-//       width: 100%;
-//     }
-//   }
-
-//   .chart-container {
-//     height: 300px;
-//   }
-// }
-// // #endregion
-
-</style>

@@ -122,13 +122,12 @@ const currentMonthProfit = computed(() => {
 })
 // #endregion
 
-
 // #region 分頁功能 pagination
 const pageSize = ref(8)
 const currentCostPage = ref(1)
 const currentRevenuePage = ref(1)
-const handleCostPageChange = (page) => currentCostPage.value = page
-const handleRevenuePageChange = (page) => currentRevenuePage.value = page
+const handleCostPageChange = (page) => { currentCostPage.value = page }
+const handleRevenuePageChange = (page) => { currentRevenuePage.value = page }
 
 const filteredCost = computed(() => 
   costList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
@@ -232,11 +231,11 @@ onMounted(() => {
     <el-date-picker
       v-model="selectedMonth"
       type="month"
+      size="large"
       format="YYYY-MM"
       value-format="YYYY-MM"
       placeholder="選擇月份"
       :clearable="false"
-      size="large"
     />
   </header>
 
