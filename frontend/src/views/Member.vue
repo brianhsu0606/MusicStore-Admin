@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagination } from '@/composables/usePagination'
 import dayjs from 'dayjs'
 import api from '@/api'
 
@@ -105,26 +106,12 @@ const calcAge = (birth) => {
   return age
 }
 
-// 查詢功能
+// 搜尋功能 + 分頁功能
 const searchInput = ref('')
-const filteredMember = computed(() => {
+const filteredMemberList = computed(() => {
   return memberList.value.filter(item => item.name.toLowerCase().includes(searchInput.value.toLowerCase()))
 })
-
-// 分頁功能
-const pageSize = ref(8)
-const currentPage = ref(1)
-const handlePageChange = (page) => { currentPage.value = page }
-
-const pagedData = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredMember.value.slice(start, end)
-})
-
-watch(searchInput, () => {
-  currentPage.value = 1
-})
+const { currentPage, pageSize, pagedList, handlePageChange} = usePagination(filteredMemberList, 8)
 
 onMounted(() => {
   fetchMembers()
@@ -140,7 +127,7 @@ onMounted(() => {
 
   <!-- 會員表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedData" class="mb-4" stripe>
+    <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="createdAt" label="註冊日期" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column label="年齡" width="130px">
@@ -163,14 +150,14 @@ onMounted(() => {
       layout="prev, pager, next"
       :page-size="pageSize"
       :current-page="currentPage"
-      :total="filteredMember.length"
+      :total="filteredMemberList.length"
       @current-change="handlePageChange"
     />
   </el-card>
 
   <!-- 新增、編輯會員 Dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px">
-    <el-form :model="dialog.form" :rules="rules" ref="formRef">
+  <el-dialog v-model="dialog.visible" :title="dialog.title">
+    <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
       <el-form-item prop="createdAt" label="註冊日期">
         <el-date-picker 
           v-model="dialog.form.createdAt"
@@ -182,7 +169,8 @@ onMounted(() => {
         <el-input v-model="dialog.form.name" />
       </el-form-item>
       <el-form-item prop="gender" label="性別">
-        <el-select v-model="dialog.form.gender" placeholder="請選擇">
+        <el-select v-model="dialog.form.gender" placeholder="請選擇性別">
+          <el-option label="請選擇性別" value="" disabled />
           <el-option label="男" value="男" />
           <el-option label="女" value="女" />
         </el-select>

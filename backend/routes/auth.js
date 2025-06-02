@@ -35,13 +35,12 @@ router.post('/api/register', async (req, res) => {
       profile: {
         name,
         role: 'user',
-        gender: '-',
-        birth: '-',
-        email: '-',
+        gender: '',
+        birth: '',
+        email: '',
         avatar: 'avatar1.jpeg'
       }
     })
-
     await newUser.save()
 
     res.json({

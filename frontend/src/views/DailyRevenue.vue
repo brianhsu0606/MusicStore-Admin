@@ -1,13 +1,13 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagination } from '@/composables/usePagination'
 import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
 import api from '@/api'
 
 const userStore = useUserStore()
-const currentMonth = ref(dayjs().format('YYYY-MM'))
-const selectedMonth = ref(currentMonth.value)
+
 
 const formRef = ref()
 const dialog = reactive({
@@ -94,24 +94,19 @@ const handleDelete = async (id) => {
 }
 // #endregion
 
-// 分頁功能
-const pageSize = ref(8)
-const currentPage = ref(1)
-const handlePageChange = () => { currentPage.value = page }
-
-const filteredRevenue = computed(() => {
-  return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
-})
-const paginatedRevenue = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredRevenue.value.slice(start, end)
-})
-
 // 價格標準化
 const formatePrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
+
+// 月份篩選 + 分頁功能
+const currentMonth = ref(dayjs().format('YYYY-MM'))
+const selectedMonth = ref(currentMonth.value)
+
+const filteredRevenueList = computed(() => {
+  return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
+})
+const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredRevenueList, 8)
 
 onMounted(() => {
   fetchRevenue()
@@ -135,7 +130,7 @@ onMounted(() => {
 
   <!-- 營業額表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="paginatedRevenue" class="mb-4" stripe>
+    <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="date" label="日期" />
       <el-table-column prop="price" label="營業額" :formatter="formatePrice"/>
       <el-table-column prop="note" label="備註" />
@@ -154,14 +149,14 @@ onMounted(() => {
       layout="prev, pager, next"
       :page-size="pageSize"
       :current-page="currentPage"
-      :total="filteredRevenue.length"
+      :total="filteredRevenueList.length"
       @current-change="handlePageChange"
     />
   </el-card>
   
   <!-- 新增營業額 dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px">
-    <el-form :model="dialog.form" :rules="rules" ref="formRef">
+  <el-dialog v-model="dialog.visible" :title="dialog.title">
+    <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
       <el-form-item prop="date" label="選擇日期">
         <el-date-picker
           v-model="dialog.form.date"

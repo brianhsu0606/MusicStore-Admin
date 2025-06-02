@@ -6,7 +6,7 @@ const Cost = require('../models/costModel')
 // 讀取成本 Read
 router.get('/api/costs', authenticateToken, async (req, res) => {
   try {
-    const costList = await Cost.find()
+    const costList = await Cost.find().sort({ date: -1 })
     res.json({
       code: 200,
       message: '獲取成本成功',

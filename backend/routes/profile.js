@@ -27,19 +27,15 @@ router.get('/api/profile', authenticateToken, async (req, res) => {
 // 更新個人資料
 router.put('/api/profile', authenticateToken, async (req, res) => {
   try {
-    const updatedProfile = req.body;
-
     const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ code: 404, message: '用戶不存在' });
     }
 
-    // 合併更新資料
     user.profile = {
       ...user.profile,
-      ...updatedProfile
-    };
-
+      ...req.body
+    }
     await user.save();
 
     res.json({

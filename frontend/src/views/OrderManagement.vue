@@ -1,6 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagination } from '@/composables/usePagination'
 import dayjs from 'dayjs'
 import api from '@/api'
 
@@ -62,7 +63,7 @@ const handleEdit = (row) => {
 
 const changeStatus = async (row) => {
   try {
-    await api.updateOrder(row, row.id)
+    await api.updateOrder(row.id, row)
     ElMessage.success('更改訂單狀態成功')
   } catch {
     ElMessage.error('更改訂單狀態失敗')
@@ -118,30 +119,23 @@ const getStatusLabel = (status) => {
   }
 }
 
-// 搜尋功能
-const searchInput = ref('')
-const filteredOrderList = computed(() => {
-  return orderList.value.filter(item => item.orderNumber.toLowerCase().includes(searchInput.value.toLowerCase()))
-})
-
-// 分頁功能 Pagination
-const currentPage = ref(1)
-const pageSize = ref(8)
-const handlePageChange = (page) => { currentPage.value = page }
-
-const pagedOrderList = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredOrderList.value.slice(start, end)
-})
-
-watch(searchInput, () => {
-  currentPage.value = 1
-})
-
 const formatPrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
+
+// 月份篩選 + 搜尋功能 + 分頁功能
+const currentMonth = ref(dayjs().format('YYYY-MM'))
+const selectedMonth = ref(currentMonth.value)
+const searchInput = ref('')
+
+const filteredOrderList = computed(() => {
+  return orderList.value.filter(item => {
+    const matchMonth = !selectedMonth.value || dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value
+    const matchSearch = !searchInput.value || item.orderNumber.toLowerCase().includes(searchInput.value.toLowerCase())
+    return matchMonth && matchSearch
+  })
+})
+const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredOrderList, 8)
 
 onMounted(() => {
   fetchOrders()
@@ -150,20 +144,30 @@ onMounted(() => {
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header class="flex justify-between mb-4">
+  <header class="mb-4 flex justify-between items-center">
     <el-button @click="handleAdd" type="primary">新增訂單</el-button>
-    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號"></el-input>
+    <div>
+      <el-date-picker
+        v-model="selectedMonth"
+        type="month"
+        size="large"
+        format="YYYY-MM"
+        value-format="YYYY-MM"
+        placeholder="選擇月份"
+      />
+      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號" class="ml-4"/>
+    </div>
   </header>
 
   <!-- 訂單列表 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedOrderList" class="mb-4" stripe>
-      <el-table-column prop="orderNumber" label="訂單編號" width="155" />
-      <el-table-column prop="createdAt" label="下單日期" width="140" />
-      <el-table-column prop="member" label="會員名稱" width="110" />
-      <el-table-column prop="items" label="商品名稱" width="210" />
-      <el-table-column prop="price" label="訂單金額" width="120" :formatter="formatPrice" />
-      <el-table-column label="狀態">
+    <el-table :data="pagedList" class="mb-4" stripe>
+      <el-table-column prop="orderNumber" label="訂單編號" min-width="120" />
+      <el-table-column prop="createdAt" label="下單日期" min-width="100" />
+      <el-table-column prop="member" label="會員名稱" min-width="70" />
+      <el-table-column prop="items" label="商品名稱" min-width="200"/>
+      <el-table-column prop="price" label="訂單金額" min-width="110" :formatter="formatPrice" />
+      <el-table-column label="狀態" min-width="150">
         <template #default="{ row }">
           <el-select v-model="row.status" @change="changeStatus(row)" class="status-select">
             <template #prefix>
@@ -175,7 +179,7 @@ onMounted(() => {
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="操作" min-width="160">
         <template #default="{ row }">
           <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
           <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
@@ -194,10 +198,9 @@ onMounted(() => {
     />
   </el-card>
 
-
   <!-- 新增訂單 dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title" width="500">
-    <el-form :model="dialog.form" :rules="rules" ref="formRef">
+  <el-dialog v-model="dialog.visible" :title="dialog.title">
+    <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
       <el-form-item prop="createdAt" label="下單日期">
         <el-date-picker
           v-model="dialog.form.createdAt"
@@ -222,10 +225,9 @@ onMounted(() => {
         </el-select>
       </el-form-item>
     </el-form>
-
     <template #footer>
-      <el-button @click="dialog.visible = false">取消</el-button>
       <el-button @click="submit" type="primary">確認</el-button>
+      <el-button @click="dialog.visible = false">取消</el-button>
     </template>
   </el-dialog>
 </template>
@@ -235,6 +237,9 @@ header {
   .el-button {
     height: 38px;
   }
+  .el-date-picker {
+    font-size: 16px;
+  }
   .el-input {
     width: 250px;
     height: 38px;
@@ -242,10 +247,8 @@ header {
   }
 }
 
-.el-card {
-  .el-tag {
-    font-size: 14px;
-  }
+.el-tag {
+  font-size: 14px;
 }
 
 ::v-deep(.status-select .el-select__selected-item) {

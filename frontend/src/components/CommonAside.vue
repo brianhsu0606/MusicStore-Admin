@@ -49,20 +49,24 @@ const list = ref([
     path: '/admin-stats',
     name: 'admin-stats',
     label: '管理員介面',
-    icon: 'user',
+    icon: 'DataLine',
     url: 'Admin'
   },
 ])
 const noChildren = computed(() => list.value.filter(item => !item.children))
 
 const router = useRouter()
+const activePath = computed(() => router.currentRoute.value.path)
+
 const handleMenu = (item) => {
-  router.push(item.path)
+  if (item.path !== activePath.value) {
+    router.push(item.path)
+  }
 }
 </script>
 
 <template>
-  <el-menu>
+  <el-menu :default-active="activePath" router>
     <el-menu-item
       v-for="item in noChildren"
       :index="item.path"

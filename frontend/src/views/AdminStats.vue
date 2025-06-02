@@ -1,22 +1,28 @@
 <script setup>
 import { ref, computed, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagination } from '@/composables/usePagination'
 import dayjs from 'dayjs'
 import api from '@/api'
 
-const currentMonth = ref(dayjs().format('YYYY-MM'))
-const selectedMonth = ref(currentMonth.value)
+const formRef = ref()
 const dialog = reactive({
   visible: false,
   isEdit: false,
-  title: '新增成本',
+  title: '',
   form: {
     name: '',
     category: '',
-    date: dayjs().format('YYYY-MM-DD'),
+    date: '',
     price: 0
   }
 })
+const rules = {
+  name: [{ required: true, message: '請輸入成本名稱', trigger: 'blur' }],
+  category: [{ required: true, message: '請選擇成本分類', trigger: 'blur' }],
+  date: [{ required: true, message: '請選擇成本日期', trigger: 'blur' }],
+  price: [{ required: true, message: '請輸入成本金額', trigger: 'blur' }],
+}
 
 // #region 成本、營業額
 const costCategories = [
@@ -25,7 +31,6 @@ const costCategories = [
   '進貨成本',
   '其他成本'
 ]
-
 const loadingCost = ref(true)
 const costList = ref([])
 const fetchCost = async () => {
@@ -43,23 +48,26 @@ const handleAdd = () => {
   dialog.visible = true
   dialog.isEdit = false
   dialog.title = '新增成本'
-  dialog.form = {
+  Object.assign(dialog.form, {
     name: '',
-    category: '',
+    category: '租金/水電',
     date: dayjs().format('YYYY-MM-DD'),
     price: 0
-  }
+  })
+  formRef.value?.clearValidate()
 }
 
 const handleEdit = (row) => {
   dialog.visible = true
   dialog.isEdit = true
   dialog.title = '編輯成本'
-  dialog.form = { ...row }
+  Object.assign(dialog.form, row)
+  formRef.value?.clearValidate()
 }
 
 const submit = async () => {
   try {
+    await formRef.value.validate()
     if (dialog.isEdit) {
       await api.updateCost(dialog.form.id, dialog.form)
     } else {
@@ -95,8 +103,6 @@ const fetchRevenue = async () => {
   try {
     revenueList.value = await api.getRevenue()
   } catch (error) {
-    console.log(error);
-    
     ElMessage.error('獲取營業額失敗')
   } finally {
     loadingRevenue.value = false
@@ -122,41 +128,38 @@ const currentMonthProfit = computed(() => {
 })
 // #endregion
 
-// #region 分頁功能 pagination
-const pageSize = ref(8)
-const currentCostPage = ref(1)
-const currentRevenuePage = ref(1)
-const handleCostPageChange = (page) => { currentCostPage.value = page }
-const handleRevenuePageChange = (page) => { currentRevenuePage.value = page }
+// 月份篩選 + 分頁功能
+const currentMonth = ref(dayjs().format('YYYY-MM'))
+const selectedMonth = ref(currentMonth.value)
 
-const filteredCost = computed(() => 
-  costList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
-)
-const paginatedCost = computed(() => {
-  const start = (currentCostPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredCost.value.slice(start, end)
+const filteredCostList = computed(() => {
+  return costList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
 })
 
-const filteredRevenue = computed(() => 
-  revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
-)
-const revenueTableData = computed(() => 
-  filteredRevenue.value.sort((a, b) => new Date(b.date) - new Date(a.date))
-)
-const paginatedRevenue = computed(() => {
-  const start = (currentRevenuePage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return revenueTableData.value.slice(start, end)
+const filteredRevenueList = computed(() => {
+  return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
 })
-// #endregion
+
+const {
+  currentPage: currentCostPage,
+  pageSize: costPageSize,
+  pagedList: paginatedCost,
+  handlePageChange: handleCostPageChange
+} = usePagination(filteredCostList, 8, false)
+
+const {
+  currentPage: currentRevenuePage,
+  pageSize: revenuePageSize,
+  pagedList: paginatedRevenue,
+  handlePageChange: handleRevenuePageChange
+} = usePagination(filteredRevenueList, 8, false)
 
 // #region 圖表 v-chart
 // 成本圓餅圖資料
 const costChartData = computed(() => {
   const categoryMap = {}
 
-  filteredCost.value.forEach(item => {
+  filteredCostList.value.forEach(item => {
     const key = item.category || '未分類'
     categoryMap[key] = (categoryMap[key] || 0) + item.price
   })
@@ -176,9 +179,10 @@ const costChartOption = computed(() => ({
 }))
 
 // 營業額折線圖
-const revenueChartData = computed(() => 
-  filteredRevenue.value.sort((a, b) => new Date(a.date) - new Date(b.date))
-)
+const revenueChartData = computed(() => {
+  return [...filteredRevenueList.value].sort((a, b) => new Date(a.date) - new Date(b.date))
+})
+
 const revenueChartOption = computed(() => ({
   title: { text: `${selectedMonth.value} 營業額趨勢圖` },
   tooltip: {},
@@ -270,17 +274,17 @@ onMounted(() => {
         <el-pagination
           background
           layout="prev, pager, next"
-          :page-size="pageSize"
+          :page-size="costPageSize"
           :current-page="currentCostPage"
-          :total="filteredCost.length"
+          :total="filteredCostList.length"
           @current-change="handleCostPageChange"
         />
       </el-card>
 
       <!-- 新增成本 dialog -->
       <el-dialog v-model="dialog.visible" :title="dialog.title">
-        <el-form>
-          <el-form-item label="成本名稱">
+        <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
+          <el-form-item prop="name" label="成本名稱">
             <el-input v-model="dialog.form.name" placeholder="請輸入成本名稱" />
           </el-form-item>
           <el-form-item label="成本分類">
@@ -293,21 +297,20 @@ onMounted(() => {
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="日期">
+          <el-form-item prop="date" label="日期">
             <el-date-picker
               v-model="dialog.form.date"
-              type="date"
-              placeholder="選擇日期"
               value-format="YYYY-MM-DD"
+              placeholder="選擇日期"
             />
           </el-form-item>
-          <el-form-item label="金額">
+          <el-form-item prop="price" label="金額">
             <el-input-number v-model="dialog.form.price" />
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button @click="dialog.visible = false">取消</el-button>
           <el-button @click="submit" type="primary">確認</el-button>
+          <el-button @click="dialog.visible = false">取消</el-button>
         </template>
       </el-dialog>
     </el-col>
@@ -324,16 +327,18 @@ onMounted(() => {
         <h3 class="mb-2">{{ selectedMonth }} 營業額資料</h3>
         <el-table :data="paginatedRevenue" stripe class="mb-4">
           <el-table-column prop="date" label="日期" />
-          <el-table-column prop="revenue" label="營業額" :formatter="formatPrice" sortable />
+          <el-table-column prop="price" label="營業額" :formatter="formatPrice" sortable />
+          <el-table-column prop="note" label="備註" />
+          <el-table-column prop="createdBy" label="登錄者" />
         </el-table>
 
         <!-- 分頁功能 pagination -->
         <el-pagination
           background
           layout="prev, pager, next"
-          :page-size="pageSize"
+          :page-size="revenuePageSize"
           :current-page="currentRevenuePage"
-          :total="filteredRevenue.length"
+          :total="filteredRevenueList.length"
           @current-change="handleRevenuePageChange"
         />
       </el-card>

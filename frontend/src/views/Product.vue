@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, reactive, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { usePagination } from '@/composables/usePagination'
 import api from '@/api'
 
 const categories = ['全部商品', '木吉他', '電吉他', '音箱', '配件', '吉他弦']
@@ -96,9 +97,9 @@ const formatPrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
 
-// 搜尋功能
+// 搜尋功能 + 分頁功能
 const searchInput = ref('')
-const filteredProducts = computed(() => {
+const filteredProductList = computed(() => {
   let list = products.value
   if (activeCategory.value !== '全部商品') {
     list = list.filter(p => p.category === activeCategory.value)
@@ -109,21 +110,7 @@ const filteredProducts = computed(() => {
   }
   return list
 })
-
-// 分頁功能
-const currentPage = ref(1)
-const pageSize = ref(8)
-const handlePageChange = (page) => { currentPage.value = page }
-
-const pagedProducts = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return filteredProducts.value.slice(start, end)
-})
-
-watch([searchInput, activeCategory], () => {
-  currentPage.value = 1
-})
+const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredProductList, 8)
 
 onMounted(() => {
   fetchProducts()
@@ -147,7 +134,7 @@ onMounted(() => {
     />
 
     <!-- 商品表格 table -->    
-    <el-table :data="pagedProducts" class="mb-4" stripe>
+    <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="name" label="商品名稱" width="300"/>
       <el-table-column prop="category" label="分類" />
       <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
@@ -166,7 +153,7 @@ onMounted(() => {
       layout="prev, pager, next"
       :page-size="pageSize"
       :current-page="currentPage"
-      :total="filteredProducts.length"
+      :total="filteredProductList.length"
       @current-change="handlePageChange"
     />
   </el-tabs>
@@ -174,7 +161,7 @@ onMounted(() => {
 
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
-    <el-form :model="dialog.form" :rules="rules" ref="formRef">
+    <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
       <el-form-item prop="name" label="商品名稱">
         <el-input v-model="dialog.form.name" />
       </el-form-item>

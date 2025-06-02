@@ -46,20 +46,24 @@ const changeRole = async (id, role) => {
     ElMessage.error('更新用戶身份失敗')
   }
 }
+
+const formatEmpty = (_, __, value) => {
+  return value ? value : '-'
+}
 </script>
 
 <template>
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="userList" stripe>
-      <el-table-column prop="employeeId" label="員工編號" width="120" />
+      <el-table-column prop="employeeId" label="員工編號" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性別">
         <template #default="{ row }">
-          {{ row.gender === 'male' ? '男性' : (row.gender === 'female' ? '女性' : '-') }}
+          {{ row.gender === 'male' ? '男' : (row.gender === 'female' ? '女' : (row.gender === 'others' ? '其他' : '-')) }}
         </template>
       </el-table-column>
-      <el-table-column prop="email" label="信箱" />
-      <el-table-column prop="birth" label="生日" />
+      <el-table-column prop="email" label="信箱" :formatter="formatEmpty" />
+      <el-table-column prop="birth" label="生日" :formatter="formatEmpty" />
       <el-table-column label="最後登入日期">
         <template #default="{ row }">
           {{ row.lastLogin ? new Date(row.lastLogin).toLocaleDateString() : '-' }}

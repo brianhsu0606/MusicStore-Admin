@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 import { ElMessage } from 'element-plus'
+import { useUserStore } from '@/stores/user'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,9 +63,16 @@ const router = createRouter({
   ],
 })
 
+const isAuthorized = (to, role) => {
+  if (to.meta.requiresAdmin) {
+    return ['admin', 'superadmin'].includes(role)
+  }
+  return true
+}
+
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const role = useUserStore().role
+  const userStore = useUserStore()
 
   if (!token && to.path !== '/login') {
     return next('/login')
@@ -75,12 +82,10 @@ router.beforeEach((to, from, next) => {
     return next('/home')
   }
 
-  const allowedRoles = ['admin', 'superadmin']
-  if (to.meta.requiresAdmin && !allowedRoles.includes(role)) {
+  if (!isAuthorized(to, userStore.role)) {
     ElMessage.warning('您沒有權限進入此頁面')
-    return next('/home')
+    return next(false)
   }
-
   next()
 })
 
