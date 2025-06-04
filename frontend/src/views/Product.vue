@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed, onMounted, reactive, watch } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
+import dayjs from 'dayjs'
 import api from '@/api'
 
 const categories = ['全部商品', '木吉他', '電吉他', '音箱', '配件', '吉他弦']
+const categoryOptions = categories.slice(1)
 const activeCategory = ref('全部商品')
 
 const formRef = ref()
@@ -13,6 +15,7 @@ const dialog = reactive({
   isEdit: false,
   title: '',
   form: {
+    lastStockIn: '',
     name: '',
     category: '',
     price: 0,
@@ -20,6 +23,7 @@ const dialog = reactive({
   }
 })
 const rules = {
+  lastStockIn : [{ required: true, message: '請選擇進貨日期', trigger: 'blur' }],
   name : [{ required: true, message: '請輸入商品名稱', trigger: 'blur' }],
   category : [{ required: true, message: '請選擇商品分類', trigger: 'blur' }],
   price : [{ required: true, message: '請輸入商品價格', trigger: 'blur' }],
@@ -28,11 +32,11 @@ const rules = {
 
 // #region CRUD
 const loading = ref(true)
-const products = ref([])
+const productList = ref([])
 const fetchProducts = async () => {
   loading.value = true
   try {
-    products.value = await api.getProducts()
+    productList.value = await api.getProducts()
   } catch {
     ElMessage.error('獲取商品失敗')
   } finally {
@@ -45,6 +49,7 @@ const handleAdd =  () => {
   dialog.isEdit = false
   dialog.title = '新增商品'
   Object.assign(dialog.form, {
+    lastStockIn: dayjs().format('YYYY-MM-DD'),
     name: '',
     category: '',
     price: 0,
@@ -78,11 +83,13 @@ const submit = async () => {
 }
 
 const handleDelete = async (id) => {
-  try {
-    await ElMessageBox.confirm('確定要刪除嗎？')
-  } catch (error) { 
-    return
-  }
+  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmed) return
+
   try {
     await api.deleteProduct(id)
     await fetchProducts()
@@ -97,16 +104,23 @@ const formatPrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
 
-// 搜尋功能 + 分頁功能
+// 月份篩選 + 搜尋功能 + 分頁功能
+const selectedMonth = ref('')
 const searchInput = ref('')
+
 const filteredProductList = computed(() => {
-  let list = products.value
+  let list = productList.value
   if (activeCategory.value !== '全部商品') {
     list = list.filter(p => p.category === activeCategory.value)
   }
   if (searchInput.value.trim()) {
     const keyword = searchInput.value.toLowerCase()
     list = list.filter(p => p.name.toLowerCase().includes(keyword))
+  }
+  if (selectedMonth.value) {
+    list = list.filter(p =>
+      p.lastStockIn && p.lastStockIn.startsWith(selectedMonth.value)
+    )
   }
   return list
 })
@@ -121,7 +135,17 @@ onMounted(() => {
   <!-- 新增、搜尋 header -->
   <header class="mb-4 flex justify-between items-center">
     <el-button @click="handleAdd" type="primary">新增商品</el-button>
-    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" />
+    <div>
+      <el-date-picker
+        v-model="selectedMonth"
+        type="month"
+        size="large"
+        format="YYYY-MM"
+        value-format="YYYY-MM"
+        placeholder="選擇月份"
+      />
+      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" class="ml-4" />
+    </div>
   </header>
 
   <!-- 商品分類 tab -->
@@ -135,11 +159,12 @@ onMounted(() => {
 
     <!-- 商品表格 table -->    
     <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="name" label="商品名稱" width="300"/>
-      <el-table-column prop="category" label="分類" />
+      <el-table-column prop="lastStockIn" label="進貨日期" min-width="90"/>
+      <el-table-column prop="name" label="商品名稱" min-width="170"/>
+      <el-table-column prop="category" label="分類" min-width="60" />
       <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
-      <el-table-column prop="quantity" label="數量" />
-      <el-table-column label="操作">
+      <el-table-column prop="quantity" label="數量" min-width="50" />
+      <el-table-column label="操作" min-width="100">
         <template #default="{ row }">
           <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
           <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
@@ -158,16 +183,22 @@ onMounted(() => {
     />
   </el-tabs>
 
-
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
     <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
+      <el-form-item prop="lastStockIn" label="進貨日期">
+        <el-date-picker
+          v-model="dialog.form.lastStockIn"
+          value-format="YYYY-MM-DD"
+          placeholder="請選擇日期"
+        />
+      </el-form-item>
       <el-form-item prop="name" label="商品名稱">
         <el-input v-model="dialog.form.name" />
       </el-form-item>
       <el-form-item prop="category" label="分類">
         <el-select v-model="dialog.form.category" placeholder="請選擇分類">
-          <el-option v-for="cat in categories" :key="cat" :label="cat" :value="cat" />
+          <el-option v-for="cat in categoryOptions" :key="cat" :label="cat" :value="cat"/>
         </el-select>
       </el-form-item>
       <el-form-item prop="price" label="價格">
@@ -196,4 +227,3 @@ header {
   }
 }
 </style>
-

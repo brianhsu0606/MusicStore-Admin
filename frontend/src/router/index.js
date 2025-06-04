@@ -22,8 +22,8 @@ const router = createRouter({
           component: () => import('@/views/Home.vue')
         },
         {
-          path: 'report',
-          name: 'report',
+          path: 'revenue',
+          name: 'revenue',
           component: () => import('@/views/DailyRevenue.vue')
         },
         {

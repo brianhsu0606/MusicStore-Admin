@@ -109,13 +109,12 @@ const selectAvatar = (avatarFileName) => {
     width: 250px;
     height: 200px;
     border: 0.5px solid gray;
-    border-radius: 10px;
     margin: 20px auto;
     display: block;
     cursor: pointer;
     transition: 0.2s;
     &:hover {
-      box-shadow: 1px 1px 7px gray;
+      box-shadow: 1px 1px 5px gray;
     }
   }
   .el-form {
@@ -131,10 +130,10 @@ const selectAvatar = (avatarFileName) => {
     width: 150px;
     height: 150px;
     margin: 0 5px;
+    border: 0.5px solid gray;
     cursor: pointer;
     transition: 0.2s;
     &:hover {
-      border: 0.5px solid gray;
       box-shadow: 1px 1px 5px gray;
     }
   }

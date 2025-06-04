@@ -24,7 +24,7 @@ const rules = {
   price: [{ required: true, message: '請輸入成本金額', trigger: 'blur' }],
 }
 
-// #region 成本、營業額
+// #region 成本、營業額 CRUD
 const costCategories = [
   '租金/水電',
   '人事成本',
@@ -50,7 +50,7 @@ const handleAdd = () => {
   dialog.title = '新增成本'
   Object.assign(dialog.form, {
     name: '',
-    category: '租金/水電',
+    category: '',
     date: dayjs().format('YYYY-MM-DD'),
     price: 0
   })
@@ -82,11 +82,13 @@ const submit = async () => {
 }
 
 const handleDelete = async (id) => {
-  try {
-    await ElMessageBox.confirm('確定要刪除嗎？')
-  } catch (error) {
-    return
-  } 
+  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmed) return
+
   try {
     await api.deleteCost(id)
     await fetchCost()
@@ -135,7 +137,6 @@ const selectedMonth = ref(currentMonth.value)
 const filteredCostList = computed(() => {
   return costList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
 })
-
 const filteredRevenueList = computed(() => {
   return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
 })
@@ -285,9 +286,9 @@ onMounted(() => {
       <el-dialog v-model="dialog.visible" :title="dialog.title">
         <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
           <el-form-item prop="name" label="成本名稱">
-            <el-input v-model="dialog.form.name" placeholder="請輸入成本名稱" />
+            <el-input v-model="dialog.form.name" />
           </el-form-item>
-          <el-form-item label="成本分類">
+          <el-form-item prop="category" label="成本分類">
             <el-select v-model="dialog.form.category" placeholder="請選擇成本分類">
               <el-option 
                 v-for="(item, index) in costCategories"
@@ -357,4 +358,8 @@ header {
     font-weight: 500;
   }
 }
+
+.el-button {
+    height: 38px;
+  }
 </style>

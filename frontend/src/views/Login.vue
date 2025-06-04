@@ -8,7 +8,7 @@ import api from '@/api'
 const userStore = useUserStore()
 const router = useRouter()
 
-const isRegister = ref(true)
+const isRegister = ref(false)
 const handleChange = () => {
   isRegister.value = !isRegister.value
 }
@@ -98,63 +98,58 @@ const handleLogin = async () => {
   <div class="background flex justify-center items-center">
 
     <div class="auth-wrapper">
-
-      <div class="flex gap-4 justify-center mb-4">
-        <el-icon size="30"><Headset /></el-icon>
+      <div class="flex gap-4 justify-center items-center mb-6">
+        <el-icon size="30"><ShoppingBag /></el-icon>
         <h2>樂器行後台系統</h2>
       </div>
 
-      <div>
-        <!-- 註冊表單 -->
-        <el-form
-          ref="registerFormRef"
-          :model="registerForm"
-          :rules="registerRules"
-          v-if="isRegister"
-        >
-          <h3 class="title">註冊</h3>
-          <el-form-item prop="name">
-            <el-input v-model="registerForm.name" prefix-icon="User" placeholder="請輸入用戶名稱" />
-          </el-form-item>
-          <el-form-item prop="username">
-            <el-input v-model="registerForm.username" prefix-icon="User" placeholder="請輸入帳號" />
-          </el-form-item>
-          <el-form-item prop="password">
-              <el-input v-model="registerForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼" />
-          </el-form-item>
-          <el-form-item prop="confirmPassword">
-            <el-input v-model="registerForm.confirmPassword" prefix-icon="Lock" type="password" placeholder="確認密碼" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="handleRegister">註冊</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-link @click="handleChange">返回登入</el-link>
-          </el-form-item>
-        </el-form>
-        
-        <!-- 登入表單 -->
-        <el-form
-          ref="loginFormRef"
-          :model="loginForm"
-          :rules="loginRules"
-          v-else
-        >
-          <h3 class="title">登入</h3>
-          <el-form-item prop="username">
-            <el-input v-model="loginForm.username" prefix-icon="User" placeholder="請輸入帳號" />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input v-model="loginForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="handleLogin">登入</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-link @click="handleChange">返回註冊</el-link>
-          </el-form-item>
-        </el-form>
-      </div>
+      <!-- 註冊表單 -->
+      <el-form
+        ref="registerFormRef"
+        :model="registerForm"
+        :rules="registerRules"
+        v-if="isRegister"
+      >
+        <el-form-item prop="name">
+          <el-input v-model="registerForm.name" prefix-icon="User" placeholder="請輸入用戶名稱" />
+        </el-form-item>
+        <el-form-item prop="username">
+          <el-input v-model="registerForm.username" prefix-icon="User" placeholder="請輸入帳號" />
+        </el-form-item>
+        <el-form-item prop="password">
+            <el-input v-model="registerForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼" />
+        </el-form-item>
+        <el-form-item prop="confirmPassword">
+          <el-input v-model="registerForm.confirmPassword" prefix-icon="Lock" type="password" placeholder="確認密碼" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleRegister">註冊</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-link @click="handleChange">返回登入</el-link>
+        </el-form-item>
+      </el-form>
+      
+      <!-- 登入表單 -->
+      <el-form
+        ref="loginFormRef"
+        :model="loginForm"
+        :rules="loginRules"
+        v-else
+      >
+        <el-form-item prop="username">
+          <el-input v-model="loginForm.username" prefix-icon="User" placeholder="請輸入帳號" />
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input v-model="loginForm.password" prefix-icon="Lock" type="password" placeholder="請輸入密碼" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleLogin">登入</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-link @click="handleChange">返回註冊</el-link>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -162,26 +157,22 @@ const handleLogin = async () => {
 <style scoped lang="less">
 .background {
   height: 100vh;
-  background: linear-gradient(to right, #B2DFDB, #A7F3D0);
+  background-color: #cce1f3;
 }
 
 .auth-wrapper {
-  padding: 40px 30px;
+  background-color: #eaf3fb;
+  border: 1px solid #e0e0e0;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  border: 0.5px solid black;
-  box-shadow: 0 0 30px black;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 400px;
-
+  padding: 30px 40px 0px 40px;
+  
   .title {
-    display: inline-block;
-    background-color: #A7F3D0;
-    border: 1px solid black;
-    border-radius: 15px;
-    box-shadow: 1px 1px 5px gray;
-    padding: 6px 10px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
     margin-bottom: 16px;
   }
   
@@ -192,6 +183,14 @@ const handleLogin = async () => {
 
   .el-button {
     width: 100%;
+  }
+
+  .el-link {
+    font-size: 14px;
+    color: #666;
+    &:hover {
+      color: #333;
+    }
   }
 }
 </style>

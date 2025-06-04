@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import dayjs from 'dayjs'
@@ -22,7 +22,6 @@ const rules = {
   createdAt: [{ required: true, message: '請選擇註冊日期', trigger: 'blur' }],
   name: [{ required: true, message: '請輸入姓名', trigger: 'blur' }],
   gender: [{ required: true, message: '請選擇性別', trigger: 'blur' }],
-  birth: [{ required: true, message: '請選擇生日', trigger: 'blur' }],
 }
 
 // #region CRUD
@@ -78,11 +77,13 @@ const submit = async () => {
 }
 
 const handleDelete = async (id) => {
-  try {
-    await ElMessageBox.confirm('確定要刪除嗎？')
-  } catch (error) {
-    return
-  }
+  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmed) return
+
   try {
     await api.deleteMember(id)
     await fetchMembers()
@@ -100,16 +101,31 @@ const calcAge = (birth) => {
   let age = today.getFullYear() - birthDate.getFullYear()
   const month = today.getMonth() - birthDate.getMonth()
   
+  if (!birth) {
+    return '-'
+  }
+
   if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
     age--
   }
   return age
 }
 
-// 搜尋功能 + 分頁功能
+const formatEmpty = (_, __, value) => {
+  return value ? value : '-'
+}
+
+// 月份篩選 + 搜尋功能 + 分頁功能
+const currentMonth = ref(dayjs().format('YYYY-MM'))
+const selectedMonth = ref(currentMonth.value)
 const searchInput = ref('')
+
 const filteredMemberList = computed(() => {
-  return memberList.value.filter(item => item.name.toLowerCase().includes(searchInput.value.toLowerCase()))
+  return memberList.value.filter(item => {
+    const matchMonth = !selectedMonth.value || dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value
+    const matchSearch = !searchInput.value || item.name.toLowerCase().includes(searchInput.value.toLowerCase())
+    return matchMonth && matchSearch
+  })
 })
 const { currentPage, pageSize, pagedList, handlePageChange} = usePagination(filteredMemberList, 8)
 
@@ -122,7 +138,17 @@ onMounted(() => {
   <!-- 新增、搜尋 header -->
   <header class="mb-4 flex justify-between items-center">
     <el-button type="primary" @click="handleAdd">新增會員</el-button>
-    <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入會員名稱" />
+    <div>
+      <el-date-picker
+        v-model="selectedMonth"
+        type="month"
+        format="YYYY-MM"
+        value-format="YYYY-MM"
+        size="large"
+        placeholder="請選擇月份"
+      />
+      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入會員名稱" class="ml-4"/>
+    </div>
   </header>
 
   <!-- 會員表格 table -->
@@ -130,13 +156,13 @@ onMounted(() => {
     <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="createdAt" label="註冊日期" />
       <el-table-column prop="name" label="姓名" />
+      <el-table-column prop="gender" label="性別" width="130px" />
       <el-table-column label="年齡" width="130px">
         <template #default="{ row }">{{ calcAge(row.birth) }}</template>
       </el-table-column>
-      <el-table-column prop="gender" label="性別" width="130px" />
-      <el-table-column prop="birth" label="生日" />
-      <el-table-column prop="addr" label="地址" />
-      <el-table-column label="操作">
+      <el-table-column prop="birth" label="生日" :formatter="formatEmpty" />
+      <el-table-column prop="addr" label="地址" :formatter="formatEmpty" />
+      <el-table-column label="操作" width="180">
         <template #default="{ row }">
           <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
           <el-button type="danger" @click="handleDelete(row.id)">刪除</el-button>
@@ -162,24 +188,24 @@ onMounted(() => {
         <el-date-picker 
           v-model="dialog.form.createdAt"
           value-format="YYYY-MM-DD"
-          placeholder="選擇日期"
+          placeholder="請選擇日期"
         />
       </el-form-item>
       <el-form-item prop="name" label="姓名">
         <el-input v-model="dialog.form.name" />
       </el-form-item>
       <el-form-item prop="gender" label="性別">
-        <el-select v-model="dialog.form.gender" placeholder="請選擇性別">
-          <el-option label="請選擇性別" value="" disabled />
-          <el-option label="男" value="男" />
-          <el-option label="女" value="女" />
-        </el-select>
+        <el-radio-group v-model="dialog.form.gender" placeholder="請選擇性別">
+          <el-radio label="男" value="男" />
+          <el-radio label="女" value="女" />
+          <el-radio label="其他" value="其他" />
+        </el-radio-group>
       </el-form-item>
-      <el-form-item prop="birth" label="生日">
+      <el-form-item label="生日">
         <el-date-picker
           v-model="dialog.form.birth"
           value-format="YYYY-MM-DD"
-          placeholder="選擇日期"
+          placeholder="請選擇日期"
         />
       </el-form-item>
       <el-form-item label="地址">

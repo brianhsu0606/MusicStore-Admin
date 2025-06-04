@@ -6,7 +6,8 @@ export function usePagination(list, defaultSize = 8, autoResize = true) {
 
   const pagedList = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value
-    return list.value.slice(start, start + pageSize.value)
+    const end = start + pageSize.value
+    return list.value.slice(start, end)
   })
 
   watch(list, () => {

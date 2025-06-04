@@ -8,7 +8,6 @@ import api from '@/api'
 
 const userStore = useUserStore()
 
-
 const formRef = ref()
 const dialog = reactive({
   visible: false,
@@ -79,11 +78,13 @@ const submit = async () => {
 }
 
 const handleDelete = async (id) => {
-  try {
-    await ElMessageBox.confirm('確定要刪除嗎？')
-  } catch (error) {
-    return
-  }
+  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmed) return
+
   try {
     await api.deleteRevenue(id)
     await fetchRevenue()
@@ -123,7 +124,6 @@ onMounted(() => {
       size="large"
       format="YYYY-MM"
       value-format="YYYY-MM"
-      placeholder="選擇月份"
       :clearable="false"
     />
   </header>
@@ -161,7 +161,7 @@ onMounted(() => {
         <el-date-picker
           v-model="dialog.form.date"
           value-format="YYYY-MM-DD"
-          placeholder="選擇日期"
+          placeholder="請選擇日期"
         />
       </el-form-item>
       <el-form-item prop="price" label="營業額">

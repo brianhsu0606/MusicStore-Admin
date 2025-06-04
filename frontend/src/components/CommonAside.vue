@@ -11,18 +11,11 @@ const list = ref([
     url: 'Home'
   },
   {
-    path: '/report',
-    name: 'report',
+    path: '/revenue',
+    name: 'revenue',
     label: '每日營收',
     icon: 'Money',
-    url: 'Report'
-  },
-  {
-    path: '/member',
-    name: 'member',
-    label: '會員管理',
-    icon: 'user',
-    url: 'Member'
+    url: 'Revenue'
   },
   {
     path: '/product',
@@ -39,21 +32,31 @@ const list = ref([
     url: 'Order'
   },
   {
-    path: '/user',
-    name: 'user',
-    label: '用戶權限管理',
+    path: '/member',
+    name: 'member',
+    label: '會員管理',
     icon: 'user',
-    url: 'User'
+    url: 'Member'
   },
   {
     path: '/admin-stats',
     name: 'admin-stats',
     label: '管理員介面',
     icon: 'DataLine',
+    adminIcon: 'Key',
     url: 'Admin'
   },
+  {
+    path: '/user',
+    name: 'user',
+    label: '用戶權限管理',
+    icon: 'user',
+    adminIcon: 'Key',
+    url: 'User'
+  },
 ])
-const noChildren = computed(() => list.value.filter(item => !item.children))
+
+const menuItems = computed(() => list.value)
 
 const router = useRouter()
 const activePath = computed(() => router.currentRoute.value.path)
@@ -68,43 +71,49 @@ const handleMenu = (item) => {
 <template>
   <el-menu :default-active="activePath" router>
     <el-menu-item
-      v-for="item in noChildren"
+      v-for="item in menuItems"
       :index="item.path"
       :key="item.path"
       @click="handleMenu(item)"
+      :class="{ 'admin-item': ['admin-stats', 'user'].includes(item.name) }"
     > 
-      <component class="icons" :is="item.icon"></component>
+      <component class="icon" :is="item.icon"></component>
       <span>{{ item.label }}</span>
+      <component
+        v-if="['admin-stats', 'user'].includes(item.name)"
+        class="admin-icon"
+        :is="item.adminIcon"
+      />
     </el-menu-item>
   </el-menu>
 </template>
 
-<style scoped lang="less">
-.el-menu {
-  background-color: #E0F2F1;
-  text-align: center;
+<style scoped lang="less"> 
+.el-menu-item {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  background-color: #eaf3fb;
+  border-bottom: 1px solid #c9d9e8;
 
-  .el-menu-item {
-    color: #333;
-    border-bottom: 1px solid gray;
-    font-size: 17px;
+  .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  .admin-icon {
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    color: #888;
+  }
+  
+  &:hover {
+    background-color: #d6e3ee;
+  }
+  &.is-active {
+    background-color: #bdd2e0;
     font-weight: 500;
-
-    .icons {
-      width: 20px;
-      height: 20px;
-      margin-right: 10px;
-    }
-    &:nth-last-child(2), &:nth-last-child(1) {
-      background-color: #B2DFDB;
-    }
-    &:hover {
-      background-color: #A7F3D0;
-    }
-    &.is-active {
-      color: #065F46;
-      background-color: #A7F3D0;
-    }
   }
 }
 </style>

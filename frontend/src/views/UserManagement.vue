@@ -19,16 +19,14 @@ const fetchUsers = async () => {
   }
 }
 
-onMounted(() => {
-  fetchUsers()
-})
-
 const handleDelete = async (id) => {
-  try {
-    await ElMessageBox.confirm('確定要刪除用戶嗎？')
-  } catch (error) {
-    return
-  }
+  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmed) return
+
   try {
     await api.deleteUser(id)
     await fetchUsers()
@@ -50,6 +48,10 @@ const changeRole = async (id, role) => {
 const formatEmpty = (_, __, value) => {
   return value ? value : '-'
 }
+
+onMounted(() => {
+  fetchUsers()
+})
 </script>
 
 <template>

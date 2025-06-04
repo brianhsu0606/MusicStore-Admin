@@ -6,7 +6,7 @@ const Product = require('../models/productModel')
 // 讀取商品 Read
 router.get('/api/products', authenticateToken, async (req, res) => {
   try {
-    const productList = await Product.find()
+    const productList = await Product.find().sort({ lastStockIn: -1 })
 
     res.json({
       code: 200,

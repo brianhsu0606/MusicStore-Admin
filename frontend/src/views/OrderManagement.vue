@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
 import dayjs from 'dayjs'
@@ -23,6 +23,7 @@ const rules = {
   member: [{ required: true, message: '請輸入會員名稱', trigger: 'blur' }],
   items: [{ required: true, message: '請輸入商品名稱', trigger: 'blur' }],
   price: [{ required: true, message: '請輸入訂單金額', trigger: 'blur' }],
+  status: [{ required: true, message: '請選擇訂單狀態', trigger: 'blur' }],
 }
 
 // #region CRUD
@@ -48,7 +49,7 @@ const handleAdd = () => {
     member: '',
     items: '',
     price: 0,
-    status: 'processing',
+    status: '',
   })
   formRef.value?.clearValidate()
 }
@@ -87,11 +88,13 @@ const submit = async () => {
 }
 
 const handleDelete = async (id) => {
-  try {
-    await ElMessageBox.confirm('確定要刪除嗎？')
-  } catch (error) {
-    return
-  }
+  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
+    confirmButtonText: '確定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).catch(() => false)
+  if (!confirmed) return
+
   try {
     await api.deleteOrder(id)
     await fetchOrders()
@@ -167,7 +170,7 @@ onMounted(() => {
       <el-table-column prop="member" label="會員名稱" min-width="70" />
       <el-table-column prop="items" label="商品名稱" min-width="200"/>
       <el-table-column prop="price" label="訂單金額" min-width="110" :formatter="formatPrice" />
-      <el-table-column label="狀態" min-width="150">
+      <el-table-column prop="status" label="狀態" min-width="150">
         <template #default="{ row }">
           <el-select v-model="row.status" @change="changeStatus(row)" class="status-select">
             <template #prefix>
@@ -217,8 +220,8 @@ onMounted(() => {
       <el-form-item prop="price" label="訂單金額"> 
         <el-input-number v-model="dialog.form.price" />
       </el-form-item>
-      <el-form-item label="訂單狀態">
-        <el-select v-model="dialog.form.status">
+      <el-form-item prop="status" label="訂單狀態">
+        <el-select v-model="dialog.form.status" placeholder="請選擇訂單狀態">
           <el-option label="處理中" value="processing"/>
           <el-option label="已出貨" value="shipped" />
           <el-option label="已完成" value="completed"/>
