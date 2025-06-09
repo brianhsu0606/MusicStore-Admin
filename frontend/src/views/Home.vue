@@ -7,21 +7,10 @@ import api from '@/api'
 // 商品（最新進貨 + 庫存）
 const productLoading = ref(true)
 const productList = ref([])
-const productStock = ref([])
-const fetchProductStock = async () => {
+const fetchProductList = async () => {
   productLoading.value = true
   try {
     productList.value = await api.getProducts()
-
-    const map = productList.value.reduce((acc, item) => {   
-      acc[item.category] = (acc[item.category] || 0) + item.quantity
-      return acc
-    }, {})
-
-    productStock.value = Object.entries(map).map(([category, quantity]) => ({
-      category,
-      quantity
-    }))
   } catch (error) {
     ElMessage.error('獲取商品失敗')
   } finally {
@@ -30,27 +19,37 @@ const fetchProductStock = async () => {
 }
 
 const recentStockIn = computed(() => {
-  return [...productList.value]
-    .filter(p => p.lastStockIn)
-    .sort((a, b) => new Date(b.lastStockIn) - new Date(a.lastStockIn))
-    .slice(0, 5)
+  return productList.value.slice(0, 5)
+})
+const productStock = computed(() => {
+  const map = productList.value.reduce((acc, item) => {
+    acc[item.category] = (acc[item.category] || 0) + item.quantity
+    return acc
+  }, {})
+  return Object.entries(map).map(([category, quantity]) => ({
+    category,
+    quantity
+  }))
 })
 
-// 訂單
+
+// 訂單（未完成數量 + 近 30 天數量）
 const orderLoading = ref(true)
 const orderList = ref([])
-const orderCount = ref(0)
-const fetchOrderCount = async () => {
+const fetchOrderList = async () => {
   orderLoading.value = true
   try {
     orderList.value = await api.getOrders()
-    orderCount.value = orderList.value.filter(item => item.status === 'processing').length
   } catch (error) {
     ElMessage.error('獲取訂單數量失敗')
   } finally {
     orderLoading.value = false
   }
 }
+
+const orderCount = computed(() => {
+  return orderList.value.filter(item => item.status === 'processing').length
+})
 
 const selectedDays = ref(30)
 const filteredOrders = computed(() => {
@@ -66,12 +65,10 @@ const ordersPerDay = computed(() => {
     const date = dayjs().subtract(i, 'day').format('YYYY-MM-DD')
     result[date] = 0
   }
-
   filteredOrders.value.forEach(order => {
     const date = dayjs(order.createdAt).format('YYYY-MM-DD')
     if (result[date] !== undefined) result[date]++
   })
-
   return {
     labels: Object.keys(result).reverse(),
     values: Object.values(result).reverse()
@@ -95,25 +92,28 @@ const chartOption = computed(() => ({
   }]
 }))
 
-const memberCount = ref(0)
-const fetchMemberCount = async () => {
+// 會員人數
+const memberList = ref([])
+const fetchMemberList = async () => {
   try {
-    const memberList = await api.getMembers()
-    memberCount.value = memberList.length
+    memberList.value = await api.getMembers()
   } catch (error) {
     ElMessage.error('獲取用戶數量失敗')
   }
 }
+const memberCount = computed(() => {
+  return memberList.value.length
+})
 
 const cardData = [
-  { icon: 'User', bg: 'bg-green-400', title: '會員人數：', value: () => memberCount.value + ' 人' },
-  { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', value: () => orderCount.value},
+  { icon: 'User', bg: 'bg-green-400', title: '會員人數：', count: memberCount },
+  { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', count: orderCount },
 ]
 
 onMounted(() => {
-  fetchMemberCount()
-  fetchOrderCount()
-  fetchProductStock()
+  fetchProductList()
+  fetchMemberList()
+  fetchOrderList()
 })
 </script>
 
@@ -154,9 +154,9 @@ onMounted(() => {
             <el-icon :size="50" :class="`${item.bg} rounded-lg p-1`">
               <component :is="item.icon" />
             </el-icon>
-            <div class="card-info">
+            <div>
               <h3>{{ item.title }}</h3>
-              <p class="text-xl text-gray-500 font-medium">{{ item.value() }}</p>
+              <p class="text-xl text-gray-500 font-medium">{{ item.count }}</p>
             </div>
           </div>
         </el-card>

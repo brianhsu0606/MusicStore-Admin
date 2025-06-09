@@ -68,27 +68,22 @@ const handleRegister = async () => {
   try {
     await registerFormRef.value.validate()
     await api.register(registerForm.value)
-    ElMessage.success('註冊成功')
     isRegister.value = false
+    ElMessage.success('註冊成功')
   } catch (error) {
-    console.error('註冊失敗:', error.response?.data || error);
     ElMessage.error('註冊失敗')
   }
 }
-
 const handleLogin = async () => {
   try {
     await loginFormRef.value.validate()
     const res = await api.login(loginForm.value)
     localStorage.setItem('token', res.token)
-
     const profile = await api.getProfile()
     userStore.setUser(profile)
-
     ElMessage.success('登入成功')
     router.push('/home')
   } catch (error) {
-    console.error('登入失敗:', error.response?.data || error);
     ElMessage.error('登入失敗')
   }
 }
@@ -98,10 +93,11 @@ const handleLogin = async () => {
   <div class="background flex justify-center items-center">
 
     <div class="auth-wrapper">
-      <div class="flex gap-4 justify-center items-center mb-6">
+
+      <header class="flex gap-4 justify-center items-center mb-6">
         <el-icon size="30"><ShoppingBag /></el-icon>
         <h2>樂器行後台系統</h2>
-      </div>
+      </header>
 
       <!-- 註冊表單 -->
       <el-form
@@ -111,7 +107,7 @@ const handleLogin = async () => {
         v-if="isRegister"
       >
         <el-form-item prop="name">
-          <el-input v-model="registerForm.name" prefix-icon="User" placeholder="請輸入用戶名稱" />
+          <el-input v-model="registerForm.name" prefix-icon="Postcard" placeholder="請輸入用戶名稱" />
         </el-form-item>
         <el-form-item prop="username">
           <el-input v-model="registerForm.username" prefix-icon="User" placeholder="請輸入帳號" />
@@ -156,35 +152,26 @@ const handleLogin = async () => {
 
 <style scoped lang="less">
 .background {
-  height: 100vh;
   background-color: #cce1f3;
+  height: 100vh;
 }
 
 .auth-wrapper {
   background-color: #eaf3fb;
-  border: 1px solid #e0e0e0;
-  border-radius: 20px;
+  border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   padding: 30px 40px 0px 40px;
-  
-  .title {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 16px;
-  }
-  
+
   .el-input {
     height: 36px;
     font-size: 16px;
   }
-
   .el-button {
     width: 100%;
+    height: 36px;
   }
-
   .el-link {
     font-size: 14px;
     color: #666;

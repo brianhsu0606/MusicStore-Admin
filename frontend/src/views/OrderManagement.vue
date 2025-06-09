@@ -167,10 +167,10 @@ onMounted(() => {
     <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="orderNumber" label="訂單編號" min-width="120" />
       <el-table-column prop="createdAt" label="下單日期" min-width="100" />
-      <el-table-column prop="member" label="會員名稱" min-width="70" />
-      <el-table-column prop="items" label="商品名稱" min-width="200"/>
-      <el-table-column prop="price" label="訂單金額" min-width="110" :formatter="formatPrice" />
-      <el-table-column prop="status" label="狀態" min-width="150">
+      <el-table-column prop="member" label="會員名稱" min-width="80" />
+      <el-table-column prop="items" label="商品名稱" min-width="180"/>
+      <el-table-column prop="price" label="訂單金額" min-width="100" :formatter="formatPrice" />
+      <el-table-column prop="status" label="狀態" min-width="140">
         <template #default="{ row }">
           <el-select v-model="row.status" @change="changeStatus(row)" class="status-select">
             <template #prefix>
@@ -182,7 +182,7 @@ onMounted(() => {
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="操作" min-width="160">
+      <el-table-column label="操作" min-width="150">
         <template #default="{ row }">
           <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
           <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>

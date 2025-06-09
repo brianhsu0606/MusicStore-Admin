@@ -160,8 +160,8 @@ onMounted(() => {
     <!-- 商品表格 table -->    
     <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="lastStockIn" label="進貨日期" min-width="90"/>
-      <el-table-column prop="name" label="商品名稱" min-width="170"/>
-      <el-table-column prop="category" label="分類" min-width="60" />
+      <el-table-column prop="name" label="商品名稱" min-width="150"/>
+      <el-table-column prop="category" label="分類" min-width="70" />
       <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
       <el-table-column prop="quantity" label="數量" min-width="50" />
       <el-table-column label="操作" min-width="100">

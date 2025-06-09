@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
     gender: { type: String, default: '' },
     birth: { type: String, default: '' },
     email: { type: String, default: '' },
-    avatar: { type: String, default: 'avatar1.jpeg' },
+    avatar: { type: String, default: 'avatar1.jpg' },
     role: { type: String, enum: ['user', 'admin', 'superadmin'], default: 'user' },
     lastLogin: { type: String, default: '' },
   }

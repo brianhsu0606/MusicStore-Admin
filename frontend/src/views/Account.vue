@@ -28,7 +28,7 @@ const handleUpdate = async () => {
   }
 }
 
-const roleLabels = {
+const roleLabel = {
   superadmin: '超級管理員',
   admin: '管理員',
   user: '職員'
@@ -53,7 +53,7 @@ const selectAvatar = (avatarFileName) => {
     <!-- 基本資料表單 form -->
     <el-form>
       <el-form-item label="身份">
-        <el-input v-model="roleLabels[form.role]" disabled />
+        <el-input v-model="roleLabel[form.role]" disabled />
       </el-form-item>
       <el-form-item label="姓名">
         <el-input v-model="form.name" />
@@ -83,13 +83,13 @@ const selectAvatar = (avatarFileName) => {
   </el-card>
 
   <!-- 彈出 Dialog 選擇頭貼 -->
-  <el-dialog v-model="dialogVisible" title="選擇頭貼" width="850">
-    <div class="avatar-list">
+  <el-dialog v-model="dialogVisible" title="選擇頭貼" width="800">
+    <div class="flex justify-between">
       <img
         v-for="i in 5"
         :key="i"
-        :src="`/images/avatars/avatar${i}.jpeg`"
-        @click="selectAvatar(`avatar${i}.jpeg`)"
+        :src="`/images/avatars/avatar${i}.jpg`"
+        @click="selectAvatar(`avatar${i}.jpg`)"
       />
     </div>
   </el-dialog>
@@ -106,9 +106,10 @@ const selectAvatar = (avatarFileName) => {
     font-weight: 500;
   }
   .avatar-preview {
-    width: 250px;
-    height: 200px;
-    border: 0.5px solid gray;
+    width: 150px;
+    height: 150px;
+    border: 1px solid gray;
+    border-radius: 50%;
     margin: 20px auto;
     display: block;
     cursor: pointer;
@@ -127,10 +128,11 @@ const selectAvatar = (avatarFileName) => {
 
 .el-dialog {
   img {
-    width: 150px;
-    height: 150px;
-    margin: 0 5px;
-    border: 0.5px solid gray;
+    width: 130px;
+    height: 130px;
+    margin: 0 4px;
+    border: 1px solid gray;
+    border-radius: 15px;
     cursor: pointer;
     transition: 0.2s;
     &:hover {

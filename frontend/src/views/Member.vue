@@ -156,13 +156,13 @@ onMounted(() => {
     <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="createdAt" label="註冊日期" />
       <el-table-column prop="name" label="姓名" />
-      <el-table-column prop="gender" label="性別" width="130px" />
-      <el-table-column label="年齡" width="130px">
+      <el-table-column prop="gender" label="性別" min-width="60" />
+      <el-table-column label="年齡" min-width="60">
         <template #default="{ row }">{{ calcAge(row.birth) }}</template>
       </el-table-column>
       <el-table-column prop="birth" label="生日" :formatter="formatEmpty" />
       <el-table-column prop="addr" label="地址" :formatter="formatEmpty" />
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" min-width="100">
         <template #default="{ row }">
           <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
           <el-button type="danger" @click="handleDelete(row.id)">刪除</el-button>

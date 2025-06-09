@@ -1,19 +1,16 @@
 <script setup>
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
-const router = useRouter()
-
-const roleMap = {
+const roleLabel = {
   superadmin: '超級管理員',
   admin: '管理員',
   user: '職員'
 }
-const roleLabel = computed(() => roleMap[userStore.role] || '未知角色')
 
+const router = useRouter()
 const toProfile = () => {
   router.push('/account')
 }
@@ -26,11 +23,12 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="flex justify-between items-center h-full">
-    <h3 class="text-xl ml-4">樂器行後台系統</h3>
-    <div class="right-content flex items-center">
-      <p>歡迎回來，{{ userStore.name }} !</p>
-      <p>身份：{{ roleLabel }}</p>
+  <header class="flex justify-between items-center px-3 h-full">
+    <h3 class="text-xl">樂器行後台系統</h3>
+
+    <div class="flex items-center gap-8">
+      <p class="text-lg font-medium">歡迎回來，{{ userStore.name }} !</p>
+      <p class="text-lg font-medium">身份：{{ roleLabel[userStore.role] }}</p>
       <el-dropdown>
         <img :src="`/images/avatars/${userStore.avatar}`" class="user-img" title="帳戶選單">
         <template #dropdown>
@@ -45,27 +43,10 @@ const handleLogout = () => {
 </template>
 
 <style scoped lang="less">
-.right-content {
-  p {
-    padding: 0 24px;
-    font-size: 18px;
-    font-weight: 500;
-    border-right: 1.5px solid #333; 
-  }
-
-  .user-img {
-    width: 45px;
-    height: 45px;
-    margin-left: 24px;
-    border-radius: 50%;
-    border: 1px solid gray;
-    transition: all 0.3s ease;
-    cursor: pointer;
-
-    &:hover {
-      transform: scale(1.02);
-      box-shadow: 0px 1px 2px gray;
-    }
-  }
+.user-img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  cursor: pointer;
 }
 </style>
