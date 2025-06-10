@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 
 export default {
-  getProducts() {
+  getProduct() {
     return request({
       url: '/api/products',
       method: 'get'

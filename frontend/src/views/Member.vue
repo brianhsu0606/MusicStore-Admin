@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
+import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
 
@@ -24,75 +24,30 @@ const rules = {
   gender: [{ required: true, message: '請選擇性別', trigger: 'blur' }],
 }
 
-// #region CRUD
-const loading = ref(true)
-const memberList = ref([])
-const fetchMembers = async () => {
-  loading.value = true
-  try {
-    memberList.value = await api.getMembers()
-  } catch {
-    ElMessage.error('無法取得會員資料')
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleAdd = () => {
-  dialog.visible = true
-  dialog.isEdit = false
-  dialog.title = '新增會員'
-  Object.assign(dialog.form, {
+const {
+  loading,
+  list: memberList,
+  fetchData,
+  handleAdd,
+  handleEdit,
+  handleDelete,
+  submit
+} = useCrud({
+  getApi: api.getMember,
+  addApi: api.addMember,
+  updateApi: api.updateMember,
+  deleteApi: api.deleteMember,
+  formRef,
+  dialog,
+  defaultForm: {
     createdAt: dayjs().format('YYYY-MM-DD'),
     name: '',
     gender: '',
     birth: '',
     addr: ''
-  })
-  formRef.value?.clearValidate()
-}
-
-const handleEdit = (row) => {
-  dialog.visible = true
-  dialog.isEdit = true
-  dialog.title = '編輯會員'
-  Object.assign(dialog.form, row)
-  formRef.value?.clearValidate()
-}
-
-const submit = async () => {
-  try {
-    await formRef.value.validate()
-    if (dialog.isEdit) {
-      await api.updateMember(dialog.form.id, dialog.form)
-    } else {
-      await api.addMember(dialog.form)
-    }
-    dialog.visible = false
-    ElMessage.success(dialog.isEdit ? '編輯會員成功': '新增會員成功')
-    await fetchMembers()
-  } catch(error) {
-    ElMessage.error(dialog.isEdit ? '編輯會員失敗' : '新增會員失敗')
-  }
-}
-
-const handleDelete = async (id) => {
-  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
-    confirmButtonText: '確定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
-  if (!confirmed) return
-
-  try {
-    await api.deleteMember(id)
-    await fetchMembers()
-    ElMessage.success('刪除會員成功')
-  } catch {
-    ElMessage.error('刪除會員失敗')
-  }
-}
-// #endregion
+  },
+  getTitle: (type) => (type === 'add' ? '新增會員' : '編輯會員')
+})
 
 const calcAge = (birth) => {
   const today = new Date()
@@ -130,7 +85,7 @@ const filteredMemberList = computed(() => {
 const { currentPage, pageSize, pagedList, handlePageChange} = usePagination(filteredMemberList, 8)
 
 onMounted(() => {
-  fetchMembers()
+  fetchData()
 })
 </script>
 

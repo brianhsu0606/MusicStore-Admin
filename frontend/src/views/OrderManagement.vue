@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
+import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
 
@@ -26,41 +26,30 @@ const rules = {
   status: [{ required: true, message: '請選擇訂單狀態', trigger: 'blur' }],
 }
 
-// #region CRUD
-const loading = ref(true)
-const orderList = ref([])
-const fetchOrders = async () => {
-  loading.value = true
-  try {
-    orderList.value = await api.getOrders()
-  } catch {
-    ElMessage.error('獲取訂單失敗')
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleAdd = () => {
-  dialog.visible = true
-  dialog.isEdit = false
-  dialog.title = '新增訂單'
-  Object.assign(dialog.form, {
+const {
+  loading,
+  list: orderList,
+  fetchData,
+  handleAdd,
+  handleEdit,
+  handleDelete,
+  submit
+} = useCrud({
+  getApi: api.getOrder,
+  addApi: api.addOrder,
+  updateApi: api.updateOrder,
+  deleteApi: api.deleteOrder,
+  formRef,
+  dialog,
+  defaultForm: {
     createdAt: dayjs().format('YYYY-MM-DD'),
     member: '',
     items: '',
     price: 0,
     status: '',
-  })
-  formRef.value?.clearValidate()
-}
-
-const handleEdit = (row) => {
-  dialog.visible = true
-  dialog.isEdit = true
-  dialog.title = '編輯訂單'
-  Object.assign(dialog.form, row)
-  formRef.value?.clearValidate()
-}
+  },
+  getTitle: (type) => (type === 'add' ? '新增訂單' : '編輯訂單')
+})
 
 const changeStatus = async (row) => {
   try {
@@ -70,40 +59,6 @@ const changeStatus = async (row) => {
     ElMessage.error('更改訂單狀態失敗')
   }
 }
-
-const submit = async () => {
-  try {
-    await formRef.value.validate()
-    if (dialog.isEdit) {
-      await api.updateOrder(dialog.form.id, dialog.form)
-    } else {
-      await api.addOrder(dialog.form)
-    }
-    dialog.visible = false
-    ElMessage.success(dialog.isEdit ? '編輯訂單成功' : '新增訂單成功')
-    await fetchOrders()
-  } catch {
-    ElMessage.error(dialog.isEdit ? '編輯訂單失敗' : '新增訂單失敗')
-  }
-}
-
-const handleDelete = async (id) => {
-  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
-    confirmButtonText: '確定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
-  if (!confirmed) return
-
-  try {
-    await api.deleteOrder(id)
-    await fetchOrders()
-    ElMessage.success('刪除訂單成功')
-  } catch (error) {
-    ElMessage.error('刪除訂單失敗')
-  }
-}
-// #endregion
 
 const getTagType = (status) => {
   switch (status) {
@@ -141,7 +96,7 @@ const filteredOrderList = computed(() => {
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredOrderList, 8)
 
 onMounted(() => {
-  fetchOrders()
+  fetchData()
 })
 </script>
 

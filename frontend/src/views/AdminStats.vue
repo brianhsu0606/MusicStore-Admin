@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, onMounted, reactive } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { usePagination } from '@/composables/usePagination'
+import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
 
@@ -24,93 +24,44 @@ const rules = {
   price: [{ required: true, message: '請輸入成本金額', trigger: 'blur' }],
 }
 
-// #region 成本、營業額 CRUD
 const costCategories = [
   '租金/水電',
   '人事成本',
   '進貨成本',
   '其他成本'
 ]
-const loadingCost = ref(true)
-const costList = ref([])
-const fetchCost = async () => {
-  loadingCost.value = true
-  try {
-    costList.value = await api.getCost()
-  } catch {
-    ElMessage.error('獲取成本失敗')
-  } finally {
-    loadingCost.value = false
-  }
-}
 
-const handleAdd = () => {
-  dialog.visible = true
-  dialog.isEdit = false
-  dialog.title = '新增成本'
-  Object.assign(dialog.form, {
+const {
+  loading: costLoading,
+  list: costList,
+  fetchData: fetchCost,
+  handleAdd,
+  handleEdit,
+  handleDelete,
+  submit
+} = useCrud({
+  getApi: api.getCost,
+  addApi: api.addCost,
+  updateApi: api.updateCost,
+  deleteApi: api.deleteCost,
+  formRef,
+  dialog,
+  defaultForm: {
     name: '',
     category: '',
     date: dayjs().format('YYYY-MM-DD'),
     price: 0
-  })
-  formRef.value?.clearValidate()
-}
+  },
+  getTitle: (type) => (type === 'add' ? '新增成本' : '編輯成本')
+})
 
-const handleEdit = (row) => {
-  dialog.visible = true
-  dialog.isEdit = true
-  dialog.title = '編輯成本'
-  Object.assign(dialog.form, row)
-  formRef.value?.clearValidate()
-}
-
-const submit = async () => {
-  try {
-    await formRef.value.validate()
-    if (dialog.isEdit) {
-      await api.updateCost(dialog.form.id, dialog.form)
-    } else {
-      await api.addCost(dialog.form)
-    }
-    dialog.visible = false
-    ElMessage.success(dialog.isEdit ? '編輯成本成功' : '新增成本成功')
-    await fetchCost()
-  } catch (error) {
-    ElMessage.error(dialog.isEdit ? '新增成本失敗' : '新增成本失敗')
-  }
-}
-
-const handleDelete = async (id) => {
-  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
-    confirmButtonText: '確定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
-  if (!confirmed) return
-
-  try {
-    await api.deleteCost(id)
-    await fetchCost()
-    ElMessage.success('刪除成本成功')
-  } catch {
-    ElMessage.error('刪除成本失敗')
-  }
-}
-
-const loadingRevenue = ref(true)
-const revenueList = ref([])
-const fetchRevenue = async () => {
-  loadingRevenue.value = true
-  try {
-    revenueList.value = await api.getRevenue()
-  } catch (error) {
-    ElMessage.error('獲取營業額失敗')
-  } finally {
-    loadingRevenue.value = false
-  }
-}
-// #endregion
+const {
+  loading: revenueLoading,
+  list: revenueList,
+  fetchData: fetchRevenue
+} = useCrud({
+  getApi: api.getRevenue
+})
 
 // #region header資料 el-card
 const currentMonthRevenue = computed(() => {
@@ -246,7 +197,7 @@ onMounted(() => {
 
   <el-row :gutter="20">
     <!-- 左側 -->
-    <el-col :lg="24" :xl="12" v-loading="loadingCost" element-loading-text="載入中，請稍候...">
+    <el-col :lg="24" :xl="12" v-loading="costLoading" element-loading-text="載入中，請稍候...">
       <!-- 成本圓餅圖 -->
       <el-card class="mb-4">
         <v-chart :option="costChartOption" autoresize style="height: 400px" />
@@ -317,7 +268,7 @@ onMounted(() => {
     </el-col>
 
     <!-- 右側 -->
-    <el-col :lg="24" :xl="12" v-loading="loadingRevenue" element-loading-text="載入中，請稍候...">
+    <el-col :lg="24" :xl="12" v-loading="revenueLoading" element-loading-text="載入中，請稍候...">
       <!-- 營業額折線圖 -->
       <el-card class="mb-4">
         <v-chart :option="revenueChartOption" autoresize style="height: 400px" />

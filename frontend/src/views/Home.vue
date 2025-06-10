@@ -10,7 +10,7 @@ const productList = ref([])
 const fetchProductList = async () => {
   productLoading.value = true
   try {
-    productList.value = await api.getProducts()
+    productList.value = await api.getProduct()
   } catch (error) {
     ElMessage.error('獲取商品失敗')
   } finally {
@@ -39,7 +39,7 @@ const orderList = ref([])
 const fetchOrderList = async () => {
   orderLoading.value = true
   try {
-    orderList.value = await api.getOrders()
+    orderList.value = await api.getOrder()
   } catch (error) {
     ElMessage.error('獲取訂單數量失敗')
   } finally {
@@ -96,7 +96,7 @@ const chartOption = computed(() => ({
 const memberList = ref([])
 const fetchMemberList = async () => {
   try {
-    memberList.value = await api.getMembers()
+    memberList.value = await api.getMember()
   } catch (error) {
     ElMessage.error('獲取用戶數量失敗')
   }

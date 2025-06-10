@@ -1,8 +1,8 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { usePagination } from '@/composables/usePagination'
 import { useUserStore } from '@/stores/user'
+import { usePagination } from '@/composables/usePagination'
+import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
 
@@ -26,76 +26,30 @@ const rules = {
   createdBy: [{ required: true, message: '請輸入登錄者', trigger: 'blur' }],
 }
 
-// #region CRUD
-const loading = ref(true)
-const revenueList = ref([])
-const fetchRevenue = async () => {
-  loading.value = true
-  try {
-    revenueList.value = await api.getRevenue()
-  } catch (error) {
-    ElMessage.error('無法取得營業額資料')
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleAdd = () => {
-  dialog.visible = true
-  dialog.isEdit = false
-  dialog.title = '新增營業額'
-  Object.assign(dialog.form, {
+const {
+  loading,
+  list: revenueList,
+  fetchData,
+  handleAdd,
+  handleEdit,
+  handleDelete,
+  submit,
+} = useCrud({
+  getApi: api.getRevenue,
+  addApi: api.addRevenue,
+  updateApi: api.updateRevenue,
+  deleteApi: api.deleteRevenue,
+  formRef,
+  dialog,
+  defaultForm: {
     date: dayjs().format('YYYY-MM-DD'),
     price: 0,
     note: '',
-    createdBy: userStore.name
-  })
-  formRef.value?.clearValidate()
-}
+    createdBy: userStore.name,
+  },
+  getTitle: (type) => (type === 'add' ? '新增營業額' : '編輯營業額')
+})
 
-const handleEdit = (row) => {
-  dialog.visible = true
-  dialog.isEdit = true
-  dialog.title = '編輯營業額'
-  Object.assign(dialog.form, row)
-  formRef.value?.clearValidate()
-}
-
-const submit = async () => {
-  try {
-    await formRef.value.validate()
-    if (dialog.isEdit) {
-      await api.updateRevenue(dialog.form.id, dialog.form)
-    } else {
-      await api.addRevenue(dialog.form)
-    }
-    dialog.visible = false
-    ElMessage.success(dialog.isEdit ? '編輯營業額成功' : '新增營業額成功')
-    await fetchRevenue()
-  } catch (error) {
-    ElMessage.error(dialog.isEdit ? '編輯營業額失敗' : '新增營業額失敗')
-  }
-}
-
-const handleDelete = async (id) => {
-  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
-    confirmButtonText: '確定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
-  if (!confirmed) return
-
-  try {
-    await api.deleteRevenue(id)
-    await fetchRevenue()
-    ElMessage.success('刪除營業額成功')
-  } catch (error) {
-    ElMessage.error('刪除營業額失敗')
-  }
-}
-// #endregion
-
-// 價格標準化
 const formatePrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
@@ -110,7 +64,7 @@ const filteredRevenueList = computed(() => {
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredRevenueList, 8)
 
 onMounted(() => {
-  fetchRevenue()
+  fetchData()
 })
 </script>
 
@@ -175,8 +129,8 @@ onMounted(() => {
       </el-form-item>       
     </el-form>
     <template #footer>
-      <el-button @click="submit" type="primary">確認</el-button>
       <el-button @click="dialog.visible = false">取消</el-button>
+      <el-button @click="submit" type="primary">確認</el-button>
     </template>
   </el-dialog>
 </template>

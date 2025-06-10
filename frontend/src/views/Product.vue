@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed, onMounted, reactive } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { usePagination } from '@/composables/usePagination'
+import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
 
@@ -30,75 +30,30 @@ const rules = {
   quantity : [{ required: true, message: '請輸入商品數量', trigger: 'blur' }],
 }
 
-// #region CRUD
-const loading = ref(true)
-const productList = ref([])
-const fetchProducts = async () => {
-  loading.value = true
-  try {
-    productList.value = await api.getProducts()
-  } catch {
-    ElMessage.error('獲取商品失敗')
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleAdd =  () => {
-  dialog.visible = true
-  dialog.isEdit = false
-  dialog.title = '新增商品'
-  Object.assign(dialog.form, {
+const {
+  loading,
+  list: productList,
+  fetchData,
+  handleAdd,
+  handleEdit,
+  handleDelete,
+  submit
+} = useCrud({
+  getApi: api.getProduct,
+  addApi: api.addProduct,
+  updateApi: api.updateProduct,
+  deleteApi: api.deleteProduct,
+  formRef,
+  dialog,
+  defaultForm: {
     lastStockIn: dayjs().format('YYYY-MM-DD'),
     name: '',
     category: '',
     price: 0,
     quantity: 0,
-  })
-  formRef.value?.clearValidate()
-}
-
-const handleEdit = (row) => {
-  dialog.visible = true
-  dialog.isEdit = true
-  dialog.title = '編輯商品'
-  Object.assign(dialog.form, row)
-  formRef.value?.clearValidate()
-}
-
-const submit = async () => {
-  try {
-    await formRef.value.validate()
-    if (dialog.isEdit) {
-      await api.updateProduct( dialog.form.id, dialog.form)
-    } else {
-      await api.addProduct(dialog.form)
-    }
-    dialog.visible = false
-    ElMessage.success(dialog.isEdit ? '編輯商品成功' : '新增商品成功')
-    await fetchProducts()
-  } catch {
-    ElMessage.error(dialog.isEdit ? '編輯商品失敗' : '新增商品失敗')
-  }
-}
-
-const handleDelete = async (id) => {
-  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
-    confirmButtonText: '確定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
-  if (!confirmed) return
-
-  try {
-    await api.deleteProduct(id)
-    await fetchProducts()
-    ElMessage.success('刪除商品成功')
-  } catch {
-    ElMessage.error('刪除商品失敗')
-  }
-}
-// #endregion
+  },
+  getTitle: (type) => (type === 'add' ? '新增商品' : '編輯商品')
+})
 
 const formatPrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
@@ -127,7 +82,7 @@ const filteredProductList = computed(() => {
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredProductList, 8)
 
 onMounted(() => {
-  fetchProducts()
+  fetchData()
 })
 </script>
 
