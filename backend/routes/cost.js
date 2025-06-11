@@ -6,7 +6,7 @@ const Cost = require('../models/costModel')
 // 讀取成本 Read
 router.get('/api/costs', authenticateToken, async (req, res) => {
   try {
-    const costList = await Cost.find().sort({ date: -1 })
+    const costList = await Cost.find().sort({ createdAt: -1 })
     res.json({
       code: 200,
       message: '獲取成本成功',
@@ -26,10 +26,11 @@ router.post('/api/costs', authenticateToken, async (req, res) => {
   try {
     const newCost = new Cost(req.body)
     await newCost.save()
+
     res.json({
       code: 200,
       message: '新增成本成功',
-      result: null
+      result: newCost
     });
   } catch (error) {
     res.status(500).json({
@@ -42,7 +43,7 @@ router.post('/api/costs', authenticateToken, async (req, res) => {
 
 router.put('/api/costs/:id', authenticateToken, async (req, res) => {
   try {
-    await Cost.findByIdAndUpdate(
+    const updatedCost = await Cost.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -50,7 +51,7 @@ router.put('/api/costs/:id', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '編輯成本成功',
-      result: null
+      result: updatedCost
     })
   } catch (error) {
     res.status(500).json({

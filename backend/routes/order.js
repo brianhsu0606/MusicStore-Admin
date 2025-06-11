@@ -41,7 +41,7 @@ router.post('/api/orders', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '新增成功',
-      result: null
+      result: newOrder
     })
   } catch (error) {
     res.status(500).json({
@@ -55,7 +55,7 @@ router.post('/api/orders', authenticateToken, async (req, res) => {
 // 更新訂單 Update
 router.put('/api/orders/:id', authenticateToken, async (req, res) => {
   try {
-    await Order.findByIdAndUpdate(
+    const updatedOrder = await Order.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -63,7 +63,7 @@ router.put('/api/orders/:id', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '更新訂單成功',
-      result: null
+      result: updatedOrder
     })
   } catch (error) {
     res.status(500).json({

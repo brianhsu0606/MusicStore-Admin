@@ -6,7 +6,7 @@ const Product = require('../models/productModel')
 // 讀取商品 Read
 router.get('/api/products', authenticateToken, async (req, res) => {
   try {
-    const productList = await Product.find().sort({ lastStockIn: -1 })
+    const productList = await Product.find().sort({ createdAt: -1 })
 
     res.json({
       code: 200,
@@ -31,7 +31,7 @@ router.post('/api/products', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       msg: '新增商品成功',
-      result: null
+      result: newProduct
     })
   } catch (error) {
     res.status(500).json({
@@ -45,7 +45,7 @@ router.post('/api/products', authenticateToken, async (req, res) => {
 // 更新商品 Update
 router.put('/api/products/:id', authenticateToken, async (req, res) => {
   try {
-    await Product.findByIdAndUpdate(
+    const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -53,7 +53,7 @@ router.put('/api/products/:id', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '商品更新成功',
-      result: null
+      result: updatedProduct
     })
   } catch (error) {
     res.status(500).json({

@@ -13,14 +13,14 @@ const dialog = reactive({
   form: {
     name: '',
     category: '',
-    date: '',
+    createdAt: '',
     price: 0
   }
 })
 const rules = {
   name: [{ required: true, message: '請輸入成本名稱', trigger: 'blur' }],
   category: [{ required: true, message: '請選擇成本分類', trigger: 'blur' }],
-  date: [{ required: true, message: '請選擇成本日期', trigger: 'blur' }],
+  createdAt: [{ required: true, message: '請選擇成本日期', trigger: 'blur' }],
   price: [{ required: true, message: '請輸入成本金額', trigger: 'blur' }],
 }
 
@@ -49,7 +49,7 @@ const {
   defaultForm: {
     name: '',
     category: '',
-    date: dayjs().format('YYYY-MM-DD'),
+    createdAt: dayjs().format('YYYY-MM-DD'),
     price: 0
   },
   getTitle: (type) => (type === 'add' ? '新增成本' : '編輯成本')
@@ -66,13 +66,13 @@ const {
 // #region header資料 el-card
 const currentMonthRevenue = computed(() => {
   return revenueList.value
-    .filter(item => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
+    .filter(item => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
     .reduce((sum, item) => sum + item.price, 0)
 })
 
 const currentMonthCost = computed(() => {
   return costList.value
-    .filter(item => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
+    .filter(item => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
     .reduce((sum, item) => sum + item.price, 0)
 })
 
@@ -86,10 +86,10 @@ const currentMonth = ref(dayjs().format('YYYY-MM'))
 const selectedMonth = ref(currentMonth.value)
 
 const filteredCostList = computed(() => {
-  return costList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
+  return costList.value.filter((item) => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
 })
 const filteredRevenueList = computed(() => {
-  return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
+  return revenueList.value.filter((item) => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
 })
 
 const {
@@ -132,7 +132,7 @@ const costChartOption = computed(() => ({
 
 // 營業額折線圖
 const revenueChartData = computed(() => {
-  return [...filteredRevenueList.value].sort((a, b) => new Date(a.date) - new Date(b.date))
+  return [...filteredRevenueList.value].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
 })
 
 const revenueChartOption = computed(() => ({
@@ -140,7 +140,7 @@ const revenueChartOption = computed(() => ({
   tooltip: {},
   xAxis: {
     type: 'category',
-    data: revenueChartData.value.map(item => item.date),
+    data: revenueChartData.value.map(item => item.createdAt),
     axisLabel: { rotate: 45 }
   },
   yAxis: { type: 'value' },
@@ -214,7 +214,7 @@ onMounted(() => {
           <el-button @click="handleAdd" type="primary">新增成本</el-button>
         </div>
         <el-table :data="paginatedCost" stripe class="mb-4">
-          <el-table-column prop="date" label="日期" :formatter="formatDate" />
+          <el-table-column prop="createdAt" label="日期" :formatter="formatDate" />
           <el-table-column prop="name" label="項目" />
           <el-table-column prop="category" label="分類" />
           <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
@@ -253,9 +253,9 @@ onMounted(() => {
               />
             </el-select>
           </el-form-item>
-          <el-form-item prop="date" label="日期">
+          <el-form-item prop="createdAt" label="日期">
             <el-date-picker
-              v-model="dialog.form.date"
+              v-model="dialog.form.createdAt"
               value-format="YYYY-MM-DD"
               placeholder="選擇日期"
             />
@@ -282,7 +282,7 @@ onMounted(() => {
       <el-card class="mb-4">
         <h3 class="mb-2">{{ selectedMonth }} 營業額資料</h3>
         <el-table :data="paginatedRevenue" stripe class="mb-4">
-          <el-table-column prop="date" label="日期" :formatter="formatDate" />
+          <el-table-column prop="createdAt" label="日期" :formatter="formatDate" />
           <el-table-column prop="price" label="營業額" :formatter="formatPrice" sortable />
           <el-table-column prop="note" label="備註" />
           <el-table-column prop="createdBy" label="登錄者" />

@@ -14,14 +14,14 @@ const dialog = reactive({
   isEdit: false,
   title: '',
   form: {
-    date: '',
+    createdAt: '',
     price: 0,
     note: '',
     createdBy: ''
   }
 })
 const rules = {
-  date: [{ required: true, message: '請選擇日期', trigger: 'blur' },],
+  createdAt: [{ required: true, message: '請選擇日期', trigger: 'blur' },],
   price: [{ required: true, message: '請輸入營業額', trigger: 'blur' },],
   createdBy: [{ required: true, message: '請輸入登錄者', trigger: 'blur' }],
 }
@@ -42,7 +42,7 @@ const {
   formRef,
   dialog,
   defaultForm: {
-    date: dayjs().format('YYYY-MM-DD'),
+    createdAt: dayjs().format('YYYY-MM-DD'),
     price: 0,
     note: '',
     createdBy: userStore.name,
@@ -55,7 +55,7 @@ const currentMonth = ref(dayjs().format('YYYY-MM'))
 const selectedMonth = ref(currentMonth.value)
 
 const filteredRevenueList = computed(() => {
-  return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
+  return revenueList.value.filter((item) => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
 })
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredRevenueList, 8)
 
@@ -89,7 +89,7 @@ onMounted(() => {
   <!-- 營業額表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="date" label="日期" :formatter="formatDate"/>
+      <el-table-column prop="createdAt" label="日期" :formatter="formatDate"/>
       <el-table-column prop="price" label="營業額" :formatter="formatePrice"/>
       <el-table-column prop="note" label="備註" />
       <el-table-column prop="createdBy" label="登錄者" />
@@ -115,9 +115,9 @@ onMounted(() => {
   <!-- 新增營業額 dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
     <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
-      <el-form-item prop="date" label="選擇日期">
+      <el-form-item prop="createdAt" label="選擇日期">
         <el-date-picker
-          v-model="dialog.form.date"
+          v-model="dialog.form.createdAt"
           value-format="YYYY-MM-DD"
           placeholder="請選擇日期"
         />

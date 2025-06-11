@@ -31,7 +31,7 @@ router.post('/api/members', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '新增會員成功',
-      result: null
+      result: newMember
     })
   } catch (error) {
     res.status(500).json({
@@ -45,7 +45,7 @@ router.post('/api/members', authenticateToken, async (req, res) => {
 // 更新會員 Update
 router.put('/api/members/:id', authenticateToken, async (req, res) => {
   try {
-    await Member.findByIdAndUpdate(
+    const updatedMember = await Member.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -53,7 +53,7 @@ router.put('/api/members/:id', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '更新會員成功',
-      result: null
+      result: updatedMember
     })
   } catch (error) {
     res.status(500).json({

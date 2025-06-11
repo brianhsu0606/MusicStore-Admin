@@ -117,7 +117,7 @@ onMounted(() => {
       <el-card v-loading="productLoading" element-loading-text="載入中，請稍候..." class="mb-4">
         <h3 class="mb-2">最近 5 筆進貨</h3>
         <el-table :data="recentStockIn" stripe>
-          <el-table-column prop="lastStockIn" label="進貨日期" min-width="50" :formatter="formatDate" />
+          <el-table-column prop="createdAt" label="進貨日期" min-width="50" :formatter="formatDate" />
           <el-table-column prop="name" label="商品名稱" />
           <el-table-column prop="quantity" label="數量" min-width="26"/>
         </el-table>

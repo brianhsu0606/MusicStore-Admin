@@ -15,7 +15,7 @@ const dialog = reactive({
   isEdit: false,
   title: '',
   form: {
-    lastStockIn: '',
+    createdAt: '',
     name: '',
     category: '',
     price: 0,
@@ -23,7 +23,7 @@ const dialog = reactive({
   }
 })
 const rules = {
-  lastStockIn : [{ required: true, message: '請選擇進貨日期', trigger: 'blur' }],
+  createdAt : [{ required: true, message: '請選擇進貨日期', trigger: 'blur' }],
   name : [{ required: true, message: '請輸入商品名稱', trigger: 'blur' }],
   category : [{ required: true, message: '請選擇商品分類', trigger: 'blur' }],
   price : [{ required: true, message: '請輸入商品價格', trigger: 'blur' }],
@@ -46,7 +46,7 @@ const {
   formRef,
   dialog,
   defaultForm: {
-    lastStockIn: dayjs().format('YYYY-MM-DD'),
+    createdAt: dayjs().format('YYYY-MM-DD'),
     name: '',
     category: '',
     price: 0,
@@ -70,7 +70,7 @@ const filteredProductList = computed(() => {
   }
   if (selectedMonth.value) {
     list = list.filter(p =>
-      p.lastStockIn && p.lastStockIn.startsWith(selectedMonth.value)
+      p.createdAt && p.createdAt.startsWith(selectedMonth.value)
     )
   }
   return list
@@ -118,7 +118,7 @@ onMounted(() => {
 
     <!-- 商品表格 table -->    
     <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="lastStockIn" label="進貨日期" min-width="90" :formatter="formatDate" />
+      <el-table-column prop="createdAt" label="進貨日期" min-width="90" :formatter="formatDate" />
       <el-table-column prop="name" label="商品名稱" min-width="150"/>
       <el-table-column prop="category" label="分類" min-width="70" />
       <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
@@ -145,9 +145,9 @@ onMounted(() => {
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title">
     <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
-      <el-form-item prop="lastStockIn" label="進貨日期">
+      <el-form-item prop="createdAt" label="進貨日期">
         <el-date-picker
-          v-model="dialog.form.lastStockIn"
+          v-model="dialog.form.createdAt"
           value-format="YYYY-MM-DD"
           placeholder="請選擇日期"
         />

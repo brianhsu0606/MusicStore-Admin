@@ -6,7 +6,7 @@ const Revenue = require('../models/revenueModel');
 // 讀取營業額 Read
 router.get('/api/revenues', authenticateToken, async (req, res) => {
   try {
-    const revenueList = await Revenue.find().sort({ date: -1 })
+    const revenueList = await Revenue.find().sort({ createdAt: -1 })
 
     res.json({
       code: 200,
@@ -31,7 +31,7 @@ router.post('/api/revenues', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '新增營業額成功',
-      result: null
+      result: newRevenue
     })
   } catch (error) {
     res.status(500).json({
@@ -45,7 +45,7 @@ router.post('/api/revenues', authenticateToken, async (req, res) => {
 // 更新營業額 update
 router.put('/api/revenues/:id', authenticateToken, async (req, res) => {
   try {
-    await Revenue.findByIdAndUpdate(
+    const updatedRevenue = await Revenue.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -53,7 +53,7 @@ router.put('/api/revenues/:id', authenticateToken, async (req, res) => {
     res.json({
       code: 200,
       message: '更新營業額成功',
-      result: null
+      result: updatedRevenue
     })
   } catch (error) {
     res.status(500).json({
