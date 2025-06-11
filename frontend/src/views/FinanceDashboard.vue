@@ -158,7 +158,10 @@ const cardData = computed(() => [
   { icon: 'SuccessFilled', bg: 'bg-red-500', title: `${selectedMonth.value} 淨利潤：`, value: () => 'NT ' + currentMonthProfit.value.toLocaleString() },
 ])
 
-// 價格標準化
+// formatter
+const formatDate = (_, __, value) => {
+  return dayjs(value).format('YYYY-MM-DD')
+}
 const formatPrice = (row) => {
   return 'NT ' + Number(row.price).toLocaleString()
 }
@@ -211,7 +214,7 @@ onMounted(() => {
           <el-button @click="handleAdd" type="primary">新增成本</el-button>
         </div>
         <el-table :data="paginatedCost" stripe class="mb-4">
-          <el-table-column prop="date" label="日期" />
+          <el-table-column prop="date" label="日期" :formatter="formatDate" />
           <el-table-column prop="name" label="項目" />
           <el-table-column prop="category" label="分類" />
           <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
@@ -279,7 +282,7 @@ onMounted(() => {
       <el-card class="mb-4">
         <h3 class="mb-2">{{ selectedMonth }} 營業額資料</h3>
         <el-table :data="paginatedRevenue" stripe class="mb-4">
-          <el-table-column prop="date" label="日期" />
+          <el-table-column prop="date" label="日期" :formatter="formatDate" />
           <el-table-column prop="price" label="營業額" :formatter="formatPrice" sortable />
           <el-table-column prop="note" label="備註" />
           <el-table-column prop="createdBy" label="登錄者" />

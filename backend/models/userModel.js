@@ -8,11 +8,11 @@ const userSchema = new mongoose.Schema({
   profile: {
     name: { type: String, required: true },
     gender: { type: String, default: '' },
-    birth: { type: String, default: '' },
+    birth: { type: Date, default: '' },
     email: { type: String, default: '' },
     avatar: { type: String, default: 'avatar1.jpg' },
     role: { type: String, enum: ['user', 'admin', 'superadmin'], default: 'user' },
-    lastLogin: { type: String, default: '' },
+    lastLogin: { type: Date, default: '' },
   }
 });
 toJSON(userSchema)

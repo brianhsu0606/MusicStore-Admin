@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
@@ -99,6 +98,10 @@ const cardData = [
   { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', count: orderCount },
 ]
 
+const formatDate = (_, __, value) => {
+  return dayjs(value).format('YYYY-MM-DD')
+}
+
 onMounted(() => {
   fetchProduct()
   fetchMember()
@@ -114,7 +117,7 @@ onMounted(() => {
       <el-card v-loading="productLoading" element-loading-text="載入中，請稍候..." class="mb-4">
         <h3 class="mb-2">最近 5 筆進貨</h3>
         <el-table :data="recentStockIn" stripe>
-          <el-table-column prop="lastStockIn" label="進貨日期" min-width="50"/>
+          <el-table-column prop="lastStockIn" label="進貨日期" min-width="50" :formatter="formatDate" />
           <el-table-column prop="name" label="商品名稱" />
           <el-table-column prop="quantity" label="數量" min-width="26"/>
         </el-table>

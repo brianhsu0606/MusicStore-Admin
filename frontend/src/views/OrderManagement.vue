@@ -91,7 +91,10 @@ const filteredOrderList = computed(() => {
 })
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredOrderList, 8)
 
-// 價格標準化
+// formatter
+const formatDate = (_, __, value) => {
+  return dayjs(value).format('YYYY-MM-DD')
+}
 const formatPrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
@@ -122,7 +125,7 @@ onMounted(() => {
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedList" class="mb-4" stripe>
       <el-table-column prop="orderNumber" label="訂單編號" min-width="120" />
-      <el-table-column prop="createdAt" label="下單日期" min-width="100" />
+      <el-table-column prop="createdAt" label="下單日期" min-width="100" :formatter="formatDate" />
       <el-table-column prop="member" label="會員名稱" min-width="80" />
       <el-table-column prop="items" label="商品名稱" min-width="180"/>
       <el-table-column prop="price" label="訂單金額" min-width="100" :formatter="formatPrice" />

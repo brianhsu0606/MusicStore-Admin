@@ -2,10 +2,10 @@ const mongoose = require('mongoose')
 const toJSON = require('../utils/toJSON')
 
 const memberSchema = new mongoose.Schema({
-  createdAt: { type: String, required: true },
+  createdAt: { type: Date, required: true },
   name: { type: String, required: true },
   gender: { type: String, required: true },
-  birth: { type: String },
+  birth: { type: Date },
   addr: { type: String },
 }, { timestamps: true })
 toJSON(memberSchema)

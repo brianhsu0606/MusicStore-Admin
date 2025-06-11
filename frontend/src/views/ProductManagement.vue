@@ -77,7 +77,10 @@ const filteredProductList = computed(() => {
 })
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredProductList, 8)
 
-// 價格標準化
+// formatter
+const formatDate = (_, __, value) => {
+  return dayjs(value).format('YYYY-MM-DD')
+}
 const formatPrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
@@ -115,7 +118,7 @@ onMounted(() => {
 
     <!-- 商品表格 table -->    
     <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="lastStockIn" label="進貨日期" min-width="90"/>
+      <el-table-column prop="lastStockIn" label="進貨日期" min-width="90" :formatter="formatDate" />
       <el-table-column prop="name" label="商品名稱" min-width="150"/>
       <el-table-column prop="category" label="分類" min-width="70" />
       <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>

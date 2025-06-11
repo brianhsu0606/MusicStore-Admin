@@ -4,6 +4,7 @@ import { ElMessage } from 'element-plus';
 import { useCrud } from '@/composables/useCrud';
 import { useUserStore } from '@/stores/user';
 import api from '@/api';
+import dayjs from 'dayjs';
 
 const userStore = useUserStore()
 
@@ -25,7 +26,10 @@ const changeRole = async (id, role) => {
     ElMessage.error('更新用戶身份失敗')
   }
 }
-
+// formatter
+const formatDate = (_, __, value) => {
+  return value ? dayjs(value).format('YYYY-MM-DD') : '-'
+}
 const formatEmpty = (_, __, value) => {
   return value ? value : '-'
 }
@@ -46,12 +50,8 @@ onMounted(() => {
         </template>
       </el-table-column>
       <el-table-column prop="email" label="信箱" :formatter="formatEmpty" />
-      <el-table-column prop="birth" label="生日" :formatter="formatEmpty" />
-      <el-table-column label="最後登入日期">
-        <template #default="{ row }">
-          {{ row.lastLogin ? new Date(row.lastLogin).toLocaleDateString() : '-' }}
-        </template>
-      </el-table-column>
+      <el-table-column prop="birth" label="生日" :formatter="formatDate" />
+      <el-table-column prop="lastLogin" label="最後登入日期" :formatter="formatDate" />
       <el-table-column label="身份" width="150">
         <template #default="{ row }">
           <template v-if="row.role === 'superadmin'">

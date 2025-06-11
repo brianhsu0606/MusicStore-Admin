@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const toJSON = require('../utils/toJSON')
 
 const revenueSchema = new mongoose.Schema({
-  date: { type: String, required: true },
+  date: { type: Date, required: true },
   price: { type: Number, required: true },
   note: { type: String },
   createdBy: { type: String, required: true },

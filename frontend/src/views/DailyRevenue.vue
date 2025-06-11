@@ -59,7 +59,10 @@ const filteredRevenueList = computed(() => {
 })
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredRevenueList, 8)
 
-// 價格標準化
+// formatter
+const formatDate = (_, __, value) => {
+  return dayjs(value).format('YYYY-MM-DD')
+}
 const formatePrice = (row) => {
   return 'NT$ ' + row.price.toLocaleString()
 }
@@ -86,7 +89,7 @@ onMounted(() => {
   <!-- 營業額表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="date" label="日期" />
+      <el-table-column prop="date" label="日期" :formatter="formatDate"/>
       <el-table-column prop="price" label="營業額" :formatter="formatePrice"/>
       <el-table-column prop="note" label="備註" />
       <el-table-column prop="createdBy" label="登錄者" />

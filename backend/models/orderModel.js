@@ -3,7 +3,7 @@ const toJSON = require('../utils/toJSON')
 
 const orderSchema = new mongoose.Schema({
   orderNumber: { type: String },
-  createdAt: { type: String, required: true },
+  createdAt: { type: Date, required: true },
   member: { type: String, required: true },
   items: { type: String, required: true },
   price: { type: Number, required: true },

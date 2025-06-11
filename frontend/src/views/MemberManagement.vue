@@ -79,6 +79,10 @@ const filteredMemberList = computed(() => {
 })
 const { currentPage, pageSize, pagedList, handlePageChange} = usePagination(filteredMemberList, 8)
 
+// formatter
+const formatDate = (_, __, value) => {
+  return value ? dayjs(value).format('YYYY-MM-DD') : '-'
+}
 const formatEmpty = (_, __, value) => {
   return value ? value : '-'
 }
@@ -108,13 +112,13 @@ onMounted(() => {
   <!-- 會員表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="createdAt" label="註冊日期" />
+      <el-table-column prop="createdAt" label="註冊日期" :formatter="formatDate" />
       <el-table-column prop="name" label="姓名" />
       <el-table-column prop="gender" label="性別" min-width="60" />
       <el-table-column label="年齡" min-width="60">
         <template #default="{ row }">{{ calcAge(row.birth) }}</template>
       </el-table-column>
-      <el-table-column prop="birth" label="生日" :formatter="formatEmpty" />
+      <el-table-column prop="birth" label="生日" :formatter="formatDate" />
       <el-table-column prop="addr" label="地址" :formatter="formatEmpty" />
       <el-table-column label="操作" min-width="100">
         <template #default="{ row }">
