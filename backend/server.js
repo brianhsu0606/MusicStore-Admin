@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -11,12 +13,14 @@ app.listen(PORT, () => {
   console.log(`伺服器運行中，請訪問 http://localhost:${PORT}`);
 });
 
+console.log('JWT_SECRET:', process.env.JWT_SECRET)
+
 app.use(require('./routes/auth'));
-app.use(require('./routes/revenue'));
 app.use(require('./routes/profile'));
-app.use(require('./routes/member'));
+app.use(require('./routes/revenue'));
 app.use(require('./routes/product'));
 app.use(require('./routes/order'));
+app.use(require('./routes/member'));
 app.use(require('./routes/cost'));
 app.use(require('./routes/user'));
 

@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 const SALT_ROUNDS = 10;
 
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'mysecretkey123'; // 之後可以放在 .env 裡
 
 const User = require('../models/userModel')
 
@@ -92,7 +91,7 @@ router.post('/api/login', async (req, res) => {
         username: user.username,
         role: user.profile.role
       },
-      JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: '30d' }
     )
 
