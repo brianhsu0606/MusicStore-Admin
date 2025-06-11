@@ -39,7 +39,7 @@ const {
   handleDelete,
   submit
 } = useCrud({
-  getApi: api.getProduct,
+  getApi: api.getProductList,
   addApi: api.addProduct,
   updateApi: api.updateProduct,
   deleteApi: api.deleteProduct,
@@ -54,10 +54,6 @@ const {
   },
   getTitle: (type) => (type === 'add' ? '新增商品' : '編輯商品')
 })
-
-const formatPrice = (row) => {
-  return 'NT$ ' + row.price.toLocaleString()
-}
 
 // 月份篩選 + 搜尋功能 + 分頁功能
 const selectedMonth = ref('')
@@ -80,6 +76,11 @@ const filteredProductList = computed(() => {
   return list
 })
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredProductList, 8)
+
+// 價格標準化
+const formatPrice = (row) => {
+  return 'NT$ ' + row.price.toLocaleString()
+}
 
 onMounted(() => {
   fetchData()
@@ -164,8 +165,8 @@ onMounted(() => {
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="submit" type="primary">確認</el-button>
       <el-button @click="dialog.visible = false">取消</el-button>
+      <el-button @click="submit" type="primary">確認</el-button>
     </template>
   </el-dialog>
 </template>

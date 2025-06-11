@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 
 export default {
-  getCost() {
+  getCostList() {
     return request({
       url: '/api/costs',
       method: 'get'

@@ -40,7 +40,7 @@ const {
   handleDelete,
   submit
 } = useCrud({
-  getApi: api.getCost,
+  getApi: api.getCostList,
   addApi: api.addCost,
   updateApi: api.updateCost,
   deleteApi: api.deleteCost,
@@ -60,7 +60,7 @@ const {
   list: revenueList,
   fetchData: fetchRevenue
 } = useCrud({
-  getApi: api.getRevenue
+  getApi: api.getRevenueList
 })
 
 // #region header資料 el-card
@@ -153,11 +153,12 @@ const revenueChartOption = computed(() => ({
 // #endregion
 
 const cardData = computed(() => [
-  { icon: 'Money', bg: 'bg-green-400', title: `${selectedMonth.value} 營業額：`, value: () => 'NT ' + currentMonthRevenue.value.toLocaleString() },
   { icon: 'GoodsFilled', bg: 'bg-blue-400', title: `${selectedMonth.value} 成本：`, value: () => 'NT ' + currentMonthCost.value.toLocaleString() },
+  { icon: 'Money', bg: 'bg-green-400', title: `${selectedMonth.value} 營業額：`, value: () => 'NT ' + currentMonthRevenue.value.toLocaleString() },
   { icon: 'SuccessFilled', bg: 'bg-red-500', title: `${selectedMonth.value} 淨利潤：`, value: () => 'NT ' + currentMonthProfit.value.toLocaleString() },
 ])
 
+// 價格標準化
 const formatPrice = (row) => {
   return 'NT ' + Number(row.price).toLocaleString()
 }
@@ -261,8 +262,8 @@ onMounted(() => {
           </el-form-item>
         </el-form>
         <template #footer>
-          <el-button @click="submit" type="primary">確認</el-button>
           <el-button @click="dialog.visible = false">取消</el-button>
+          <el-button @click="submit" type="primary">確認</el-button>
         </template>
       </el-dialog>
     </el-col>

@@ -1,7 +1,7 @@
 import request from "@/utils/request";
 
 export default {
-  getMember() {
+  getMemberList() {
     return request({
       url: '/api/members',
       method: 'get',

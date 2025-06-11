@@ -82,7 +82,7 @@ const selectAvatar = (avatarFileName) => {
     </footer>
   </el-card>
 
-  <!-- 彈出 Dialog 選擇頭貼 -->
+  <!-- 選擇頭貼 Dialog -->
   <el-dialog v-model="dialogVisible" title="選擇頭貼" width="800">
     <div class="flex justify-between">
       <img
@@ -108,14 +108,14 @@ const selectAvatar = (avatarFileName) => {
   .avatar-preview {
     width: 150px;
     height: 150px;
-    border: 1px solid gray;
+    border: 1px solid rgb(172, 172, 172);
     border-radius: 50%;
     margin: 20px auto;
     display: block;
     cursor: pointer;
     transition: 0.2s;
     &:hover {
-      box-shadow: 1px 1px 5px gray;
+      box-shadow: 1px 1px 6px gray;
     }
   }
   .el-form {
@@ -130,13 +130,12 @@ const selectAvatar = (avatarFileName) => {
   img {
     width: 130px;
     height: 130px;
-    margin: 0 4px;
-    border: 1px solid gray;
+    border: 1px solid rgb(172, 172, 172);
     border-radius: 15px;
     cursor: pointer;
     transition: 0.2s;
     &:hover {
-      box-shadow: 1px 1px 5px gray;
+      box-shadow: 1px 1px 4px gray;
     }
   }
 }

@@ -35,7 +35,7 @@ const {
   handleDelete,
   submit,
 } = useCrud({
-  getApi: api.getRevenue,
+  getApi: api.getRevenueList,
   addApi: api.addRevenue,
   updateApi: api.updateRevenue,
   deleteApi: api.deleteRevenue,
@@ -50,10 +50,6 @@ const {
   getTitle: (type) => (type === 'add' ? '新增營業額' : '編輯營業額')
 })
 
-const formatePrice = (row) => {
-  return 'NT$ ' + row.price.toLocaleString()
-}
-
 // 月份篩選 + 分頁功能
 const currentMonth = ref(dayjs().format('YYYY-MM'))
 const selectedMonth = ref(currentMonth.value)
@@ -62,6 +58,11 @@ const filteredRevenueList = computed(() => {
   return revenueList.value.filter((item) => dayjs(item.date).format('YYYY-MM') === selectedMonth.value)
 })
 const { currentPage, pageSize, pagedList, handlePageChange } = usePagination(filteredRevenueList, 8)
+
+// 價格標準化
+const formatePrice = (row) => {
+  return 'NT$ ' + row.price.toLocaleString()
+}
 
 onMounted(() => {
   fetchData()

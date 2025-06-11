@@ -1,40 +1,21 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
+import { useCrud } from '@/composables/useCrud';
 import { useUserStore } from '@/stores/user';
 import api from '@/api';
 
 const userStore = useUserStore()
 
-const loading = ref(true)
-const userList = ref([])
-const fetchUsers = async () => {
-  loading.value = true
-  try {
-    userList.value = await api.getUsers()
-  } catch {
-    ElMessage.error('獲取用戶失敗')
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleDelete = async (id) => {
-  const confirmed = await ElMessageBox.confirm('確定要刪除嗎？', '刪除確認', {
-    confirmButtonText: '確定',
-    cancelButtonText: '取消',
-    type: 'warning',
-  }).catch(() => false)
-  if (!confirmed) return
-
-  try {
-    await api.deleteUser(id)
-    await fetchUsers()
-    ElMessage.success('刪除用戶成功')
-  } catch {
-    ElMessage.error('刪除用戶失敗')
-  }
-}
+const {
+  loading,
+  list: userList,
+  fetchData,
+  handleDelete,
+} = useCrud({
+  getApi: api.getUserList,
+  deleteApi: api.deleteUser,
+})
 
 const changeRole = async (id, role) => {
   try {
@@ -50,7 +31,7 @@ const formatEmpty = (_, __, value) => {
 }
 
 onMounted(() => {
-  fetchUsers()
+  fetchData()
 })
 </script>
 

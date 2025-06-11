@@ -1,6 +1,6 @@
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 
-export function usePagination(list, defaultSize = 8, autoResize = true) {
+export const usePagination = (list, defaultSize = 8, autoResize = true) => {
   const currentPage = ref(1)
   const pageSize = ref(defaultSize)
 

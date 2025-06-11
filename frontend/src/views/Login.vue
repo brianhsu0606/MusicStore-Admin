@@ -79,8 +79,10 @@ const handleLogin = async () => {
     await loginFormRef.value.validate()
     const res = await api.login(loginForm.value)
     localStorage.setItem('token', res.token)
+
     const profile = await api.getProfile()
     userStore.setUser(profile)
+    
     ElMessage.success('登入成功')
     router.push('/home')
   } catch (error) {
@@ -91,9 +93,7 @@ const handleLogin = async () => {
 
 <template>
   <div class="background flex justify-center items-center">
-
     <div class="auth-wrapper">
-
       <header class="flex gap-4 justify-center items-center mb-6">
         <el-icon size="30"><ShoppingBag /></el-icon>
         <h2>樂器行後台系統</h2>
@@ -152,14 +152,14 @@ const handleLogin = async () => {
 
 <style scoped lang="less">
 .background {
-  background-color: #cce1f3;
+  background: linear-gradient(135deg, #4b6180 0%, #7c92ad 100%);
   height: 100vh;
 }
 
 .auth-wrapper {
-  background-color: #eaf3fb;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: #f0f4f8; 
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 450px;
   padding: 30px 40px 0px 40px;
@@ -168,15 +168,24 @@ const handleLogin = async () => {
     height: 36px;
     font-size: 16px;
   }
+
   .el-button {
     width: 100%;
     height: 36px;
+    background-color: #4b6180;
+    border: none;
+
+    &:hover {
+      background-color: #3b4f6a;
+    }
   }
+
   .el-link {
     font-size: 14px;
-    color: #666;
+    color: #6c7a89;
+
     &:hover {
-      color: #333;
+      color: #3a4756;
     }
   }
 }

@@ -8,8 +8,8 @@ const list = [
   { path: '/product', name: 'product', label: '商品庫存', icon: 'goods' },
   { path: '/order', name: 'order', label: '網路訂單', icon: 'Document' },
   { path: '/member', name: 'member', label: '會員管理', icon: 'user' },
-  { path: '/admin-stats', name: 'admin-stats', label: '管理員介面', icon: 'DataLine', isAdmin: true },
-  { path: '/user', name: 'user', label: '用戶權限管理', icon: 'user', isAdmin: true },
+  { path: '/finance', name: 'finance', label: '營收分析', icon: 'DataLine', isAdmin: true },
+  { path: '/user', name: 'user', label: '權限管理', icon: 'user', isAdmin: true },
 ]
 
 const router = useRouter()

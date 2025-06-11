@@ -1,22 +1,18 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
 
 // 商品（最新進貨 + 庫存）
-const productLoading = ref(true)
-const productList = ref([])
-const fetchProductList = async () => {
-  productLoading.value = true
-  try {
-    productList.value = await api.getProduct()
-  } catch (error) {
-    ElMessage.error('獲取商品失敗')
-  } finally {
-    productLoading.value = false
-  }
-}
+const {
+  loading: productLoading,
+  list: productList,
+  fetchData: fetchProduct
+} = useCrud({
+  getApi: api.getProductList
+})
 
 const recentStockIn = computed(() => {
   return productList.value.slice(0, 5)
@@ -32,20 +28,14 @@ const productStock = computed(() => {
   }))
 })
 
-
 // 訂單（未完成數量 + 近 30 天數量）
-const orderLoading = ref(true)
-const orderList = ref([])
-const fetchOrderList = async () => {
-  orderLoading.value = true
-  try {
-    orderList.value = await api.getOrder()
-  } catch (error) {
-    ElMessage.error('獲取訂單數量失敗')
-  } finally {
-    orderLoading.value = false
-  }
-}
+const {
+  loading: orderLoading,
+  list: orderList,
+  fetchData: fetchOrder
+} = useCrud({
+  getApi: api.getOrderList
+})
 
 const orderCount = computed(() => {
   return orderList.value.filter(item => item.status === 'processing').length
@@ -93,14 +83,13 @@ const chartOption = computed(() => ({
 }))
 
 // 會員人數
-const memberList = ref([])
-const fetchMemberList = async () => {
-  try {
-    memberList.value = await api.getMember()
-  } catch (error) {
-    ElMessage.error('獲取用戶數量失敗')
-  }
-}
+const {
+  list: memberList,
+  fetchData: fetchMember
+} = useCrud({
+  getApi: api.getMemberList
+})
+
 const memberCount = computed(() => {
   return memberList.value.length
 })
@@ -111,9 +100,9 @@ const cardData = [
 ]
 
 onMounted(() => {
-  fetchProductList()
-  fetchMemberList()
-  fetchOrderList()
+  fetchProduct()
+  fetchMember()
+  fetchOrder()
 })
 </script>
 

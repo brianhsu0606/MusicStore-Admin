@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-export function useCrud({ getApi, addApi, updateApi, deleteApi, formRef, dialog, defaultForm, getTitle }) {
+export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog, defaultForm, getTitle }) => {
   const loading = ref(false)
   const list = ref([])
 

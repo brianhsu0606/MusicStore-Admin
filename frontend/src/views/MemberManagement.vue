@@ -33,7 +33,7 @@ const {
   handleDelete,
   submit
 } = useCrud({
-  getApi: api.getMember,
+  getApi: api.getMemberList,
   addApi: api.addMember,
   updateApi: api.updateMember,
   deleteApi: api.deleteMember,
@@ -59,15 +59,10 @@ const calcAge = (birth) => {
   if (!birth) {
     return '-'
   }
-
   if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
     age--
   }
   return age
-}
-
-const formatEmpty = (_, __, value) => {
-  return value ? value : '-'
 }
 
 // 月份篩選 + 搜尋功能 + 分頁功能
@@ -83,6 +78,10 @@ const filteredMemberList = computed(() => {
   })
 })
 const { currentPage, pageSize, pagedList, handlePageChange} = usePagination(filteredMemberList, 8)
+
+const formatEmpty = (_, __, value) => {
+  return value ? value : '-'
+}
 
 onMounted(() => {
   fetchData()
@@ -168,8 +167,8 @@ onMounted(() => {
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="submit" type="primary">確認</el-button>
       <el-button @click="dialog.visible = false">取消</el-button>
+      <el-button @click="submit" type="primary">確認</el-button>
     </template>
   </el-dialog>
 </template>

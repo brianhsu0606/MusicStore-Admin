@@ -10,7 +10,7 @@ export const useUserStore = defineStore('user', () => {
   const email = ref('')
   const avatar = ref('')
 
-  function setUser(data) {
+  const setUser = (data) => {
     id.value = data.id
     role.value = data.role
     name.value = data.name
@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', () => {
     avatar.value = data.avatar
   }
 
-  function clearUser() {
+  const clearUser = () => {
     id.value = ''
     role.value = ''
     name.value = ''
