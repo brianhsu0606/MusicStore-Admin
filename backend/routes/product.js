@@ -1,7 +1,8 @@
 const express = require('express')
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth')
+const router = express.Router()
 const Product = require('../models/productModel')
+const handleError = require('../utils/handleError')
+const { authenticateToken } = require('../middleware/auth')
 
 // 讀取商品 Read
 router.get('/api/products', authenticateToken, async (req, res) => {
@@ -10,15 +11,11 @@ router.get('/api/products', authenticateToken, async (req, res) => {
 
     res.json({
       code: 200,
-      msg: '獲得商品成功',
+      message: '獲取商品成功',
       result: productList
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '獲取商品失敗')
   }
 })
 
@@ -30,15 +27,11 @@ router.post('/api/products', authenticateToken, async (req, res) => {
 
     res.json({
       code: 200,
-      msg: '新增商品成功',
+      message: '新增商品成功',
       result: newProduct
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '新增商品失敗')
   }
 })
 
@@ -48,26 +41,39 @@ router.put('/api/products/:id', authenticateToken, async (req, res) => {
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     )
+
+    if (!updatedProduct) {
+      return res.status(404).json({
+        code: 404,
+        message: '找不到要更新的商品資料',
+        result: null
+      })
+    }
+
     res.json({
       code: 200,
       message: '商品更新成功',
       result: updatedProduct
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    });
+    handleError(res, error, '更新商品失敗')
   }
 })
 
 // 刪除商品 Delete
 router.delete('/api/products/:id', authenticateToken, async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id)
+    const deleted = await Product.findByIdAndDelete(req.params.id)
+
+    if (!deleted) {
+      return res.status(404).json({
+        code: 404,
+        message: '找不到要刪除的商品資料',
+        result: null,
+      })
+    }
 
     res.json({
       code: 200,
@@ -75,12 +81,8 @@ router.delete('/api/products/:id', authenticateToken, async (req, res) => {
       result: null
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    });
+    handleError(res, error, '刪除商品失敗')
   }
 })
 
-module.exports = router;
+module.exports = router

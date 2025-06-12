@@ -5,12 +5,17 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
   const loading = ref(false)
   const list = ref([])
 
+  const showError = (error, fallback = '操作失敗') => {
+    ElMessage.error(typeof error === 'string' ? error : fallback)
+  }
+
+
   const fetchData = async () => {
     loading.value = true
     try {
       list.value = await getApi()
-    } catch (err) {
-      ElMessage.error('資料載入失敗')
+    } catch (error) {
+      showError(error, '資料載入失敗')
     } finally {
       loading.value = false
     }
@@ -53,7 +58,8 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
       }
       dialog.visible = false
     } catch (error) {
-      ElMessage.error(dialog.isEdit ? '編輯失敗' : '新增失敗')
+      const fallback = dialog.isEdit ? '編輯失敗' : '新增失敗'
+      showError(error, fallback)
     }
   }
 
@@ -69,8 +75,8 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
       await deleteApi(id)
       list.value = list.value.filter(item => item.id !== id)
       ElMessage.success('刪除成功')
-    } catch {
-      ElMessage.error('刪除失敗')
+    } catch (error) {
+      showError(error, '刪除失敗')
     }
   }
 

@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const Revenue = require('../models/revenueModel');
+const express = require('express')
+const router = express.Router()
+const Revenue = require('../models/revenueModel')
+const handleError = require('../utils/handleError')
+const { authenticateToken } = require('../middleware/auth')
 
 // 讀取營業額 Read
 router.get('/api/revenues', authenticateToken, async (req, res) => {
@@ -10,15 +11,11 @@ router.get('/api/revenues', authenticateToken, async (req, res) => {
 
     res.json({
       code: 200,
-      message: '獲取營收成功',
+      message: '獲取營業額成功',
       result: revenueList
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '獲取營業額失敗')
   }
 })
 
@@ -34,11 +31,7 @@ router.post('/api/revenues', authenticateToken, async (req, res) => {
       result: newRevenue
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '新增營業額失敗')
   }
 })
 
@@ -48,39 +41,48 @@ router.put('/api/revenues/:id', authenticateToken, async (req, res) => {
     const updatedRevenue = await Revenue.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     )
+
+    if (!updatedRevenue) {
+      return res.status(404).json({
+        code: 404,
+        message: '找不到要更新的營業額資料',
+        result: null
+      })
+    }
+
     res.json({
       code: 200,
       message: '更新營業額成功',
       result: updatedRevenue
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '更新營業額失敗')
   }
 })
 
 // 刪除營業額 delete
 router.delete('/api/revenues/:id', authenticateToken, async (req, res) => {
   try {
-    await Revenue.findByIdAndDelete(req.params.id)
+    const deleted = await Revenue.findByIdAndDelete(req.params.id)
+
+    if (!deleted) {
+      return res.status(404).json({
+        code: 404,
+        message: '找不到要刪除的營業額資料',
+        result: null,
+      })
+    }
 
     res.json({
       code: 200,
-      message: '刪除當日營業額成功',
+      message: '刪除營業額成功',
       result: null
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '刪除營業額失敗')
   }
 })
 
-module.exports = router;
+module.exports = router

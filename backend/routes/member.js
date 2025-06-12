@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const Member = require('../models/memberModel');
+const express = require('express')
+const router = express.Router()
+const Member = require('../models/memberModel')
+const handleError = require('../utils/handleError')
+const { authenticateToken } = require('../middleware/auth')
 
 // 讀取會員 Read
 router.get('/api/members', authenticateToken, async (req, res) => {
@@ -14,11 +15,7 @@ router.get('/api/members', authenticateToken, async (req, res) => {
       result: memberList
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '獲取會員失敗')
   }
 })
 
@@ -34,11 +31,7 @@ router.post('/api/members', authenticateToken, async (req, res) => {
       result: newMember
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '新增會員失敗')
   }
 })
 
@@ -48,26 +41,39 @@ router.put('/api/members/:id', authenticateToken, async (req, res) => {
     const updatedMember = await Member.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true }
+      { new: true, runValidators: true }
     )
+
+    if (!updatedMember) {
+      return res.status(404).json({
+        code: 404,
+        message: '找不到要更新的會員資料',
+        result: null
+      })
+    }
+
     res.json({
       code: 200,
       message: '更新會員成功',
       result: updatedMember
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '更新會員失敗')
   }
 })
 
 // 刪除會員 Delete
 router.delete('/api/members/:id', authenticateToken, async (req, res) => {
   try {
-    await Member.findByIdAndDelete(req.params.id);
+    const deleted = await Member.findByIdAndDelete(req.params.id)
+
+    if (!deleted) {
+      return res.status(404).json({
+        code: 404,
+        message: '找不到要刪除的會員資料',
+        result: null,
+      })
+    }
 
     res.json({
       code: 200,
@@ -75,12 +81,8 @@ router.delete('/api/members/:id', authenticateToken, async (req, res) => {
       result: null
     })
   } catch (error) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+    handleError(res, error, '刪除會員失敗')
   }
 })
 
-module.exports = router;
+module.exports = router
