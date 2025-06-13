@@ -22,8 +22,7 @@ router.get('/api/products', authenticateToken, async (req, res) => {
 // 新增商品 Create
 router.post('/api/products', authenticateToken, async (req, res) => {
   try {
-    const newProduct = new Product(req.body)
-    await newProduct.save()
+    const newProduct = await Product.create(req.body)
 
     res.json({
       code: 200,

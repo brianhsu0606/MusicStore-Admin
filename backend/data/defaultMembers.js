@@ -8,7 +8,6 @@ module.exports = [
   { createdAt: '2025-06-02', name: '吳大雄', gender: '男', birth: '1992-09-30', addr: '桃園' },
   { createdAt: '2025-06-01', name: '廖小偉', gender: '男', birth: '1999-01-18', addr: '台北' },
   { createdAt: '2025-06-01', name: '鄭阿珍', gender: '女', birth: '1990-10-22', addr: '高雄' },
-  { createdAt: '2025-06-01', name: '蔡志明', gender: '男', birth: '1989-04-05', addr: '台南' },
   { createdAt: '2025-05-29', name: '謝小拉', gender: '女', birth: '2003-02-14', addr: '台中' },
   { createdAt: '2025-05-27', name: '郭大明', gender: '男', birth: '1994-07-07', addr: '基隆' },
   { createdAt: '2025-05-21', name: '葉婉君', gender: '女', birth: '2000-06-30', addr: '花蓮' },

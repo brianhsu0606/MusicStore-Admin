@@ -22,8 +22,7 @@ router.get('/api/members', authenticateToken, async (req, res) => {
 // 新增會員 Create
 router.post('/api/members', authenticateToken, async (req, res) => {
   try {
-    const newMember = new Member(req.body)
-    await newMember.save()
+    const newMember = await Member.create(req.body)
 
     res.json({
       code: 200,

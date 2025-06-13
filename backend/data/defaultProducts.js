@@ -27,5 +27,4 @@ module.exports = [
   { createdAt: '2025-02-07', name: 'Veelah V1-DM', price: 9200, quantity: 12, category: '木吉他' },
   { createdAt: '2025-01-23', name: 'Veelah V7', price: 25000, quantity: 2, category: '木吉他' },
   { createdAt: '2025-01-12', name: 'Veelah V6-GAC', price: 25000, quantity: 2, category: '木吉他' },
-
 ];

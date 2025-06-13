@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const User = require('../models/userModel');
+const express = require('express')
+const router = express.Router()
+const User = require('../models/userModel')
+const handleError = require('../utils/handleError')
+const { authenticateToken } = require('../middleware/auth')
 
 // 載入用戶 Read（僅限 superAdmin、admin）
 router.get('/api/users', authenticateToken, async (req, res) => {
@@ -9,7 +10,7 @@ router.get('/api/users', authenticateToken, async (req, res) => {
     const allowedRoles = ['superadmin', 'admin']
     const currentUser = await User.findById(req.user.id)
     if (!currentUser || !allowedRoles.includes(currentUser.profile.role)) {
-      return res.status(403).json({ code: 403, msg: '無權限' });
+      return res.status(403).json({ code: 403, message: '無權限' });
     }
 
     const users = await User.find().select('-password')
@@ -22,15 +23,15 @@ router.get('/api/users', authenticateToken, async (req, res) => {
 
     return res.json({
       code: 200,
-      msg: '獲取用戶成功',
+      message: '獲取用戶成功',
       result: userList
     });
   } catch (error) {
-    res.status(500).json({ code: 500, msg: '伺服器錯誤' });
+    handleError(res, error, '獲取用戶失敗')
   }
 })
 
-// 更新用戶角色 Update
+// 更新用戶權限 Update
 router.put('/api/users/:id', authenticateToken, async (req, res) => {
   try {
     const { role } = req.body;
@@ -41,18 +42,26 @@ router.put('/api/users/:id', authenticateToken, async (req, res) => {
 
     res.json({
       code: 200,
-      message: '更新用戶身份成功',
+      message: '更新用戶權限成功',
       result: null
     });
   } catch (error) {
-    res.status(500).json({ code: 500, message: '更新失敗' });
+    handleError(res, error, '更新用戶權限失敗')
   }
 })
 
 // 刪除用戶 Delete
 router.delete('/api/users/:id', authenticateToken, async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
+    const deleted = await User.findByIdAndDelete(req.params.id);
+
+    if (!deleted) {
+      return res.status(404).json({
+        code: 404,
+        message: '找不到要刪除的用戶',
+        result: null
+      })
+    }
 
     res.json({
       code: 200,
@@ -60,7 +69,7 @@ router.delete('/api/users/:id', authenticateToken, async (req, res) => {
       result: null
     });
   } catch (error) {
-    res.status(500).json({ code: 500, message: '刪除失敗' });
+    handleError(res, error, '刪除用戶失敗')
   }
 })
 

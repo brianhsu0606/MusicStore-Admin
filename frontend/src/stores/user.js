@@ -41,4 +41,4 @@ export const useUserStore = defineStore('user', () => {
     setUser,
     clearUser
   }
-}, { persist: true })
+})

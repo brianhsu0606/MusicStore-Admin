@@ -23,7 +23,7 @@ const handleUpdate = async () => {
       ...form
     })
     ElMessage.success('更新成功')
-  } catch (err) {
+  } catch (error) {
     ElMessage.error('更新失敗')
   }
 }

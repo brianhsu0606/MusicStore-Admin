@@ -22,8 +22,7 @@ router.get('/api/costs', authenticateToken, async (req, res) => {
 // 新增成本 Create
 router.post('/api/costs', authenticateToken, async (req, res) => {
   try {
-    const newCost = new Cost(req.body)
-    await newCost.save()
+    const newCost = await Cost.create(req.body)
 
     res.json({
       code: 200,

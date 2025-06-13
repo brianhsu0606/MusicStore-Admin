@@ -68,25 +68,26 @@ const handleRegister = async () => {
   try {
     await registerFormRef.value.validate()
     await api.register(registerForm.value)
+
     isRegister.value = false
     ElMessage.success('註冊成功')
   } catch (error) {
-    ElMessage.error('註冊失敗')
+    ElMessage.error(error)
   }
 }
 const handleLogin = async () => {
   try {
     await loginFormRef.value.validate()
-    const res = await api.login(loginForm.value)
-    localStorage.setItem('token', res.token)
-
+    const token = await api.login(loginForm.value)
+    localStorage.setItem('token', token)
+    
     const profile = await api.getProfile()
     userStore.setUser(profile)
     
     ElMessage.success('登入成功')
     router.push('/home')
   } catch (error) {
-    ElMessage.error('登入失敗')
+    ElMessage.error(error)
   }
 }
 </script>

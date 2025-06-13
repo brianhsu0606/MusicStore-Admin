@@ -22,8 +22,7 @@ router.get('/api/revenues', authenticateToken, async (req, res) => {
 // 新增營業額 Create
 router.post('/api/revenues', authenticateToken, async (req, res) => {
   try {
-    const newRevenue = new Revenue(req.body)
-    await newRevenue.save()
+    const newRevenue = await Revenue.create(req.body)
 
     res.json({
       code: 200,

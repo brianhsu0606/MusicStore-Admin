@@ -29,11 +29,10 @@ router.post('/api/orders', authenticateToken, async (req, res) => {
   const random = Math.floor(1000 + Math.random() * 9000)
 
   try {
-    const newOrder = new Order({
+    const newOrder = await Order.create({
       orderNumber: `ORD${datePart}${random}`,
       ...req.body,
     })
-    await newOrder.save()
 
     res.json({
       code: 200,

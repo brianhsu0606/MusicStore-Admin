@@ -51,7 +51,7 @@ module.exports = [
   { createdAt: '2025-01-16', price: 95000, note: '', createdBy: 'user2' },
   { createdAt: '2025-01-13', price: 47800, note: '', createdBy: 'user1' },
   { createdAt: '2025-01-10', price: 25900, note: '', createdBy: 'user3' },
-  { createdAt: '2025-01-07', price: 68000, note: '', createdBy: 'user2' },
-  { createdAt: '2025-01-04', price: 61200, note: '', createdBy: 'user1' },
-  { createdAt: '2025-01-01', price: 49900, note: '', createdBy: 'user3' },
+  { createdAt: '2025-01-07', price: 68035, note: '', createdBy: 'user2' },
+  { createdAt: '2025-01-04', price: 61220, note: '', createdBy: 'user1' },
+  { createdAt: '2025-01-01', price: 149415, note: '元旦人潮', createdBy: 'user3' },
 ]

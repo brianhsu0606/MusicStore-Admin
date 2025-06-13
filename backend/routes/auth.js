@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
+const handleError = require('../utils/handleError')
 
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs')
 const SALT_ROUNDS = 10;
 
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
 const User = require('../models/userModel')
 
@@ -14,10 +15,11 @@ router.post('/api/register', async (req, res) => {
 
   try {
     const existingUser = await User.findOne({ username })
+
     if (existingUser) {
       return res.status(400).json({
         code: 400,
-        message: '帳號已存在',
+        message: '此帳號已存在',
         result: null
       })
     }
@@ -47,12 +49,8 @@ router.post('/api/register', async (req, res) => {
       message: '註冊成功',
       result: null
     })
-  } catch (err) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+  } catch (error) {
+    handleError(res, error, '註冊失敗')
   }
 })
 
@@ -70,7 +68,6 @@ router.post('/api/login', async (req, res) => {
       })
     }
 
-    // bcrypt 密碼加密 
     const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
       return res.status(400).json({
@@ -98,16 +95,10 @@ router.post('/api/login', async (req, res) => {
     res.json({
       code: 200,
       message: '登入成功',
-      result: {
-        token
-      }
+      result: token
     })
-  } catch (err) {
-    res.status(500).json({
-      code: 500,
-      message: '伺服器錯誤',
-      result: null
-    })
+  } catch (error) {
+    handleError(res, error, '登入失敗')
   }
 })
 
