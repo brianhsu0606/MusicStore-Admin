@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/userModel')
 const handleError = require('../utils/handleError')
-const { authenticateToken } = require('../middleware/auth')
+const authenticateToken = require('../middleware/authMiddleware')
 
 // 獲取用戶資料 Read
 router.get('/api/profile', authenticateToken, async (req, res) => {
@@ -19,7 +19,7 @@ router.get('/api/profile', authenticateToken, async (req, res) => {
 
     res.json({
       code: 200,
-      message: '取得用戶資料成功',
+      message: '獲取用戶資料成功',
       result: {
         id: user.id,
         ...user.profile
@@ -33,7 +33,7 @@ router.get('/api/profile', authenticateToken, async (req, res) => {
 // 更新用戶資料 Update
 router.put('/api/profile', authenticateToken, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id)
+    const user = await User.findById(req.user.id).select('-password');
 
     if (!user) {
       return res.status(404).json({

@@ -1,9 +1,12 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
+import { useDialogWidth } from '@/composables/useDialogWidth'
 import { usePagination } from '@/composables/usePagination'
 import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
+
+const { dialogWidth } = useDialogWidth()
 
 const categories = ['全部商品', '木吉他', '電吉他', '音箱', '配件', '吉他弦']
 const categoryOptions = categories.slice(1)
@@ -92,9 +95,10 @@ onMounted(() => {
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header class="mb-4 flex justify-between items-center">
+  <header class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
     <el-button @click="handleAdd" type="primary">新增商品</el-button>
-    <div>
+
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <el-date-picker
         v-model="selectedMonth"
         type="month"
@@ -103,47 +107,48 @@ onMounted(() => {
         value-format="YYYY-MM"
         placeholder="選擇月份"
       />
-      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" class="ml-4" />
+      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入商品名稱" />
     </div>
   </header>
 
   <!-- 商品分類 tab -->
-  <el-tabs v-model="activeCategory" type="border-card" v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-tab-pane
-      v-for="item in categories"
-      :key="item"
-      :label="item"
-      :name="item"
-    />
+  <div class="overflow-auto">
+    <el-tabs v-model="activeCategory" type="border-card" class="mb-4 min-w-[900px]" v-loading="loading" element-loading-text="載入中，請稍候...">
+      <el-tab-pane
+        v-for="item in categories"
+        :key="item"
+        :label="item"
+        :name="item"
+      />
+      <!-- 商品表格 table -->    
+      <el-table :data="pagedList" class="mb-4" stripe>
+        <el-table-column prop="createdAt" label="進貨日期" min-width="90" :formatter="formatDate" />
+        <el-table-column prop="name" label="商品名稱" min-width="150"/>
+        <el-table-column prop="category" label="分類" min-width="70" />
+        <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
+        <el-table-column prop="quantity" label="數量" min-width="50" />
+        <el-table-column label="操作" min-width="100">
+          <template #default="{ row }">
+            <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
+            <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <!-- 商品表格 table -->    
-    <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="createdAt" label="進貨日期" min-width="90" :formatter="formatDate" />
-      <el-table-column prop="name" label="商品名稱" min-width="150"/>
-      <el-table-column prop="category" label="分類" min-width="70" />
-      <el-table-column prop="price" label="價格" sortable :formatter="formatPrice"/>
-      <el-table-column prop="quantity" label="數量" min-width="50" />
-      <el-table-column label="操作" min-width="100">
-        <template #default="{ row }">
-          <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
-          <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!-- 分頁功能 Pagination -->
-    <el-pagination
-      background
-      layout="prev, pager, next"
-      :page-size="pageSize"
-      :current-page="currentPage"
-      :total="filteredProductList.length"
-      @current-change="handlePageChange"
-    />
-  </el-tabs>
+      <!-- 分頁功能 Pagination -->
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :page-size="pageSize"
+        :current-page="currentPage"
+        :total="filteredProductList.length"
+        @current-change="handlePageChange"
+      />
+    </el-tabs>
+  </div>
 
   <!-- 新增、編輯商品 Dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title">
+  <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
     <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
       <el-form-item prop="createdAt" label="進貨日期">
         <el-date-picker

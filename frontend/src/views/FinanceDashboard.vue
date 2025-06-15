@@ -1,9 +1,12 @@
 <script setup>
 import { ref, computed, onMounted, reactive } from 'vue'
+import { useDialogWidth } from '@/composables/useDialogWidth'
 import { usePagination } from '@/composables/usePagination'
 import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
+
+const { dialogWidth } = useDialogWidth()
 
 const formRef = ref()
 const dialog = reactive({
@@ -140,7 +143,7 @@ const revenueChartOption = computed(() => ({
   tooltip: {},
   xAxis: {
     type: 'category',
-    data: revenueChartData.value.map(item => item.createdAt),
+    data: revenueChartData.value.map(item => dayjs(item.createdAt).format('YYYY-MM-DD')),
     axisLabel: { rotate: 45 }
   },
   yAxis: { type: 'value' },
@@ -174,9 +177,9 @@ onMounted(() => {
 
 <template>
   <!-- 基本資訊 el-card -->
-  <header class="flex justify-between items-center mb-4">
-    <div class="flex gap-4">
-      <el-card v-for="(item, index) in cardData" :key="index">
+  <header class="flex flex-col sm:flex-row justify-between gap-4 mb-4">
+    <div class="flex flex-col sm:flex-row order-2 sm:order-1 gap-4">
+      <el-card v-for="(item, index) in cardData" :key="index" class="min-w-[300px]">
         <div class="flex gap-4 items-center">
           <el-icon :size="50" :class="`${item.bg} rounded-lg p-1`">
             <component :is="item.icon" />
@@ -188,6 +191,7 @@ onMounted(() => {
         </div>
       </el-card>
     </div>
+
     <el-date-picker
       v-model="selectedMonth"
       type="month"
@@ -196,6 +200,8 @@ onMounted(() => {
       value-format="YYYY-MM"
       placeholder="選擇月份"
       :clearable="false"
+      style="width: 200px; height: 44px; font-size: 18px"
+      class="order-1 sm:order-2"
     />
   </header>
 
@@ -213,18 +219,20 @@ onMounted(() => {
           <h3 class="mb-2">{{ selectedMonth }} 成本資料</h3>
           <el-button @click="handleAdd" type="primary">新增成本</el-button>
         </div>
-        <el-table :data="paginatedCost" stripe class="mb-4">
-          <el-table-column prop="createdAt" label="日期" :formatter="formatDate" />
-          <el-table-column prop="name" label="項目" />
-          <el-table-column prop="category" label="分類" />
-          <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
-          <el-table-column label="操作">
-            <template #default="{ row }">
-              <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
-              <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div class="overflow-auto">
+          <el-table :data="paginatedCost" stripe class="mb-4 min-w-[800px]">
+            <el-table-column prop="createdAt" label="日期" :formatter="formatDate" />
+            <el-table-column prop="name" label="項目" />
+            <el-table-column prop="category" label="分類" />
+            <el-table-column prop="price" label="金額" :formatter="formatPrice" sortable />
+            <el-table-column label="操作">
+              <template #default="{ row }">
+                <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
+                <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
 
         <!-- 分頁功能 pagination -->
         <el-pagination
@@ -238,7 +246,7 @@ onMounted(() => {
       </el-card>
 
       <!-- 新增成本 dialog -->
-      <el-dialog v-model="dialog.visible" :title="dialog.title">
+      <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
         <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
           <el-form-item prop="name" label="成本名稱">
             <el-input v-model="dialog.form.name" />
@@ -281,13 +289,14 @@ onMounted(() => {
       <!-- 營業額表格 table -->
       <el-card class="mb-4">
         <h3 class="mb-2">{{ selectedMonth }} 營業額資料</h3>
-        <el-table :data="paginatedRevenue" stripe class="mb-4">
-          <el-table-column prop="createdAt" label="日期" :formatter="formatDate" />
-          <el-table-column prop="price" label="營業額" :formatter="formatPrice" sortable />
-          <el-table-column prop="note" label="備註" />
-          <el-table-column prop="createdBy" label="登錄者" />
-        </el-table>
-
+        <div class="overflow-auto">
+          <el-table :data="paginatedRevenue" stripe class="mb-4 min-w-[900px]">
+            <el-table-column prop="createdAt" label="日期" :formatter="formatDate" />
+            <el-table-column prop="price" label="營業額" :formatter="formatPrice" sortable />
+            <el-table-column prop="note" label="備註" />
+            <el-table-column prop="createdBy" label="登錄者" />
+          </el-table>
+        </div>
         <!-- 分頁功能 pagination -->
         <el-pagination
           background
@@ -315,6 +324,7 @@ header {
 }
 
 .el-button {
-    height: 38px;
-  }
+  height: 38px;
+}
+
 </style>

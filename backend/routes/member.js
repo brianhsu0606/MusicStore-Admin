@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Member = require('../models/memberModel')
 const handleError = require('../utils/handleError')
-const { authenticateToken } = require('../middleware/auth')
+const authenticateToken = require('../middleware/authMiddleware')
 
 // 讀取會員 Read
 router.get('/api/members', authenticateToken, async (req, res) => {

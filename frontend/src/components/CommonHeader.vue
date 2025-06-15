@@ -2,8 +2,10 @@
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { useUiStore } from '@/stores/ui'
 
 const userStore = useUserStore()
+const uiStore = useUiStore()
 const roleLabel = {
   superadmin: '超級管理員',
   admin: '管理員',
@@ -24,12 +26,18 @@ const handleLogout = () => {
 
 <template>
   <header class="flex justify-between items-center px-3 h-full">
+    <el-button
+      class="sm:hidden"
+      @click="uiStore.isAsideVisible = !uiStore.isAsideVisible"
+      icon="Expand"
+    />
     <h3 class="text-xl">樂器行後台系統</h3>
+
     <div class="flex items-center gap-8">
-      <p class="text-lg font-medium">歡迎回來，{{ userStore.name }} !</p>
-      <span>|</span>
-      <p class="text-lg font-medium">身份：{{ roleLabel[userStore.role] }}</p>
-      <span>|</span>
+      <p class="text-lg font-medium hidden sm:inline">歡迎回來，{{ userStore.name }} !</p>
+      <span class="hidden sm:inline">|</span>
+      <p class="text-lg font-medium hidden sm:inline">身份：{{ roleLabel[userStore.role] }}</p>
+      <span class="hidden sm:inline">|</span>
 
       <el-dropdown>
         <img :src="`/images/avatars/${userStore.avatar}`" class="user-img" title="帳戶選單">

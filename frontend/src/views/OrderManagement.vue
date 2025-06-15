@@ -1,9 +1,13 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
+import { ElMessage } from 'element-plus'
+import { useDialogWidth } from '@/composables/useDialogWidth'
 import { usePagination } from '@/composables/usePagination'
 import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
+
+const { dialogWidth } = useDialogWidth()
 
 const formRef = ref()
 const dialog = reactive({
@@ -51,9 +55,9 @@ const {
   getTitle: (type) => (type === 'add' ? '新增訂單' : '編輯訂單')
 })
 
-const changeStatus = async (row) => {
+const changeStatus = async (id, status) => {
   try {
-    await api.updateOrder(row.id, row)
+    await api.updateOrder(id, { status })
     ElMessage.success('更改訂單狀態成功')
   } catch {
     ElMessage.error('更改訂單狀態失敗')
@@ -106,9 +110,10 @@ onMounted(() => {
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header class="mb-4 flex justify-between items-center">
+  <header class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
     <el-button @click="handleAdd" type="primary">新增訂單</el-button>
-    <div>
+    
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <el-date-picker
         v-model="selectedMonth"
         type="month"
@@ -117,37 +122,39 @@ onMounted(() => {
         value-format="YYYY-MM"
         placeholder="選擇月份"
       />
-      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號" class="ml-4"/>
+      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入訂單編號" />
     </div>
   </header>
 
   <!-- 訂單列表 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="orderNumber" label="訂單編號" min-width="120" />
-      <el-table-column prop="createdAt" label="下單日期" min-width="100" :formatter="formatDate" />
-      <el-table-column prop="member" label="會員名稱" min-width="80" />
-      <el-table-column prop="items" label="商品名稱" min-width="180"/>
-      <el-table-column prop="price" label="訂單金額" min-width="100" :formatter="formatPrice" />
-      <el-table-column prop="status" label="狀態" min-width="140">
-        <template #default="{ row }">
-          <el-select v-model="row.status" @change="changeStatus(row)" class="status-select">
-            <template #prefix>
-              <el-tag :type="getTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
-            </template>
-            <el-option label="處理中" value="processing" />
-            <el-option label="已出貨" value="shipped" />
-            <el-option label="已完成" value="completed" />
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" min-width="150">
-        <template #default="{ row }">
-          <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
-          <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="overflow-auto">
+      <el-table :data="pagedList" class="mb-4 min-w-[1000px]" stripe>
+        <el-table-column prop="orderNumber" label="訂單編號" min-width="120" />
+        <el-table-column prop="createdAt" label="下單日期" min-width="100" :formatter="formatDate" />
+        <el-table-column prop="member" label="會員名稱" min-width="80" />
+        <el-table-column prop="items" label="商品名稱" min-width="180"/>
+        <el-table-column prop="price" label="訂單金額" min-width="100" :formatter="formatPrice" />
+        <el-table-column prop="status" label="狀態" min-width="140">
+          <template #default="{ row }">
+            <el-select v-model="row.status" @change="changeStatus(row.id, row.status)" class="status-select">
+              <template #prefix>
+                <el-tag :type="getTagType(row.status)">{{ getStatusLabel(row.status) }}</el-tag>
+              </template>
+              <el-option label="處理中" value="processing" />
+              <el-option label="已出貨" value="shipped" />
+              <el-option label="已完成" value="completed" />
+            </el-select>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" min-width="150">
+          <template #default="{ row }">
+            <el-button @click="handleEdit(row)" type="primary">編輯</el-button>
+            <el-button @click="handleDelete(row.id)" type="danger">刪除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <!-- 分頁功能 Pagination -->
     <el-pagination
@@ -161,7 +168,7 @@ onMounted(() => {
   </el-card>
 
   <!-- 新增訂單 dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title">
+  <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
     <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
       <el-form-item prop="createdAt" label="下單日期">
         <el-date-picker

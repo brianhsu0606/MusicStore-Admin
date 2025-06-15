@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Cost = require('../models/costModel')
 const handleError = require('../utils/handleError')
-const { authenticateToken } = require('../middleware/auth')
+const authenticateToken = require('../middleware/authMiddleware')
 
 // 讀取成本 Read
 router.get('/api/costs', authenticateToken, async (req, res) => {

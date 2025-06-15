@@ -1,9 +1,12 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue'
+import { useDialogWidth } from '@/composables/useDialogWidth'
 import { usePagination } from '@/composables/usePagination'
 import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
+
+const { dialogWidth } = useDialogWidth()
 
 const formRef = ref()
 const dialog = reactive({
@@ -94,9 +97,10 @@ onMounted(() => {
 
 <template>
   <!-- 新增、搜尋 header -->
-  <header class="mb-4 flex justify-between items-center">
+  <header class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
     <el-button type="primary" @click="handleAdd">新增會員</el-button>
-    <div>
+
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
       <el-date-picker
         v-model="selectedMonth"
         type="month"
@@ -105,29 +109,31 @@ onMounted(() => {
         size="large"
         placeholder="請選擇月份"
       />
-      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入會員名稱" class="ml-4"/>
+      <el-input v-model="searchInput" prefix-icon="search" placeholder="請輸入會員名稱" />
     </div>
   </header>
 
   <!-- 會員表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
-    <el-table :data="pagedList" class="mb-4" stripe>
-      <el-table-column prop="createdAt" label="註冊日期" :formatter="formatDate" />
-      <el-table-column prop="name" label="姓名" />
-      <el-table-column prop="gender" label="性別" min-width="60" />
-      <el-table-column label="年齡" min-width="60">
-        <template #default="{ row }">{{ calcAge(row.birth) }}</template>
-      </el-table-column>
-      <el-table-column prop="birth" label="生日" :formatter="formatDate" />
-      <el-table-column prop="addr" label="地址" :formatter="formatEmpty" />
-      <el-table-column label="操作" min-width="100">
-        <template #default="{ row }">
-          <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
-          <el-button type="danger" @click="handleDelete(row.id)">刪除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
+    <div class="overflow-auto">
+      <el-table :data="pagedList" class="mb-4 min-w-[900px]" stripe>
+        <el-table-column prop="createdAt" label="註冊日期" :formatter="formatDate" />
+        <el-table-column prop="name" label="姓名" />
+        <el-table-column prop="gender" label="性別" min-width="60" />
+        <el-table-column label="年齡" min-width="60">
+          <template #default="{ row }">{{ calcAge(row.birth) }}</template>
+        </el-table-column>
+        <el-table-column prop="birth" label="生日" :formatter="formatDate" />
+        <el-table-column prop="addr" label="地址" :formatter="formatEmpty" />
+        <el-table-column label="操作" min-width="100">
+          <template #default="{ row }">
+            <el-button type="primary" @click="handleEdit(row)">編輯</el-button>
+            <el-button type="danger" @click="handleDelete(row.id)">刪除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    
     <!-- 分頁功能 Pagination -->
     <el-pagination
       background
@@ -140,7 +146,7 @@ onMounted(() => {
   </el-card>
 
   <!-- 新增、編輯會員 Dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title">
+  <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
     <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
       <el-form-item prop="createdAt" label="註冊日期">
         <el-date-picker 

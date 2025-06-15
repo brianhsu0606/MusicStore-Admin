@@ -112,19 +112,21 @@ onMounted(() => {
 <template>
   <el-row :gutter="20">
     <!-- 左邊 -->
-    <el-col :span="10">
+    <el-col :xs="24" :sm="24" :md="12" :lg="10">
       <!-- 最新進貨 el-table -->
       <el-card v-loading="productLoading" element-loading-text="載入中，請稍候..." class="mb-4">
         <h3 class="mb-2">最近 5 筆進貨</h3>
-        <el-table :data="recentStockIn" stripe>
-          <el-table-column prop="createdAt" label="進貨日期" min-width="50" :formatter="formatDate" />
-          <el-table-column prop="name" label="商品名稱" />
-          <el-table-column prop="quantity" label="數量" min-width="26"/>
-        </el-table>
+        <div class="overflow-auto">
+          <el-table :data="recentStockIn" stripe class="min-w-[380px]">
+            <el-table-column prop="createdAt" label="進貨日期" min-width="50" :formatter="formatDate" />
+            <el-table-column prop="name" label="商品名稱" />
+            <el-table-column prop="quantity" label="數量" min-width="26"/>
+          </el-table>
+        </div>
       </el-card>
       
       <!-- 庫存表格 el-table -->
-      <el-card v-loading="productLoading" element-loading-text="載入中，請稍候...">
+      <el-card v-loading="productLoading" element-loading-text="載入中，請稍候..." class="mb-4">
         <h3 class="mb-2">商品總庫存</h3>
         <el-table :data="productStock" stripe>
           <el-table-column prop="category" label="分類" />
@@ -138,9 +140,9 @@ onMounted(() => {
     </el-col>
 
     <!-- 右邊 -->
-    <el-col :span="14">
+    <el-col :xs="24" :sm="24" :md="12" :lg="14">
       <!-- 資料卡 el-card -->
-      <div class="flex gap-4 mb-4">
+      <div class="flex flex-col sm:flex-row gap-4 mb-4">
         <el-card v-for="(item, index) in cardData" :key="index" class="flex-1">
           <div class="flex items-center gap-4">
             <el-icon :size="50" :class="`${item.bg} rounded-lg p-1`">

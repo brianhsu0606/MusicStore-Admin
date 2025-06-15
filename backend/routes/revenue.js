@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Revenue = require('../models/revenueModel')
 const handleError = require('../utils/handleError')
-const { authenticateToken } = require('../middleware/auth')
+const authenticateToken = require('../middleware/authMiddleware')
 
 // 讀取營業額 Read
 router.get('/api/revenues', authenticateToken, async (req, res) => {

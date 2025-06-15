@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/userModel')
 const handleError = require('../utils/handleError')
-const { authenticateToken } = require('../middleware/auth')
+const authenticateToken = require('../middleware/authMiddleware')
 
 // 載入用戶 Read（僅限 superAdmin、admin）
 router.get('/api/users', authenticateToken, async (req, res) => {
@@ -36,9 +36,11 @@ router.put('/api/users/:id', authenticateToken, async (req, res) => {
   try {
     const { role } = req.body;
 
-    await User.findByIdAndUpdate(req.params.id, {
-      'profile.role': role
-    });
+    await User.findByIdAndUpdate(
+      req.params.id,
+      { 'profile.role': role },
+      { new: true, runValidators: true }
+    );
 
     res.json({
       code: 200,
@@ -73,4 +75,4 @@ router.delete('/api/users/:id', authenticateToken, async (req, res) => {
   }
 })
 
-module.exports = router;
+module.exports = router

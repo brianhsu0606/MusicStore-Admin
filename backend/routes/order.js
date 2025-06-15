@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Order = require('../models/orderModel')
 const handleError = require('../utils/handleError')
-const { authenticateToken } = require('../middleware/auth')
+const authenticateToken = require('../middleware/authMiddleware')
 
 // 讀取訂單 Read
 router.get('/api/orders', authenticateToken, async (req, res) => {

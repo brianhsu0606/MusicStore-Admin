@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUiStore } from '@/stores/ui'
 
 const list = [
   { path: '/home', name: 'home', label: '首頁', icon: 'house' },
@@ -14,6 +15,15 @@ const list = [
 
 const router = useRouter()
 const activePath = computed(() => router.currentRoute.value.path)
+
+const uiStore = useUiStore()
+const handleChange = (path) => {
+  router.push(path)
+
+  if (window.innerWidth < 768) {
+    uiStore.isAsideVisible = false
+  }
+}
 </script>
 
 <template>
@@ -22,6 +32,7 @@ const activePath = computed(() => router.currentRoute.value.path)
       v-for="item in list"
       :index="item.path"
       :key="item.path"
+      @click="handleChange(item.path)"
     > 
       <component class="icon" :is="item.icon"></component>
       <span>{{ item.label }}</span>

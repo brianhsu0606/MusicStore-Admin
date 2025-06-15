@@ -1,6 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const handleError = require('../utils/handleError')
 
 const bcrypt = require('bcryptjs')
 const SALT_ROUNDS = 10;
@@ -8,6 +7,7 @@ const SALT_ROUNDS = 10;
 const jwt = require('jsonwebtoken')
 
 const User = require('../models/userModel')
+const handleError = require('../utils/handleError')
 
 // 註冊 register
 router.post('/api/register', async (req, res) => {
@@ -29,20 +29,19 @@ router.post('/api/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
 
-    const newUser = new User({
+    await User.create({
+      employeeId: nextEmployeeId,
       username,
       password: hashedPassword,
-      employeeId: nextEmployeeId,
       profile: {
-        name,
         role: 'user',
+        name,
         gender: '',
         birth: '',
         email: '',
         avatar: 'avatar1.jpg'
       }
     })
-    await newUser.save()
 
     res.json({
       code: 200,
@@ -81,7 +80,6 @@ router.post('/api/login', async (req, res) => {
     user.profile.lastLogin = new Date().toISOString()
     await user.save()
 
-    // jwt token設定
     const token = jwt.sign(
       {
         id: user.id,
@@ -89,7 +87,7 @@ router.post('/api/login', async (req, res) => {
         role: user.profile.role
       },
       process.env.JWT_SECRET,
-      { expiresIn: '30d' }
+      { expiresIn: '7d' }
     )
 
     res.json({
