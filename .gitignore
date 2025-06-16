@@ -6,6 +6,7 @@ backend/node_modules/  # 確保忽略後端的依賴
 # 環境變數設定檔 (確保忽略所有 .env 檔案)
 .env
 frontend/.env          # 確保忽略前端的 .env
+frontend/.env.productuin
 backend/.env           # 確保忽略後端的 .env
 
 # 日誌檔案
