@@ -40,7 +40,7 @@ const handleLogout = () => {
       <span class="hidden sm:inline">|</span>
 
       <el-dropdown>
-        <img :src="`/images/avatars/${userStore.avatar}`" class="user-img" title="帳戶選單">
+        <img :src="`$/images/avatars/${userStore.avatar}`" class="user-img" title="帳戶選單">
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toAccount">帳戶資訊</el-dropdown-item>
