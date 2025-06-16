@@ -9,9 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`伺服器運行中，請訪問 http://localhost:${PORT}`);
-});
+app.listen(PORT, () => { })
 
 app.use(require('./routes/auth'));
 app.use(require('./routes/profile'));
@@ -23,41 +21,36 @@ app.use(require('./routes/cost'));
 app.use(require('./routes/user'));
 
 const Revenue = require('./models/revenueModel');
-const Member = require('./models/memberModel');
 const Product = require('./models/productModel');
 const Order = require('./models/orderModel');
+const Member = require('./models/memberModel');
 const Cost = require('./models/costModel');
 
 const initUser = require('./utils/initUser');
 const defaultRevenue = require('./data/defaultRevenue');
-const defaultMembers = require('./data/defaultMembers');
 const defaultProducts = require('./data/defaultProducts');
 const defaultOrders = require('./data/defaultOrders');
+const defaultMembers = require('./data/defaultMembers');
 const defaultCost = require('./data/defaultCost');
 
-mongoose.connect(process.env.MONGO_URI, {})
+mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
     console.log('資料庫連線成功');
 
     try {
-      // 測試用，重啟伺服器時清空資料
-      // await User.deleteMany({});
-      await Revenue.deleteMany({});
-      await Member.deleteMany({});
-      await Product.deleteMany({});
-      await Order.deleteMany({});
-      await Cost.deleteMany({});
-      console.log('舊有資料已清除');
+      const hasData = await Revenue.findOne();
 
-      // await User.insertMany(defaultUser);
-      await initUser();
-      await Revenue.insertMany(defaultRevenue);
-      await Member.insertMany(defaultMembers);
-      await Product.insertMany(defaultProducts);
-      await Order.insertMany(defaultOrders);
-      await Cost.insertMany(defaultCost);
-      console.log('預設資料已成功插入');
-
+      if (!hasData) {
+        await initUser();
+        await Revenue.insertMany(defaultRevenue);
+        await Product.insertMany(defaultProducts);
+        await Order.insertMany(defaultOrders);
+        await Member.insertMany(defaultMembers);
+        await Cost.insertMany(defaultCost);
+        console.log('首次啟動：預設資料已成功插入');
+      } else {
+        console.log('已存在資料，略過初始化');
+      }
     } catch (err) {
       console.error('重置會員資料失敗:', err);
     }

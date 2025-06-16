@@ -16,23 +16,27 @@ import * as echarts from 'echarts'
 
 import '@/assets/main.less'
 
-const app = createApp(App)
+async function bootstrap() {
+  const app = createApp(App)
 
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-app.use(pinia)
+  const pinia = createPinia()
+  pinia.use(piniaPluginPersistedstate)
+  app.use(pinia)
 
-await useLoadUserProfile()
+  await useLoadUserProfile() // ✅ 放在 async 裡
 
-app.use(router)
-app.use(ElementPlus)
-app.component('VChart', VueECharts)
+  app.use(router)
+  app.use(ElementPlus)
+  app.component('VChart', VueECharts)
 
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
+
+  app.mount('#app')
+
+  const loadingEl = document.getElementById('loading')
+  if (loadingEl) loadingEl.remove()
 }
 
-app.mount('#app')
-
-const loadingEl = document.getElementById('loading')
-if (loadingEl) loadingEl.remove()
+bootstrap()

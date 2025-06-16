@@ -1,20 +1,19 @@
 const bcrypt = require('bcryptjs')
 const SALT_ROUNDS = 10
 
-const defaultUsers = require('../data/defaultUser')
+const defaultUser = require('../data/defaultUser')
 const User = require('../models/userModel')
 
-async function createDefaultUsers() {
+async function createDefaultUser() {
   try {
-    for (const user of defaultUsers) {
+    for (const user of defaultUser) {
       const existing = await User.findOne({ username: user.username })
       if (existing) {
-        console.log(`🟢 已存在：${user.username}`)
+        console.log(`已存在：${user.username}`)
         continue
       }
 
       const hashedPassword = await bcrypt.hash(user.password, SALT_ROUNDS)
-      console.log('Hash:', hashedPassword)
 
       await User.create({
         employeeId: 1,
@@ -26,17 +25,16 @@ async function createDefaultUsers() {
           gender: '-',
           birth: '-',
           email: '-',
-          avatar: 'avatar1.jpeg',
+          avatar: 'avatar1.jpg',
           lastLogin: '',
         }
       })
 
-      console.log(`✅ 已建立帳號：${user.username}`)
+      console.log(`已建立帳號：${user.username}`)
     }
   } catch (err) {
-    console.error('❌ 建立預設帳號失敗：', err)
+    console.error('建立預設帳號失敗：', err)
   }
 }
 
-
-module.exports = createDefaultUsers
+module.exports = createDefaultUser
