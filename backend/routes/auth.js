@@ -13,8 +13,23 @@ router.post('/api/register', async (req, res) => {
   const { name, username, password } = req.body
 
   try {
-    const existingUser = await User.findOne({ username })
+    if (username.length < 5 || username.length > 20) {
+      return res.status(400).json({
+        code: 400,
+        message: '帳號必須介於 5 到 20 個字元',
+        result: null
+      });
+    }
 
+    if (password.length < 5 || password.length > 20) {
+      return res.status(400).json({
+        code: 400,
+        message: '密碼必須介於 5 到 20 個字元',
+        result: null
+      });
+    }
+
+    const existingUser = await User.findOne({ username })
     if (existingUser) {
       return res.status(400).json({
         code: 400,

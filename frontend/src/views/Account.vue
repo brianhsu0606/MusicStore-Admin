@@ -4,6 +4,12 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import api from '@/api'
 
+const avatarImages = import.meta.glob('../assets/images/avatars/*.jpg', {
+  eager: true,
+  import: 'default'
+})
+const getAvatarPath = (filename) => avatarImages[`../assets/images/avatars/${filename}`]
+
 const userStore = useUserStore()
 
 const form = reactive({
@@ -45,7 +51,7 @@ const selectAvatar = (avatarFileName) => {
   <el-card>
     <h3>帳戶資訊</h3>
     <img 
-      :src="`/images/avatars/${form.avatar}`"
+      :src="getAvatarPath(form.avatar)"
       @click="dialogVisible = true" 
       class="avatar-preview"
     />
@@ -88,7 +94,7 @@ const selectAvatar = (avatarFileName) => {
       <img
         v-for="i in 5"
         :key="i"
-        :src="`/images/avatars/avatar${i}.jpg`"
+        :src="getAvatarPath(`avatar${i}.jpg`)"
         @click="selectAvatar(`avatar${i}.jpg`)"
       />
     </div>

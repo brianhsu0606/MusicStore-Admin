@@ -9,7 +9,6 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
     ElMessage.error(typeof error === 'string' ? error : fallback)
   }
 
-
   const fetchData = async () => {
     loading.value = true
     try {

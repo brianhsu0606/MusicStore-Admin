@@ -4,6 +4,12 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/stores/user'
 import { useUiStore } from '@/stores/ui'
 
+const avatarImages = import.meta.glob('../assets/images/avatars/*.jpg', {
+  eager: true,
+  import: 'default'
+})
+const getAvatarPath = (filename) => avatarImages[`../assets/images/avatars/${filename}`]
+
 const userStore = useUserStore()
 const uiStore = useUiStore()
 const roleLabel = {
@@ -40,7 +46,7 @@ const handleLogout = () => {
       <span class="hidden sm:inline">|</span>
 
       <el-dropdown>
-        <img :src="`$/images/avatars/${userStore.avatar}`" class="user-img" title="帳戶選單">
+        <img :src="getAvatarPath(userStore.avatar)" class="user-img" title="帳戶選單">
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="toAccount">帳戶資訊</el-dropdown-item>

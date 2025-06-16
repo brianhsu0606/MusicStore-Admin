@@ -9,6 +9,8 @@ const uiStore = useUiStore()
 const handleResize = () => {
   if (window.innerWidth >= 768) {
     uiStore.isAsideVisible = true
+  } else {
+    uiStore.isAsideVisible = false
   }
 }
 

@@ -210,16 +210,18 @@ onMounted(() => {
     <el-col :lg="24" :xl="12" v-loading="costLoading" element-loading-text="載入中，請稍候...">
       <!-- 成本圓餅圖 -->
       <el-card class="mb-4">
-        <v-chart :option="costChartOption" autoresize style="height: 400px" />
+        <div class="overflow-auto">
+          <v-chart :option="costChartOption" autoresize class="h-[400px] min-w-[300px]" />
+        </div>
       </el-card>
 
       <!-- 成本表格 table -->
       <el-card class="mb-4">
-        <div class="flex justify-between items-center mb-2">
-          <h3 class="mb-2">{{ selectedMonth }} 成本資料</h3>
-          <el-button @click="handleAdd" type="primary">新增成本</el-button>
-        </div>
         <div class="overflow-auto">
+          <header class="flex justify-between items-center mb-2 min-w-[800px]">
+            <h3 class="mb-2">{{ selectedMonth }} 成本資料</h3>
+            <el-button @click="handleAdd" type="primary">新增成本</el-button>
+          </header>
           <el-table :data="paginatedCost" stripe class="mb-4 min-w-[800px]">
             <el-table-column prop="createdAt" label="日期" :formatter="formatDate" />
             <el-table-column prop="name" label="項目" />
@@ -283,7 +285,9 @@ onMounted(() => {
     <el-col :lg="24" :xl="12" v-loading="revenueLoading" element-loading-text="載入中，請稍候...">
       <!-- 營業額折線圖 -->
       <el-card class="mb-4">
-        <v-chart :option="revenueChartOption" autoresize style="height: 400px" />
+        <div class="overflow-auto">
+          <v-chart :option="revenueChartOption" autoresize class="h-[400px] min-w-[400px]"/>
+        </div>
       </el-card>
       
       <!-- 營業額表格 table -->
@@ -323,8 +327,8 @@ header {
   }
 }
 
-.el-button {
-  height: 38px;
-}
+// .el-button {
+//   height: 38px;
+// }
 
 </style>

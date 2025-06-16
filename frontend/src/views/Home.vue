@@ -141,8 +141,8 @@ onMounted(() => {
     <!-- 右邊 -->
     <el-col :xs="24" :sm="24" :md="12" :lg="14">
       <!-- 資料卡 el-card -->
-      <div class="flex flex-col sm:flex-row gap-4 mb-4">
-        <el-card v-for="(item, index) in cardData" :key="index" class="flex-1">
+      <div class="flex flex-col sm:flex-row gap-4 mb-4 overflow-auto">
+        <el-card v-for="(item, index) in cardData" :key="index" class="flex-1 min-w-[300px]">
           <div class="flex items-center gap-4">
             <el-icon :size="50" :class="`${item.bg} rounded-lg p-1`">
               <component :is="item.icon" />
@@ -157,15 +157,17 @@ onMounted(() => {
 
       <!-- 訂單分析長條圖 v-chart -->
       <el-card v-loading="orderLoading" element-loading-text="載入中，請稍候...">
-        <header class="flex justify-between items-center">
-          <h3 class="text-xl font-medium">最近 {{ selectedDays }} 天的訂單數量</h3>
-          <el-select v-model="selectedDays" size="large" style="width: 150px">
-            <el-option :label="'最近 7 天'" :value="7" />
-            <el-option :label="'最近 14 天'" :value="14" />
-            <el-option :label="'最近 30 天'" :value="30" />
-          </el-select>
-        </header>
-        <v-chart :option="chartOption" autoresize style="height: 400px" />
+        <div class="overflow-auto">
+          <header class="flex justify-between items-center min-w-[350px]">
+            <h3 class="text-xl font-medium">最近 {{ selectedDays }} 天的訂單數量</h3>
+            <el-select v-model="selectedDays" size="large" style="width: 150px">
+              <el-option :label="'最近 7 天'" :value="7" />
+              <el-option :label="'最近 14 天'" :value="14" />
+              <el-option :label="'最近 30 天'" :value="30" />
+            </el-select>
+          </header>
+          <v-chart :option="chartOption" autoresize  class="h-[400px] min-w-[350px]" />
+        </div>
       </el-card>
     </el-col>
   </el-row>

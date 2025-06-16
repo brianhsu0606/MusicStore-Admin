@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === 'production'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: isProduction ? '/MusicStore-Admin/' : '/',
+  base: isProduction ? '/music-store-admin/' : '/',
 
   plugins: [
     vue(),
