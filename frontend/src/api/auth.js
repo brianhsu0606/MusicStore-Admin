@@ -3,14 +3,14 @@ import request from "@/utils/request";
 export default {
   register(data) {
     return request({
-      url: '/api/register',
+      url: '/register',
       method: 'post',
       data,
     })
   },
   login(data) {
     return request({
-      url: '/api/login',
+      url: '/login',
       method: 'post',
       data,
     })

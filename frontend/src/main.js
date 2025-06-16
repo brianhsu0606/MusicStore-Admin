@@ -14,7 +14,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import VueECharts from 'vue-echarts'
 import * as echarts from 'echarts'
 
-import '@/assets/main.css'
+import '@/assets/main.less'
 
 const app = createApp(App)
 

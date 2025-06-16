@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`伺服器運行中，請訪問 http://localhost:${PORT}`);
 });
@@ -35,7 +35,7 @@ const defaultProducts = require('./data/defaultProducts');
 const defaultOrders = require('./data/defaultOrders');
 const defaultCost = require('./data/defaultCost');
 
-mongoose.connect('mongodb+srv://myuser:vue3projectDATABASE@cluster0.e8k1tey.mongodb.net/myproject?retryWrites=true&w=majority&appName=Cluster0', {})
+mongoose.connect(process.env.MONGO_URI, {})
   .then(async () => {
     console.log('資料庫連線成功');
 

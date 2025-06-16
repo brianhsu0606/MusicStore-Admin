@@ -123,7 +123,7 @@ const handleLogin = async () => {
           <el-button type="primary" @click="handleRegister">註冊</el-button>
         </el-form-item>
         <el-form-item>
-          <el-link @click="handleChange">返回登入</el-link>
+          <el-link @click="handleChange"><ArrowLeft class="w-4 mr-1"/>登入</el-link>
         </el-form-item>
       </el-form>
       
@@ -144,7 +144,7 @@ const handleLogin = async () => {
           <el-button type="primary" @click="handleLogin">登入</el-button>
         </el-form-item>
         <el-form-item>
-          <el-link @click="handleChange">返回註冊</el-link>
+          <el-link @click="handleChange"><ArrowRight class="w-4 mr-1"/>註冊帳號</el-link>
         </el-form-item>
       </el-form>
     </div>
@@ -160,7 +160,7 @@ const handleLogin = async () => {
 .auth-wrapper {
   background-color: #f0f4f8; 
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 5px 15px rgb(90, 90, 90);
   width: 100%;
   max-width: 450px;
   padding: 30px 40px 0px 40px;
@@ -169,22 +169,12 @@ const handleLogin = async () => {
     height: 36px;
     font-size: 16px;
   }
-
   .el-button {
     width: 100%;
     height: 36px;
-    background-color: #4b6180;
-    border: none;
-
-    &:hover {
-      background-color: #3b4f6a;
-    }
   }
-
   .el-link {
-    font-size: 14px;
     color: #6c7a89;
-
     &:hover {
       color: #3a4756;
     }

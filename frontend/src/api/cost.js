@@ -3,27 +3,27 @@ import request from "@/utils/request";
 export default {
   getCostList() {
     return request({
-      url: '/api/costs',
+      url: '/costs',
       method: 'get'
     })
   },
   addCost(data) {
     return request({
-      url: '/api/costs',
+      url: '/costs',
       method: 'post',
       data
     })
   },
   updateCost(id, data) {
     return request({
-      url: `/api/costs/${id}`,
+      url: `/costs/${id}`,
       method: 'put',
       data
     })
   },
   deleteCost(id) {
     return request({
-      url: `/api/costs/${id}`,
+      url: `/costs/${id}`,
       method: 'delete',
     })
   },

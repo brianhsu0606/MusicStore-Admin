@@ -1,10 +1,9 @@
 const express = require('express')
 const router = express.Router()
 
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 const SALT_ROUNDS = 10;
-
-const jwt = require('jsonwebtoken')
 
 const User = require('../models/userModel')
 const handleError = require('../utils/handleError')
@@ -76,7 +75,6 @@ router.post('/api/login', async (req, res) => {
       })
     }
 
-    // 登入時間
     user.profile.lastLogin = new Date().toISOString()
     await user.save()
 

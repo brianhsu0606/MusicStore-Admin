@@ -3,27 +3,27 @@ import request from "@/utils/request";
 export default {
   getOrderList() {
     return request({
-      url: '/api/orders',
+      url: '/orders',
       method: 'get',
     })
   },
   addOrder(data) {
     return request({
-      url: '/api/orders/',
+      url: '/orders/',
       method: 'post',
       data,
     })
   },
   updateOrder(id, data) {
     return request({
-      url: `/api/orders/${id}`,
+      url: `/orders/${id}`,
       method: 'put',
       data,
     })
   },
   deleteOrder(id) {
     return request({
-      url: `/api/orders/${id}`,
+      url: `/orders/${id}`,
       method: 'delete',
     })
   },

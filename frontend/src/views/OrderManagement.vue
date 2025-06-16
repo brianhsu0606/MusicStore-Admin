@@ -202,20 +202,6 @@ onMounted(() => {
 </template>
 
 <style scoped lang="less">
-header {
-  .el-button {
-    height: 38px;
-  }
-  .el-date-picker {
-    font-size: 16px;
-  }
-  .el-input {
-    width: 250px;
-    height: 38px;
-    font-size: 16px;
-  }
-}
-
 .el-tag {
   font-size: 14px;
 }

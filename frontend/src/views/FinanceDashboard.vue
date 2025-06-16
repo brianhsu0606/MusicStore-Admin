@@ -200,7 +200,7 @@ onMounted(() => {
       value-format="YYYY-MM"
       placeholder="選擇月份"
       :clearable="false"
-      style="width: 200px; height: 44px; font-size: 18px"
+      style="width: 200px; height: 42px; font-size: 18px"
       class="order-1 sm:order-2"
     />
   </header>

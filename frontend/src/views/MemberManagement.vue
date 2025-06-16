@@ -182,16 +182,3 @@ onMounted(() => {
     </template>
   </el-dialog>
 </template>
-
-<style scoped lang="less">
-header {
-  .el-button {
-    height: 38px;
-  }
-  .el-input {
-    width: 250px;
-    height: 38px;
-    font-size: 16px;
-  }
-}
-</style>

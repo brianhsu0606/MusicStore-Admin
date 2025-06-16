@@ -47,7 +47,6 @@ const filteredOrders = computed(() => {
     dayjs(order.createdAt).isAfter(today.subtract(selectedDays.value, 'day'))
   )
 })
-
 const ordersPerDay = computed(() => {
   const result = {}
   for (let i = 0; i < selectedDays.value; i++) {
