@@ -29,19 +29,10 @@
 營收分析：此頁面只有管理員或超級管理員可以進入，可以看到成本及營業額的表格、分析
 ![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/finance.jpg)
 
-同時也做了全站的RWD設計，在手機上也不會跑版
-![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/home_mobile.jpg)
-![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/order_mobile.jpg)
-![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/finance_mobile.jpg)
-images/finance_mobile.jpg
 
 同時也做了全站的 RWD 設計，在手機上也不會跑版。
-
-<!-- 手機版首頁截圖 -->
-<img src="images/home_mobile.jpg" alt="手機版首頁截圖" width="350">
-
-<!-- 手機版訂單頁面截圖 -->
-<img src="images/order_mobile.jpg" alt="手機版訂單頁面截圖" width="350">
-
-<!-- 手機版營業額頁面截圖 -->
-<img src="images/finance_mobile.jpg" alt="手機版營業額頁面截圖" width="350">
+<div style="display: flex; justify-content: space-around; align-items: flex-start; flex-wrap: wrap;">
+  <img src="images/home_mobile.jpg" alt="手機版首頁截圖" width="350">
+  <img src="images/order_mobile.jpg" alt="手機版訂單頁面截圖" width="350">
+  <img src="images/finance_mobile.jpg" alt="手機版營業額頁面截圖" width="350">
+</div>
