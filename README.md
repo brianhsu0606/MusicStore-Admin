@@ -1,6 +1,6 @@
 # Music Store Admin 後台管理系統
 
-- 本專案為一套樂器行的後台管理系統，涵蓋會員管理、商品管理、訂單處理與營收統計等功能模組。
+- 本專案為一套樂器行的後台管理系統，涵蓋會員、商品、訂單管理與營收統計等功能。
 - 前端採用 Vue 3 搭配 Vue Router 打造 SPA 架構，並結合 Element Plus 及 Tailwind CSS 強化 UI 設計與 RWD 響應式排版。
 - 後端則使用 Node.js（Express）建構 RESTful API，資料持久化則透過 Mongoose 操作 MongoDB。
 
