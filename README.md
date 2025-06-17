@@ -33,3 +33,15 @@
 ![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/home_mobile.jpg)
 ![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/order_mobile.jpg)
 ![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/finance_mobile.jpg)
+images/finance_mobile.jpg
+
+同時也做了全站的 RWD 設計，在手機上也不會跑版。
+
+<!-- 手機版首頁截圖 -->
+<img src="images/home_mobile.jpg" alt="手機版首頁截圖" width="350">
+
+<!-- 手機版訂單頁面截圖 -->
+<img src="images/order_mobile.jpg" alt="手機版訂單頁面截圖" width="350">
+
+<!-- 手機版營業額頁面截圖 -->
+<img src="images/finance_mobile.jpg" alt="手機版營業額頁面截圖" width="350">
