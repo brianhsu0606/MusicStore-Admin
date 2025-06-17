@@ -32,7 +32,7 @@
 
 同時也做了全站的 RWD 設計，在手機上也不會跑版。
 <div style="display: flex; justify-content: space-around; align-items: flex-start; flex-wrap: wrap;">
-  <img src="images/home_mobile.jpg" alt="手機版首頁截圖" width="350">
-  <img src="images/order_mobile.jpg" alt="手機版訂單頁面截圖" width="350">
-  <img src="images/finance_mobile.jpg" alt="手機版營業額頁面截圖" width="350">
+  <img src="images/home_mobile.jpg" alt="手機版首頁截圖" width="300" height="600">
+  <img src="images/order_mobile.jpg" alt="手機版訂單頁面截圖" width="300" height="600">
+  <img src="images/finance_mobile.jpg" alt="手機版營業額頁面截圖" width="300" height="600">
 </div>
