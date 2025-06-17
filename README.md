@@ -49,3 +49,6 @@
   <img src="images/order_mobile.jpg" alt="手機版訂單頁面截圖" width="260" height="600">
   <img src="images/finance_mobile.jpg" alt="手機版營業額頁面截圖" width="260" height="600">
 </div>
+
+## 聯絡方式
+email：a0938406813@gmail.com
