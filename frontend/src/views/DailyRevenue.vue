@@ -77,7 +77,8 @@ onMounted(() => {
 <template>
   <!-- header 新增按鈕、選擇月份 -->
   <header class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-    <el-button @click="handleAdd" type="primary">新增營業額</el-button>
+    <el-button @click="handleAdd" type="primary" class="order-2 sm:order-1">新增營業額</el-button>
+    <h3 class="order-1 sm:order-2 text-center">{{ selectedMonth }} 營業額</h3>
     <el-date-picker
       v-model="selectedMonth"
       type="month"
@@ -85,6 +86,7 @@ onMounted(() => {
       format="YYYY-MM"
       value-format="YYYY-MM"
       :clearable="false"
+      class="order-3"
     />
   </header>
 

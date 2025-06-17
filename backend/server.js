@@ -38,6 +38,8 @@ mongoose.connect(process.env.MONGO_URI)
     console.log('資料庫連線成功');
 
     try {
+      await Member.deleteMany({});
+      await Member.insertMany(defaultMembers);
       const hasData = await Revenue.findOne();
 
       if (!hasData) {

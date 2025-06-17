@@ -7,7 +7,7 @@ const authenticateToken = require('../middleware/authMiddleware')
 // 讀取會員 Read
 router.get('/api/members', authenticateToken, async (req, res) => {
   try {
-    const memberList = await Member.find().sort({ createdAt: -1 })
+    const memberList = await Member.find().sort({ memberId: -1 })
 
     res.json({
       code: 200,
@@ -22,7 +22,13 @@ router.get('/api/members', authenticateToken, async (req, res) => {
 // 新增會員 Create
 router.post('/api/members', authenticateToken, async (req, res) => {
   try {
-    const newMember = await Member.create(req.body)
+    const lastMember = await Member.findOne().sort({ memberId: -1 }).exec();
+    const nextMemberId = lastMember ? lastMember.memberId + 1 : 1;
+
+    const newMember = await Member.create({
+      ...req.body,
+      memberId: nextMemberId
+    })
 
     res.json({
       code: 200,

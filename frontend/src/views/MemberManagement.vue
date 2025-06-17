@@ -98,9 +98,9 @@ onMounted(() => {
 <template>
   <!-- 新增、搜尋 header -->
   <header class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-    <el-button type="primary" @click="handleAdd">新增會員</el-button>
-
-    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+    <el-button type="primary" @click="handleAdd" class="order-2 sm:order-1">新增會員</el-button>
+    <h3 class="order-1 sm:order2 text-center">{{ selectedMonth ? selectedMonth+' ' : '全部'}}新增會員</h3>
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 order-3">
       <el-date-picker
         v-model="selectedMonth"
         type="month"
@@ -117,6 +117,7 @@ onMounted(() => {
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <div class="overflow-auto">
       <el-table :data="pagedList" class="mb-4 min-w-[900px]" stripe>
+        <el-table-column prop="memberId" label="會員ID" min-width="66" />
         <el-table-column prop="createdAt" label="註冊日期" :formatter="formatDate" />
         <el-table-column prop="name" label="姓名" />
         <el-table-column prop="gender" label="性別" min-width="60" />
