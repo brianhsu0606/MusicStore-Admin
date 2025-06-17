@@ -17,4 +17,19 @@
 - JWT 驗證機制
 - Mongoose + MongoDB（資料儲存）
 
-![image](https://github.com/brianhsu0606/music-store-admin/blob/main/FinanceDashboard.jpg)
+
+**以下是作品畫面**
+
+首頁：快速讀取最新進貨狀況、庫存狀況、基本資訊、近30天的訂天的訂單數量
+![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/home.jpg)
+
+網路訂單：在每日營收、商品庫存、網路訂單、會員管理，都有著CRUD及基本的表格介面
+![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/order.jpg)
+
+營收分析：此頁面只有管理員或超級管理員可以進入，可以看到成本及營業額的表格、分析
+![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/finance.jpg)
+
+同時也做了全站的RWD設計，在手機上也不會跑版
+![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/home_mobile.jpg)
+![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/order_mobile.jpg)
+![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/finance_mobile.jpg)
