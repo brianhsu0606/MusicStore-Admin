@@ -100,7 +100,7 @@ onMounted(() => {
   <!-- 新增、搜尋 header -->
   <header class="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
     <el-button type="primary" @click="handleAdd" class="order-2 sm:order-1">新增會員</el-button>
-    <h3 class="order-1 sm:order2 text-center">{{ selectedMonth ? selectedMonth+' ' : '全部'}}新增會員</h3>
+    <h3 class="order-1 sm:order2 text-center">{{ selectedMonth ? selectedMonth+' 新增' : '全部'}}會員</h3>
     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 order-3">
       <el-date-picker
         v-model="selectedMonth"
