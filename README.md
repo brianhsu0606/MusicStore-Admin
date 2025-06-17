@@ -17,28 +17,30 @@
 ### 後端
 - Node.js（Express）
 - RESTful API 設計
-- JWT 驗證機制
 - Mongoose + MongoDB（資料儲存）
+- JWT 驗證機制
 
 ## 系統功能介紹
-- 首頁儀表板：快速瀏覽庫存狀況、近期訂單與進貨資訊
+- 首頁：快速瀏覽庫存狀況、近期訂單與進貨資訊
+- 每日營收：管理每日的營收狀況
+- 商品庫存：管理商品資訊與庫存數量
+- 網路訂單：查看並更新顧客訂單
 - 會員管理：建立、編輯、刪除會員資料
-- 商品管理：管理商品資訊與庫存數量
-- 訂單處理：查看並更新顧客訂單
-- 營收分析：僅限管理員權限，查看每月成本與營業額報表
+- 營收分析（僅限管理員）：查看每月成本與營業額報表
+- 權限管理（僅限管理員）：調整職員權限
   
 ## 系統畫面預覽（桌機版）
 
-### 首頁：快速讀取最新進貨狀況、庫存狀況、基本資訊、近30天的訂單數量
+### 首頁：快速瀏覽最新進貨狀況、庫存數量、基本資訊及近30天的訂單數量
 <img src="images/home.jpg" alt="首頁截圖">
 
-### 每日營收、商品庫存、網路訂單、會員管理：有基本的資料表格及CRUD操作功能
+### 每日營收、商品庫存、網路訂單、會員管理：有基本的資料表格及 CRUD 操作功能
 <img src="images/order.jpg" alt="訂單截圖">
 
 ### 營收分析（限管理員）：顯示成本與營收的統計圖表，提供數據分析功能 
 <img src="images/finance.jpg" alt="營收分析截圖">
 
-## RWD 響應式設計（手機版預覽）
+## RWD 響應式設計（手機版）
 <div style="display: flex; justify-content: space-around; align-items: flex-start; flex-wrap: wrap;">
   <img src="images/home_mobile.jpg" alt="手機版首頁截圖" width="260" height="600">
   <img src="images/order_mobile.jpg" alt="手機版訂單頁面截圖" width="260" height="600">
