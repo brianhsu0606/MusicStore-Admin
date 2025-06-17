@@ -29,6 +29,7 @@ const rules = {
 
 const {
   loading,
+  dialogLoading,
   list: memberList,
   fetchData,
   handleAdd,
@@ -116,7 +117,7 @@ onMounted(() => {
   <!-- 會員表格 table -->
   <el-card v-loading="loading" element-loading-text="載入中，請稍候...">
     <div class="overflow-auto">
-      <el-table :data="pagedList" class="mb-4 min-w-[900px]" stripe>
+      <el-table :data="pagedList" class="mb-4 min-w-[940px]" stripe>
         <el-table-column prop="memberId" label="會員ID" min-width="66" />
         <el-table-column prop="createdAt" label="註冊日期" :formatter="formatDate" />
         <el-table-column prop="name" label="姓名" />
@@ -148,7 +149,15 @@ onMounted(() => {
 
   <!-- 新增、編輯會員 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
-    <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
+    <el-form
+      :model="dialog.form"
+      :rules="rules"
+      ref="formRef"
+      label-width="80px"
+      label-position="right"
+      v-loading="dialogLoading"
+      element-loading-text="載入中，請稍候..."
+    >
       <el-form-item prop="createdAt" label="註冊日期">
         <el-date-picker 
           v-model="dialog.form.createdAt"

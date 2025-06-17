@@ -30,6 +30,7 @@ const rules = {
 
 const {
   loading,
+  dialogLoading,
   list: revenueList,
   fetchData,
   handleAdd,
@@ -119,8 +120,16 @@ onMounted(() => {
   </el-card>
   
   <!-- 新增營業額 dialog -->
-  <el-dialog v-model="dialog.visible" :title="dialog.title" class="responsive-dialog" :width="dialogWidth">
-    <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
+  <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
+    <el-form
+      :model="dialog.form"
+      :rules="rules"
+      ref="formRef"
+      label-width="80px"
+      label-position="right"
+      v-loading="dialogLoading"
+      element-loading-text="載入中，請稍候..."
+    >
       <el-form-item prop="createdAt" label="選擇日期">
         <el-date-picker
           v-model="dialog.form.createdAt"

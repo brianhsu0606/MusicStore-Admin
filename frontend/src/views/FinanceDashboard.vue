@@ -36,6 +36,7 @@ const costCategories = [
 
 const {
   loading: costLoading,
+  dialogLoading,
   list: costList,
   fetchData: fetchCost,
   handleAdd,
@@ -249,7 +250,15 @@ onMounted(() => {
 
       <!-- 新增成本 dialog -->
       <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
-        <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
+        <el-form
+          :model="dialog.form"
+          :rules="rules"
+          ref="formRef"
+          label-width="80px"
+          label-position="right"
+          v-loading="dialogLoading"
+          element-loading-text="載入中，請稍候..."
+        >
           <el-form-item prop="name" label="成本名稱">
             <el-input v-model="dialog.form.name" />
           </el-form-item>

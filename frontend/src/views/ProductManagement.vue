@@ -35,6 +35,7 @@ const rules = {
 
 const {
   loading,
+  dialogLoading,
   list: productList,
   fetchData,
   handleAdd,
@@ -149,7 +150,15 @@ onMounted(() => {
 
   <!-- 新增、編輯商品 Dialog -->
   <el-dialog v-model="dialog.visible" :title="dialog.title" :width="dialogWidth">
-    <el-form :model="dialog.form" :rules="rules" ref="formRef" label-width="80px" label-position="right">
+    <el-form
+      :model="dialog.form"
+      :rules="rules"
+      ref="formRef"
+      label-width="80px"
+      label-position="right"
+      v-loading="dialogLoading"
+      element-loading-text="載入中，請稍候..."
+    >
       <el-form-item prop="createdAt" label="進貨日期">
         <el-date-picker
           v-model="dialog.form.createdAt"

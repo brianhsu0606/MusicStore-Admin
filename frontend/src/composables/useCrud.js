@@ -3,6 +3,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 
 export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog, defaultForm, getTitle }) => {
   const loading = ref(false)
+  const dialogLoading = ref(false)
   const list = ref([])
 
   const showError = (error, fallback = '操作失敗') => {
@@ -39,6 +40,7 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
   const submit = async () => {
     try {
       await formRef.value.validate()
+      dialogLoading.value = true
 
       if (dialog.isEdit) {
         const updatedItem = await updateApi(dialog.form.id, dialog.form)
@@ -59,6 +61,8 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
     } catch (error) {
       const fallback = dialog.isEdit ? '編輯失敗' : '新增失敗'
       showError(error, fallback)
+    } finally {
+      dialogLoading.value = false
     }
   }
 
@@ -71,16 +75,20 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
     if (!confirmed) return
 
     try {
+      loading.value = true
       await deleteApi(id)
       list.value = list.value.filter(item => item.id !== id)
       ElMessage.success('刪除成功')
     } catch (error) {
       showError(error, '刪除失敗')
+    } finally {
+      loading.value = false
     }
   }
 
   return {
     loading,
+    dialogLoading,
     list,
     fetchData,
     handleAdd,
