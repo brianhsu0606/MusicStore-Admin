@@ -29,14 +29,13 @@
 ## 系統畫面預覽（桌機版）
 
 ### 首頁：快速讀取最新進貨狀況、庫存狀況、基本資訊、近30天的訂天的訂單數量
-![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/home.jpg)
+<img src="images/home.jpg" alt="首頁截圖">
 
-### 網路訂單：在每日營收、商品庫存、網路訂單、會員管理，都有著CRUD及基本的表格介面
-![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/order.jpg)
+### 每日營收、商品庫存、網路訂單、會員管理：有基本的資料表格及CRUD操作功能
+<img src="images/order.jpg" alt="訂單截圖">
 
 ### 營收分析（限管理員）：顯示成本與營收的統計圖表，提供數據分析功能 
-![image](https://github.com/brianhsu0606/music-store-admin/blob/main/images/finance.jpg)
-
+<img src="images/finance.jpg" alt="營收分析截圖">
 
 ## RWD 響應式設計（手機版預覽）
 <div style="display: flex; justify-content: space-around; align-items: flex-start; flex-wrap: wrap;">
