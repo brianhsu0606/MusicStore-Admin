@@ -4,6 +4,9 @@
 - 前端採用 Vue 3 搭配 Vue Router 打造 SPA 架構，並結合 Element Plus 及 Tailwind CSS 強化 UI 設計與 RWD 響應式排版。
 - 後端則使用 Node.js（Express）建構 RESTful API，資料持久化則透過 Mongoose 操作 MongoDB。
 
+## demo 連結：https://brianhsu0606.github.io/music-store-admin/
+為保護資料內容，目前未提供公開帳密。若需測試帳號，請於面試時提出或聯絡本人索取。
+
 ## 使用技術
 
 ### 前端
