@@ -61,8 +61,7 @@ onUnmounted(() => {
   height: 100%;
 }
 
-
-/* 這裡設定滑動的動畫，從左邊滑入滑出 */
+/* 滑動動畫，從左邊滑入滑出 */
 .slide-aside-enter-from,
 .slide-aside-leave-to {
   transform: translateX(-100%);
@@ -76,15 +75,5 @@ onUnmounted(() => {
 .slide-aside-leave-from {
   transform: translateX(0);
   opacity: 1;
-}
-
-/* 手機版時 Aside 預設樣式 */
-.mobile-aside {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  z-index: 999;
-  background-color: #334155;
 }
 </style>
