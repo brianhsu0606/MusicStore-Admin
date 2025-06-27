@@ -23,7 +23,7 @@ async function bootstrap() {
   pinia.use(piniaPluginPersistedstate)
   app.use(pinia)
 
-  await useLoadUserProfile() // ✅ 放在 async 裡
+  await useLoadUserProfile()
 
   app.use(router)
   app.use(ElementPlus)
