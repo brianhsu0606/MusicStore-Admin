@@ -4,7 +4,7 @@ import { useCrud } from '@/composables/useCrud'
 import dayjs from 'dayjs'
 import api from '@/api'
 
-// 商品（最新進貨 + 庫存）
+// 商品
 const {
   loading: productLoading,
   list: productList,
@@ -12,22 +12,20 @@ const {
 } = useCrud({
   getApi: api.getProductList
 })
-
+// 商品（最近 5 筆進貨）
 const recentStockIn = computed(() => {
   return productList.value.slice(0, 5)
 })
+// 商品（總庫存）
 const productStock = computed(() => {
-  const map = productList.value.reduce((acc, item) => {
+  const categoryMap = productList.value.reduce((acc, item) => {
     acc[item.category] = (acc[item.category] || 0) + item.quantity
     return acc
   }, {})
-  return Object.entries(map).map(([category, quantity]) => ({
-    category,
-    quantity
-  }))
+  return Object.entries(categoryMap).map(([category, quantity]) => { return { category, quantity } })
 })
 
-// 訂單（未完成數量 + 近 30 天數量）
+// 訂單
 const {
   loading: orderLoading,
   list: orderList,
@@ -35,35 +33,35 @@ const {
 } = useCrud({
   getApi: api.getOrderList
 })
-
-const orderCount = computed(() => {
+// 訂單（未完成數量）
+const processingOrderCount = computed(() => {
   return orderList.value.filter(item => item.status === 'processing').length
 })
-
+// 訂單（近 30 天數量）
 const selectedDays = ref(30)
-const filteredOrders = computed(() => {
+const filteredOrderList = computed(() => {
   const today = dayjs()
-  return orderList.value.filter(order =>
-    dayjs(order.createdAt).isAfter(today.subtract(selectedDays.value, 'day'))
-  )
+  return orderList.value.filter(item => dayjs(item.createdAt).isAfter(today.subtract(selectedDays.value, 'day')))
 })
 const ordersPerDay = computed(() => {
   const result = {}
+
   for (let i = 0; i < selectedDays.value; i++) {
     const date = dayjs().subtract(i, 'day').format('YYYY-MM-DD')
     result[date] = 0
   }
-  filteredOrders.value.forEach(order => {
+
+  filteredOrderList.value.forEach(order => {
     const date = dayjs(order.createdAt).format('YYYY-MM-DD')
     if (result[date] !== undefined) result[date]++
   })
+  
   return {
     labels: Object.keys(result).reverse(),
     values: Object.values(result).reverse()
   }
 })
-
-// 長條圖 echart
+// 訂單長條圖 echart
 const chartOption = computed(() => ({
   tooltip: {},
   xAxis: {
@@ -87,14 +85,13 @@ const {
 } = useCrud({
   getApi: api.getMemberList
 })
-
 const memberCount = computed(() => {
   return memberList.value.length
 })
 
 const cardData = [
   { icon: 'User', bg: 'bg-green-400', title: '會員人數：', count: memberCount },
-  { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', count: orderCount },
+  { icon: 'Document', bg: 'bg-blue-400', title: '未出貨訂單：', count: processingOrderCount },
 ]
 
 const formatDate = (_, __, value) => {

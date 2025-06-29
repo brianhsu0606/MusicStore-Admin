@@ -113,7 +113,7 @@ const costPieOption = computed(() => ({
 
 // 營業額 折線圖
 const revenueLineData = computed(() => {
-  return [...filteredRevenueList.value].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+  return [...filteredRevenueList.value].reverse()
 })
 
 const revenueLineOption = computed(() => ({
