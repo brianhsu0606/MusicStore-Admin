@@ -41,7 +41,7 @@ mongoose.connect(process.env.MONGO_URI)
       const hasData = await Revenue.findOne();
 
       if (!hasData) {
-        await initUser();
+        // await initUser();
         await Revenue.insertMany(defaultRevenue);
         await Product.insertMany(defaultProducts);
         await Order.insertMany(defaultOrders);
