@@ -58,7 +58,6 @@ const {
   },
   getTitle: (type) => (type === 'add' ? '新增成本' : '編輯成本')
 })
-
 const {
   loading: revenueLoading,
   list: revenueList,
@@ -66,24 +65,6 @@ const {
 } = useCrud({
   getApi: api.getRevenueList
 })
-
-// #region header資料 el-card
-const currentMonthRevenue = computed(() => {
-  return revenueList.value
-    .filter(item => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
-    .reduce((sum, item) => sum + item.price, 0)
-})
-
-const currentMonthCost = computed(() => {
-  return costList.value
-    .filter(item => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
-    .reduce((sum, item) => sum + item.price, 0)
-})
-
-const currentMonthProfit = computed(() => {
-  return currentMonthRevenue.value - currentMonthCost.value
-})
-// #endregion
 
 // 月份篩選 + 分頁功能
 const currentMonth = ref(dayjs().format('YYYY-MM'))
@@ -102,7 +83,6 @@ const {
   pagedList: paginatedCost,
   handlePageChange: handleCostPageChange
 } = usePagination(filteredCostList, 8, false)
-
 const {
   currentPage: currentRevenuePage,
   pageSize: revenuePageSize,
@@ -110,7 +90,7 @@ const {
   handlePageChange: handleRevenuePageChange
 } = usePagination(filteredRevenueList, 8, false)
 
-// #region 圖表 v-chart
+// 成本 圓餅圖
 const costPieData = computed(() => {
   const categoryMap = filteredCostList.value.reduce((acc, item) => {
     acc[item.category] = (acc[item.category] || 0) + item.price
@@ -131,28 +111,41 @@ const costPieOption = computed(() => ({
   }]
 }))
 
-// 營業額折線圖
-const revenueChartData = computed(() => {
+// 營業額 折線圖
+const revenueLineData = computed(() => {
   return [...filteredRevenueList.value].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
 })
 
-const revenueChartOption = computed(() => ({
+const revenueLineOption = computed(() => ({
   title: { text: `${selectedMonth.value} 營業額趨勢圖` },
   tooltip: {},
   xAxis: {
     type: 'category',
-    data: revenueChartData.value.map(item => dayjs(item.createdAt).format('YYYY-MM-DD')),
+    data: revenueLineData.value.map(item => dayjs(item.createdAt).format('YYYY-MM-DD')),
     axisLabel: { rotate: 45 }
   },
   yAxis: { type: 'value' },
   series: [{    
     name: '營業額',
     type: 'line',
-    data: revenueChartData.value.map(item => item.price),
+    data: revenueLineData.value.map(item => item.price),
   }]
 }))
-// #endregion
 
+// header資料 el-card
+const currentMonthRevenue = computed(() => {
+  return revenueList.value
+    .filter(item => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
+    .reduce((sum, item) => sum + item.price, 0)
+})
+const currentMonthCost = computed(() => {
+  return costList.value
+    .filter(item => dayjs(item.createdAt).format('YYYY-MM') === selectedMonth.value)
+    .reduce((sum, item) => sum + item.price, 0)
+})
+const currentMonthProfit = computed(() => {
+  return currentMonthRevenue.value - currentMonthCost.value
+})
 const cardData = computed(() => [
   { icon: 'GoodsFilled', bg: 'bg-blue-400', title: `${selectedMonth.value} 成本：`, value: () => 'NT ' + currentMonthCost.value.toLocaleString() },
   { icon: 'Money', bg: 'bg-green-400', title: `${selectedMonth.value} 營業額：`, value: () => 'NT ' + currentMonthRevenue.value.toLocaleString() },
@@ -292,7 +285,7 @@ onMounted(() => {
       <!-- 營業額折線圖 -->
       <el-card class="mb-4">
         <div class="overflow-auto">
-          <v-chart :option="revenueChartOption" autoresize class="h-[400px] min-w-[400px]"/>
+          <v-chart :option="revenueLineOption" autoresize class="h-[400px] min-w-[400px]"/>
         </div>
       </el-card>
       
