@@ -111,18 +111,15 @@ const {
 } = usePagination(filteredRevenueList, 8, false)
 
 // #region 圖表 v-chart
-// 成本圓餅圖資料
-const costChartData = computed(() => {
-  const categoryMap = {}
-
-  filteredCostList.value.forEach(item => {
-    const key = item.category || '未分類'
-    categoryMap[key] = (categoryMap[key] || 0) + item.price
-  })
-  return Object.entries(categoryMap).map(([name, value]) => ({ name, value }))
+const costPieData = computed(() => {
+  const categoryMap = filteredCostList.value.reduce((acc, item) => {
+    acc[item.category] = (acc[item.category] || 0) + item.price
+    return acc
+  }, {})
+  return Object.entries(categoryMap).map(([name, value]) => { return { name, value } })
 })
 
-const costChartOption = computed(() => ({
+const costPieOption = computed(() => ({
   title: { text: `${selectedMonth.value} 成本佔比圖` },
   tooltip: {},
   legend: { top: 'bottom' },
@@ -130,7 +127,7 @@ const costChartOption = computed(() => ({
     name: '成本項目',
     type: 'pie',
     radius: '50%',
-    data: costChartData.value
+    data: costPieData.value
   }]
 }))
 
@@ -212,7 +209,7 @@ onMounted(() => {
       <!-- 成本圓餅圖 -->
       <el-card class="mb-4">
         <div class="overflow-auto">
-          <v-chart :option="costChartOption" autoresize class="h-[400px] min-w-[300px]" />
+          <v-chart :option="costPieOption" autoresize class="h-[400px] min-w-[300px]" />
         </div>
       </el-card>
 
