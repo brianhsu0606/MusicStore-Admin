@@ -1,4 +1,6 @@
 module.exports = [
+  { createdAt: '2025-07-01', name: 'Eastman進貨', category: '進貨成本', price: 144000 },
+  { createdAt: '2025-07-01', name: '隔音工程', category: '其他成本', price: 100000 },
   { createdAt: '2025-06-30', name: '店面租金', category: '租金/水電', price: 120000 },
   { createdAt: '2025-06-30', name: '職員勞健保', category: '人事成本', price: 22540 },
   { createdAt: '2025-06-30', name: '職員薪水', category: '人事成本', price: 74000 },

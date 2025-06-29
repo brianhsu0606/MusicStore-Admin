@@ -1,4 +1,8 @@
 module.exports = [
+  { createdAt: '2025-07-02', name: 'Eastman E2OM', price: 23800, quantity: 8, category: '木吉他' },
+  { createdAt: '2025-07-01', name: 'Elixir 紅銅 (12-53)', price: 760, quantity: 20, category: '吉他弦' },
+  { createdAt: '2025-06-27', name: 'Eastman E3OME', price: 29800, quantity: 10, category: '木吉他' },
+  { createdAt: '2025-06-20', name: 'Lowden F32', price: 302000, quantity: 1, category: '木吉他' },
   { createdAt: '2025-06-15', name: 'Collings OM2H', price: 238000, quantity: 1, category: '木吉他' },
   { createdAt: '2025-06-12', name: 'Lakewood M32C', price: 118000, quantity: 2, category: '木吉他' },
   { createdAt: '2025-06-10', name: 'Maton EBG808TE', price: 84800, quantity: 4, category: '木吉他' },

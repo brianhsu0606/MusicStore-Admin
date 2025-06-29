@@ -1,5 +1,8 @@
 module.exports = [
-  { memberId: 42, createdAt: '2025-06-14', name: '王小明', gender: '男', birth: '1998-01-01', addr: '台北' },
+  { memberId: 45, createdAt: '2025-07-03', name: '羅建銘', gender: '男', birth: '1998-01-06', addr: '台北' },
+  { memberId: 44, createdAt: '2025-07-01', name: '曾家瑋', gender: '男', birth: '1998-04-11', addr: '台北' },
+  { memberId: 43, createdAt: '2025-06-28', name: '鄧小英', gender: '女', birth: '1998-07-21', addr: '台北' },
+  { memberId: 42, createdAt: '2025-06-22', name: '趙俊明', gender: '男', birth: '1998-12-21', addr: '台北' },
   { memberId: 41, createdAt: '2025-06-12', name: '陳小美', gender: '女', birth: '1995-04-12', addr: '新竹' },
   { memberId: 40, createdAt: '2025-06-11', name: '李阿強', gender: '男', birth: '1992-08-25', addr: '台中' },
   { memberId: 39, createdAt: '2025-06-11', name: '林小花', gender: '女', birth: '2001-07-15', addr: '高雄' },

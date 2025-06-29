@@ -1,4 +1,11 @@
 module.exports = [
+  { createdAt: '2025-07-04', price: 94225, note: '', createdBy: 'user2' },
+  { createdAt: '2025-07-03', price: 62215, note: '', createdBy: 'user2' },
+  { createdAt: '2025-07-02', price: 121025, note: '', createdBy: 'user3' },
+  { createdAt: '2025-07-01', price: 84780, note: '', createdBy: 'user1' },
+  { createdAt: '2025-06-30', price: 34455, note: '', createdBy: 'user1' },
+  { createdAt: '2025-06-27', price: 48225, note: '', createdBy: 'user3' },
+  { createdAt: '2025-06-24', price: 55780, note: '', createdBy: 'user3' },
   { createdAt: '2025-06-20', price: 49210, note: '', createdBy: 'user2' },
   { createdAt: '2025-06-19', price: 43225, note: '', createdBy: 'user3' },
   { createdAt: '2025-06-16', price: 34780, note: '', createdBy: 'user1' },
