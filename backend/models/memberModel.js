@@ -8,7 +8,7 @@ const memberSchema = new mongoose.Schema({
   gender: { type: String, required: true },
   birth: { type: Date },
   addr: { type: String },
-}, { timestamps: true })
+})
 toJSON(memberSchema)
 
 module.exports = mongoose.model('Member', memberSchema)

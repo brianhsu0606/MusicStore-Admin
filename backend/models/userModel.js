@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     avatar: { type: String, default: 'avatar1.jpg' },
     lastLogin: { type: Date, default: '' },
   }
-});
+})
 toJSON(userSchema)
 
 module.exports = mongoose.model('User', userSchema)
