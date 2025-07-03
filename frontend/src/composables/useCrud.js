@@ -45,18 +45,14 @@ export const useCrud = ({ getApi, addApi, updateApi, deleteApi, formRef, dialog,
       if (dialog.isEdit) {
         const updatedItem = await updateApi(dialog.form.id, dialog.form)
         const index = list.value.findIndex(item => item.id === updatedItem.id)
-
-        if (index !== -1) {
-          list.value.splice(index, 1, updatedItem)
-        }
+        if (index !== -1) list.value.splice(index, 1, updatedItem)
         ElMessage.success('編輯成功')
       } else {
         const newItem = await addApi(dialog.form)
-
         list.value.unshift(newItem)
-        list.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         ElMessage.success('新增成功')
       }
+      list.value.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       dialog.visible = false
     } catch (error) {
       const fallback = dialog.isEdit ? '編輯失敗' : '新增失敗'
